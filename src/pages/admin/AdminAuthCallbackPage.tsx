@@ -6,20 +6,19 @@ export const AdminAuthCallbackPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Log what arrived in URL
+    console.log('Hash:', window.location.hash);
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth event:', event, 'Session:', !!session);
       if (event === 'SIGNED_IN' && session) {
         navigate('/admin', { replace: true });
-      } else if (event === 'SIGNED_OUT') {
-        navigate('/admin/login', { replace: true });
       }
     });
 
-    const timeout = setTimeout(() => {
-      navigate('/admin/login', { replace: true });
-    }, 15000);
+    const timeout = setTimeout(() => navigate('/admin/login', { replace: true }), 15000);
 
     return () => {
       subscription.unsubscribe();

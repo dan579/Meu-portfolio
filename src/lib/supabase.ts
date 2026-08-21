@@ -22,7 +22,7 @@ export const supabase: SupabaseClient = createClient(
   isSupabaseConfigured ? supabaseAnonKey : 'placeholder-anon-key',
   {
     auth: {
-      flowType: 'pkce',
+      flowType: 'implicit',
       detectSessionInUrl: true,
       persistSession: true,
       autoRefreshToken: true,
@@ -59,8 +59,8 @@ export async function signInWithGoogle(): Promise<{ error: Error | null }> {
       options: {
         redirectTo: redirectUrl,
         queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
+          response_type: 'token',
+          access_type: 'online',
         },
       },
     });
