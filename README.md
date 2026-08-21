@@ -1,11 +1,19 @@
-<div align="center">
+# Interactive CV — Daniel Santos da Silva
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Site de currículo profissional e portfólio interativo para Técnico de Suporte de TI em transição para Analista de Sistemas e Infraestrutura.
 
-  <h1>Built with AI Studio</h2>
+## Stack Técnica
+- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS, Lucide Icons, Motion
+- **Roteamento:** React Router (SPA)
+- **Backend / Persistência:** Supabase (PostgreSQL, Row Level Security, Supabase Auth)
+- **Arquitetura de Conteúdo:** Camada desacoplada com suporte a múltiplos provedores (`StaticContentProvider` e `CloudContentProvider`).
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## Guia de Instalação e Configuração
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+Consulte o guia completo de configuração do banco de dados e políticas de segurança em [supabase/SETUP.md](supabase/SETUP.md).
 
-</div>
+### Variáveis de Ambiente
+Copie o arquivo `.env.example` para `.env` e preencha as variáveis correspondentes:
+```bash
+cp .env.example .env
+```

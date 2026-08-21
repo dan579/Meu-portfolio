@@ -1,0 +1,8 @@
+{
+  "name": "Interactive CV",
+  "description": "Interactive professional CV and portfolio for Daniel Santos da Silva, Systems & Infrastructure Analyst with decoupled content architecture.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
