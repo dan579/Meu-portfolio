@@ -7,17 +7,20 @@ import {
   ArrowLeft,
   AlertCircle,
   Mail,
-  Send,
-  CheckCircle2
+  KeyRound,
+  LogIn,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 export const AdminLoginPage: React.FC = () => {
-  const { user, isAuthorized, adminEmail, isConfigured, loginWithMagicLink } = useAdminAuth();
+  const { user, isAuthorized, adminEmail, isConfigured, loginWithPassword } = useAdminAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   // If already authenticated and authorized, redirect to /admin
   useEffect(() => {
@@ -27,19 +30,34 @@ export const AdminLoginPage: React.FC = () => {
     }
   }, [user, isAuthorized, navigate, location]);
 
-  const handleMagicLinkLogin = async (e: React.FormEvent) => {
+  const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!password) {
+      setErrorMsg('Por favor, digite a sua senha de administrador.');
+      return;
+    }
+
     setLoading(true);
     setErrorMsg(null);
-    setSuccessMsg(null);
 
-    const { error } = await loginWithMagicLink(adminEmail);
+    const { data, error } = await loginWithPassword(adminEmail, password);
+
     if (error) {
-      setErrorMsg(error.message || 'Falha ao enviar link de acesso.');
-    } else {
-      setSuccessMsg('Link enviado! Verifique seu e-mail.');
+      if (error.message?.includes('Invalid login credentials') || error.message?.includes('invalid_grant')) {
+        setErrorMsg('Senha incorreta ou usuário não encontrado. Verifique as credenciais.');
+      } else {
+        setErrorMsg(error.message || 'Falha ao autenticar com e-mail e senha.');
+      }
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+
+    if (data?.session) {
+      const origin = (location.state as any)?.from?.pathname || '/admin';
+      navigate(origin, { replace: true });
+    } else {
+      setLoading(false);
+    }
   };
 
   return (
@@ -82,20 +100,8 @@ export const AdminLoginPage: React.FC = () => {
           </div>
         )}
 
-        {successMsg && (
-          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3.5 text-xs text-emerald-300 flex items-start gap-2.5">
-            <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-400" />
-            <div>
-              <p className="font-bold text-white">{successMsg}</p>
-              <p className="text-[11px] text-emerald-300/80 mt-0.5">
-                Enviamos um link mágico de login direto para <span className="font-mono text-emerald-200">{adminEmail}</span>.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Magic Link Form */}
-        <form onSubmit={handleMagicLinkLogin} className="space-y-4 pt-1">
+        {/* Password Login Form */}
+        <form onSubmit={handlePasswordLogin} className="space-y-4 pt-1">
           <div className="space-y-1.5">
             <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">
               E-mail do Administrador
@@ -113,18 +119,45 @@ export const AdminLoginPage: React.FC = () => {
             </div>
           </div>
 
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">
+              Senha de Acesso
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <KeyRound className="w-4 h-4" />
+              </div>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••••••"
+                required
+                className="w-full pl-9 pr-10 py-2.5 bg-[#16161B] border border-slate-700 focus:border-blue-500 rounded-xl text-xs text-slate-200 focus:outline-none transition-colors"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-200 transition-colors"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
-            id="send-magic-link-btn"
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-all shadow-lg hover:shadow-blue-500/20 cursor-pointer disabled:opacity-50"
+            id="login-submit-btn"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-all shadow-lg hover:shadow-blue-500/20 cursor-pointer disabled:opacity-50 mt-2"
           >
             {loading ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
-              <Send className="w-4 h-4" />
+              <LogIn className="w-4 h-4" />
             )}
-            <span>{loading ? 'Enviando link...' : 'Enviar link de acesso'}</span>
+            <span>{loading ? 'Autenticando...' : 'Entrar'}</span>
           </button>
         </form>
 

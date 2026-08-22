@@ -41,28 +41,23 @@ export function isAuthorizedAdmin(user: User | null | undefined): boolean {
 }
 
 /**
- * Initiates Supabase Magic Link authentication flow via Email OTP.
+ * Initiates Supabase Email and Password authentication.
  */
-export async function signInWithMagicLink(email: string): Promise<{ error: Error | null }> {
+export async function signInWithPassword(email: string, password: string) {
   if (!isSupabaseConfigured) {
     return {
+      data: { user: null, session: null },
       error: new Error(
-        'Supabase credentials (VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY) are not configured. Configure them in .env to enable Magic Link login.'
+        'Supabase credentials (VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY) are not configured.'
       ),
     };
   }
 
   try {
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/admin`,
-      },
-    });
-
-    return { error: error || null };
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    return { data, error };
   } catch (err: any) {
-    return { error: err };
+    return { data: { user: null, session: null }, error: err };
   }
 }
 

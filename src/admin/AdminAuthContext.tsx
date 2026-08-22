@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { ADMIN_EMAIL, isAuthorizedAdmin, isSupabaseConfigured, signInWithMagicLink, signOut, supabase } from '../lib/supabase.ts';
+import { ADMIN_EMAIL, isAuthorizedAdmin, isSupabaseConfigured, signInWithPassword, signOut, supabase } from '../lib/supabase.ts';
 
 interface AdminAuthContextType {
   user: User | null;
@@ -9,7 +9,7 @@ interface AdminAuthContextType {
   isAuthorized: boolean;
   adminEmail: string;
   isConfigured: boolean;
-  loginWithMagicLink: (email: string) => Promise<{ error: Error | null }>;
+  loginWithPassword: (email: string, password: string) => Promise<{ data: any; error: any }>;
   logout: () => Promise<void>;
 }
 
@@ -70,8 +70,13 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
   }, []);
 
-  const loginWithMagicLink = async (email: string) => {
-    return await signInWithMagicLink(email);
+  const loginWithPassword = async (email: string, password: string) => {
+    const result = await signInWithPassword(email, password);
+    if (result.data?.session) {
+      setSession(result.data.session);
+      setUser(result.data.session.user);
+    }
+    return result;
   };
 
   const logout = async () => {
@@ -91,7 +96,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         isAuthorized,
         adminEmail: ADMIN_EMAIL,
         isConfigured: isSupabaseConfigured,
-        loginWithMagicLink,
+        loginWithPassword,
         logout,
       }}
     >
