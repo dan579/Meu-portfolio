@@ -11,7 +11,6 @@ import {
   Briefcase,
   Server,
   Layers,
-  Activity,
   Mail,
   MapPin,
   Linkedin,
@@ -33,7 +32,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ onItemClick }) => {
     { path: '/experiencia', label: labels.nav.experience, icon: Briefcase },
     { path: '/infraestrutura', label: labels.nav.infrastructure, icon: Server },
     { path: '/projetos', label: labels.nav.projects, icon: Layers },
-    { path: '/metricas', label: labels.nav.metrics, icon: Activity },
     { path: '/contato', label: labels.nav.contact, icon: Mail },
   ];
 

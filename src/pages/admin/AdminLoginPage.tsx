@@ -14,9 +14,10 @@ import {
 } from 'lucide-react';
 
 export const AdminLoginPage: React.FC = () => {
-  const { user, isAuthorized, adminEmail, isConfigured, loginWithPassword } = useAdminAuth();
+  const { user, isAuthorized, isConfigured, loginWithPassword } = useAdminAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,19 +33,20 @@ export const AdminLoginPage: React.FC = () => {
 
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!password) {
-      setErrorMsg('Por favor, digite a sua senha de administrador.');
+    const cleanEmail = email.trim();
+    if (!cleanEmail || !password) {
+      setErrorMsg('Por favor, informe seu e-mail e sua senha de administrador.');
       return;
     }
 
     setLoading(true);
     setErrorMsg(null);
 
-    const { data, error } = await loginWithPassword(adminEmail, password);
+    const { data, error } = await loginWithPassword(cleanEmail, password);
 
     if (error) {
       if (error.message?.includes('Invalid login credentials') || error.message?.includes('invalid_grant')) {
-        setErrorMsg('Senha incorreta ou usuário não encontrado. Verifique as credenciais.');
+        setErrorMsg('E-mail ou senha incorretos. Verifique suas credenciais.');
       } else {
         setErrorMsg(error.message || 'Falha ao autenticar com e-mail e senha.');
       }
@@ -86,11 +88,8 @@ export const AdminLoginPage: React.FC = () => {
             <span>Regra de Conta Única & RLS</span>
           </div>
           <p className="text-slate-300 text-[11px] leading-relaxed">
-            O acesso a este painel e todas as mutações no banco PostgreSQL são restritos exclusivamente ao e-mail autorizado:
+            O acesso a este painel e todas as operações de mutação no banco PostgreSQL são protegidos por Row Level Security (RLS) e restritos exclusivamente à conta autenticada do administrador.
           </p>
-          <div className="bg-[#0C0C0E] border border-slate-800 px-2.5 py-1.5 rounded font-mono text-emerald-400 text-xs font-bold truncate">
-            {adminEmail}
-          </div>
         </div>
 
         {errorMsg && (
@@ -112,9 +111,13 @@ export const AdminLoginPage: React.FC = () => {
               </div>
               <input
                 type="email"
-                value={adminEmail}
-                readOnly
-                className="w-full pl-9 pr-3 py-2.5 bg-[#16161B] border border-slate-700 rounded-xl text-xs text-slate-200 font-mono focus:outline-none cursor-not-allowed opacity-90"
+                name="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="seu.email@exemplo.com"
+                required
+                className="w-full pl-9 pr-3 py-2.5 bg-[#16161B] border border-slate-700 focus:border-blue-500 rounded-xl text-xs text-slate-200 focus:outline-none transition-colors"
               />
             </div>
           </div>
@@ -129,6 +132,8 @@ export const AdminLoginPage: React.FC = () => {
               </div>
               <input
                 type={showPassword ? 'text' : 'password'}
+                name="password"
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"

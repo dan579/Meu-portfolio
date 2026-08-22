@@ -22,11 +22,12 @@ export const ptData: ContentData = {
     githubDisplay: 'github.com/danielsantos-dev',
     availability: 'Disponível para novas oportunidades e transição de carreira',
     workFocus: {
-      infraPercentage: 60,
-      systemsPercentage: 40,
       infraLabel: 'Infraestrutura & Redes',
       systemsLabel: 'Sistemas & Desenvolvimento',
-      note: 'Composição real de dedicação e escopo de atuação técnica. Representa a distribuição prática do tempo entre sustentação de infraestrutura e engenharia de software — não indica limitação técnica ou escala arbitrária de proficiência.'
+      description: 'Atuação integrada que combina a sustentação operacional de infraestrutura corporativa, servidores Windows/Linux, virtualização e redes com o desenvolvimento de software moderno (React, TypeScript, SQL). A experiência prática na ponta com suporte e incidentes enriquece diretamente a arquitetura de sistemas com visão de confiabilidade, segurança e usabilidade real.',
+      note: 'Foco técnico estruturado por sinergia de competências reais — sem métricas arbitrárias de proficiência.',
+      infraFocusAreas: ['Active Directory & Políticas', 'Servidores Windows & Linux', 'Virtualização (Proxmox VE)', 'Redes, pfSense & MikroTik', 'Monitoramento com Zabbix'],
+      systemsFocusAreas: ['Frontend com React & TypeScript', 'Modelagem Relacional SQL', 'Automação de Processos', 'APIs & Arquitetura Web', 'Gestão de Ativos & Chamados'],
     },
     education: [
       {

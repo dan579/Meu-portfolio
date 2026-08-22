@@ -39,11 +39,12 @@ export interface Profile {
   githubDisplay: string;
   availability: string;
   workFocus: {
-    infraPercentage: number;
-    systemsPercentage: number;
     infraLabel: string;
     systemsLabel: string;
-    note: string;
+    description: string;
+    note?: string;
+    infraFocusAreas?: string[];
+    systemsFocusAreas?: string[];
   };
   education: EducationItem[];
   certifications?: CertificationItem[];

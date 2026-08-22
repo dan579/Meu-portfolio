@@ -222,15 +222,20 @@ export const CloudContentProvider: React.FC<CloudContentProviderProps> = ({
       githubDisplay: p.github_display || staticFallback.profile.githubDisplay,
       availability: isPt ? (p.availability_pt || staticFallback.profile.availability) : (p.availability_en || staticFallback.profile.availability),
       workFocus: {
-        infraPercentage: p.work_focus_infra_percentage ?? staticFallback.profile.workFocus.infraPercentage,
-        systemsPercentage: p.work_focus_systems_percentage ?? staticFallback.profile.workFocus.systemsPercentage,
         infraLabel: isPt
           ? (p.work_focus_infra_label_pt || staticFallback.profile.workFocus.infraLabel)
           : (p.work_focus_infra_label_en || staticFallback.profile.workFocus.infraLabel),
         systemsLabel: isPt
           ? (p.work_focus_systems_label_pt || staticFallback.profile.workFocus.systemsLabel)
           : (p.work_focus_systems_label_en || staticFallback.profile.workFocus.systemsLabel),
-        note: isPt ? (p.work_focus_note_pt || staticFallback.profile.workFocus.note) : (p.work_focus_note_en || staticFallback.profile.workFocus.note),
+        description: isPt
+          ? (p.work_focus_description_pt || staticFallback.profile.workFocus.description)
+          : (p.work_focus_description_en || staticFallback.profile.workFocus.description),
+        note: isPt
+          ? (p.work_focus_note_pt || staticFallback.profile.workFocus.note)
+          : (p.work_focus_note_en || staticFallback.profile.workFocus.note),
+        infraFocusAreas: staticFallback.profile.workFocus.infraFocusAreas,
+        systemsFocusAreas: staticFallback.profile.workFocus.systemsFocusAreas,
       },
       education,
       certifications,

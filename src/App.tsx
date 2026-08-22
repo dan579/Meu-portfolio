@@ -52,7 +52,7 @@ export default function App() {
               <Route path="infraestrutura" element={<InfrastructurePage />} />
               <Route path="projetos" element={<ProjectsPage />} />
               <Route path="projetos/:slug" element={<ProjectDetailPage />} />
-              <Route path="metricas" element={<MetricsPage />} />
+              <Route path="metricas" element={<Navigate to="/" replace />} />
               <Route path="contato" element={<ContactPage />} />
             </Route>
 

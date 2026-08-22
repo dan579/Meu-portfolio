@@ -22,11 +22,12 @@ export const enData: ContentData = {
     githubDisplay: 'github.com/danielsantos-dev',
     availability: 'Available for career transition opportunities and technical projects',
     workFocus: {
-      infraPercentage: 60,
-      systemsPercentage: 40,
       infraLabel: 'Infrastructure & Networking',
       systemsLabel: 'Systems & Software Development',
-      note: 'Practical breakdown of daily technical scope and professional focus. Demonstrates real-world time allocation between infrastructure operations and software engineering — not an arbitrary proficiency score or limit.'
+      description: 'Integrated technical approach bridging enterprise infrastructure management, Windows/Linux server administration, virtualization, and network operations with modern software engineering (React, TypeScript, SQL). Hands-on frontline support experience directly enhances system architecture with focus on operational resilience, security, and real-world workflow efficiency.',
+      note: 'Technical focus structured around real competency synergy — avoiding arbitrary proficiency scores.',
+      infraFocusAreas: ['Active Directory & GPOs', 'Windows & Linux Servers', 'Virtualization (Proxmox VE)', 'Networking, pfSense & MikroTik', 'Zabbix Infrastructure Monitoring'],
+      systemsFocusAreas: ['Frontend (React & TypeScript)', 'Relational SQL Modeling', 'Process Automation', 'Web APIs & Architecture', 'IT Asset & Ticket Management'],
     },
     education: [
       {
