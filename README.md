@@ -1,4 +1,4 @@
-# Interactive CV — Documentação Técnica
+# Meu Portfolio — Documentação Técnica
 
 **Autor:** Daniel Santos da Silva  
 **Versão atual:** v0.5 (CMS completo)  
