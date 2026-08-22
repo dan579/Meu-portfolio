@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { ADMIN_EMAIL, isAuthorizedAdmin, isSupabaseConfigured, signInWithGoogle, signOut, supabase } from '../lib/supabase.ts';
+import { ADMIN_EMAIL, isAuthorizedAdmin, isSupabaseConfigured, signInWithMagicLink, signOut, supabase } from '../lib/supabase.ts';
 
 interface AdminAuthContextType {
   user: User | null;
@@ -9,7 +9,7 @@ interface AdminAuthContextType {
   isAuthorized: boolean;
   adminEmail: string;
   isConfigured: boolean;
-  loginWithGoogle: () => Promise<{ error: Error | null }>;
+  loginWithMagicLink: (email: string) => Promise<{ error: Error | null }>;
   logout: () => Promise<void>;
 }
 
@@ -70,8 +70,8 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
   }, []);
 
-  const loginWithGoogle = async () => {
-    return await signInWithGoogle();
+  const loginWithMagicLink = async (email: string) => {
+    return await signInWithMagicLink(email);
   };
 
   const logout = async () => {
@@ -91,7 +91,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         isAuthorized,
         adminEmail: ADMIN_EMAIL,
         isConfigured: isSupabaseConfigured,
-        loginWithGoogle,
+        loginWithMagicLink,
         logout,
       }}
     >

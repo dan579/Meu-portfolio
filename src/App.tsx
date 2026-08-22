@@ -18,7 +18,6 @@ import { ContactPage } from './pages/ContactPage.tsx';
 
 // Admin Pages
 import { AdminLoginPage } from './pages/admin/AdminLoginPage.tsx';
-import { AdminAuthCallbackPage } from './pages/admin/AdminAuthCallbackPage.tsx';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage.tsx';
 import { AdminProfilePage } from './pages/admin/AdminProfilePage.tsx';
 import { AdminExperiencePage } from './pages/admin/AdminExperiencePage.tsx';
@@ -57,9 +56,8 @@ export default function App() {
               <Route path="contato" element={<ContactPage />} />
             </Route>
 
-            {/* Admin Login & Auth Callback Routes */}
+            {/* Admin Login Route */}
             <Route path="/admin/login" element={<AdminLoginPage />} />
-            <Route path="/admin/auth/callback" element={<AdminAuthCallbackPage />} />
 
             {/* Protected Admin Routes */}
             <Route

@@ -41,28 +41,26 @@ export function isAuthorizedAdmin(user: User | null | undefined): boolean {
 }
 
 /**
- * Initiates Google OAuth authentication flow via Supabase Auth (implicit flow).
+ * Initiates Supabase Magic Link authentication flow via Email OTP.
  */
-export async function signInWithGoogle(): Promise<{ error: Error | null }> {
+export async function signInWithMagicLink(email: string): Promise<{ error: Error | null }> {
   if (!isSupabaseConfigured) {
     return {
       error: new Error(
-        'Supabase credentials (VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY) are not configured. Configure them in .env to enable Google OAuth.'
+        'Supabase credentials (VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY) are not configured. Configure them in .env to enable Magic Link login.'
       ),
     };
   }
 
   try {
-    const redirectUrl = `${window.location.origin}/admin/auth/callback`;
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
       options: {
-        redirectTo: redirectUrl,
+        emailRedirectTo: `${window.location.origin}/admin`,
       },
     });
 
-    if (error) throw error;
-    return { error: null };
+    return { error: error || null };
   } catch (err: any) {
     return { error: err };
   }
