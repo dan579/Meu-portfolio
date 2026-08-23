@@ -24,34 +24,17 @@ export const AboutPage: React.FC = () => {
   return (
     <div className="space-y-10" id="about-page-container">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
-        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-tr from-blue-600 via-blue-500 to-cyan-400 p-[2px] shadow-xl shadow-blue-500/10 shrink-0 overflow-hidden">
-          {profile.photoUrl ? (
-            <img
-              src={profile.photoUrl}
-              alt={profile.name}
-              referrerPolicy="no-referrer"
-              className="w-full h-full rounded-2xl object-cover"
-            />
-          ) : (
-            <div className="w-full h-full rounded-2xl bg-[#141418] flex items-center justify-center text-2xl font-extrabold text-blue-400 tracking-wider">
-              {profile.initials}
-            </div>
-          )}
+      <div>
+        <div className="flex items-center gap-2 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-2">
+          <User className="w-4 h-4" />
+          <span>Perfil & Carreira</span>
         </div>
-
-        <div>
-          <div className="flex items-center gap-2 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-2">
-            <User className="w-4 h-4" />
-            <span>Perfil & Carreira</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Sobre {profile.name} <span className="text-blue-500">.</span>
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mt-1">
-            Histórico profissional, mentalidade de engenharia, formação acadêmica e escopo de atuação técnica.
-          </p>
-        </div>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          Sobre {profile.name} <span className="text-blue-500">.</span>
+        </h1>
+        <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mt-1">
+          Histórico profissional, mentalidade de engenharia, formação acadêmica e escopo de atuação técnica.
+        </p>
       </div>
 
       {/* Trajetória Completa (Bio) */}

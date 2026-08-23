@@ -20,7 +20,7 @@ export const ContactPage: React.FC = () => {
   const [copied, setCopied] = useState(false);
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText(contact.email);
+    navigator.clipboard.writeText(profile.email || contact.email);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
@@ -59,7 +59,7 @@ export const ContactPage: React.FC = () => {
               E-mail Direto
             </h3>
             <p className="text-base font-mono font-bold text-white tracking-tight">
-              {contact.email}
+              {profile.email || contact.email}
             </p>
           </div>
 

@@ -405,7 +405,7 @@ export const CloudContentProvider: React.FC<CloudContentProviderProps> = ({
     const p = dbData.profile;
     const isPt = language === 'pt';
 
-    const resolvedEmail = c?.email || p?.email || staticFallback.contact.email;
+    const resolvedEmail = p?.email || staticFallback.profile.email || staticFallback.contact.email;
     const resolvedLinkedin = c?.linkedin || p?.linkedin_display || staticFallback.contact.linkedin;
     const resolvedLinkedinUrl = c?.linkedin_url || p?.linkedin || staticFallback.contact.linkedinUrl;
     const resolvedGithub = c?.github || p?.github_display || staticFallback.contact.github;

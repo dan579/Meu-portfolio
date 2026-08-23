@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 
 export const AdminDashboardPage: React.FC = () => {
-  const { adminEmail, isConfigured } = useAdminAuth();
+  const { adminEmail, authorizedAdmins, isConfigured } = useAdminAuth();
 
   return (
     <div className="space-y-8" id="admin-dashboard-container">
@@ -39,12 +39,16 @@ export const AdminDashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-[#111113] border border-slate-800/90 rounded-xl p-4 space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase text-slate-400">Conta Autorizada</span>
+            <span className="text-[10px] font-bold uppercase text-slate-400">Contas Autorizadas</span>
             <Lock className="w-3.5 h-3.5 text-blue-400" />
           </div>
-          <p className="text-xs font-mono font-bold text-white truncate">{adminEmail}</p>
+          <p className="text-xs font-mono font-bold text-white truncate">
+            {authorizedAdmins.length > 0
+              ? `${authorizedAdmins.length} administrador(es)`
+              : adminEmail}
+          </p>
           <span className="text-[10px] text-emerald-400 block pt-1">
-            ✓ Validação estrita por e-mail no RLS
+            ✓ Validação dinâmica de lista no RLS
           </span>
         </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useProfile } from '../../content/ContentProvider.tsx';
 import { isSupabaseConfigured, supabase } from '../../lib/supabase.ts';
+import { useAdminAuth } from '../../admin/AdminAuthContext.tsx';
 import { MediaPicker } from '../../admin/components/MediaPicker.tsx';
 import { MediaAsset } from '../../content/types.ts';
 import {
@@ -22,12 +23,18 @@ import {
   Image as ImageIcon,
   Camera,
   UploadCloud,
-  X
+  X,
+  Shield,
+  ShieldCheck,
+  UserPlus,
+  KeyRound,
+  Lock
 } from 'lucide-react';
 import { EducationItem, CertificationItem } from '../../content/types.ts';
 
 export const AdminProfilePage: React.FC = () => {
   const currentProfile = useProfile();
+  const { user: authUser, authorizedAdmins, addAdmin, removeAdmin } = useAdminAuth();
 
   // Active language tab for editing bilingual fields
   const [activeLangTab, setActiveLangTab] = useState<'pt' | 'en'>('pt');
@@ -45,6 +52,12 @@ export const AdminProfilePage: React.FC = () => {
   const [linkedinDisplay, setLinkedinDisplay] = useState(currentProfile.linkedinDisplay);
   const [github, setGithub] = useState(currentProfile.github);
   const [githubDisplay, setGithubDisplay] = useState(currentProfile.githubDisplay);
+
+  // Admin accounts state
+  const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [adminActionLoading, setAdminActionLoading] = useState(false);
+  const [adminActionMessage, setAdminActionMessage] = useState<string | null>(null);
+  const [adminActionError, setAdminActionError] = useState<string | null>(null);
 
   // Bilingual Roles & Bio
   const [currentRolePt, setCurrentRolePt] = useState(currentProfile.currentRole);
@@ -85,6 +98,48 @@ export const AdminProfilePage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleAddAuthorizedAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const clean = newAdminEmail.trim().toLowerCase();
+    if (!clean || !clean.includes('@')) {
+      setAdminActionError('Informe um e-mail de administrador válido.');
+      return;
+    }
+    setAdminActionLoading(true);
+    setAdminActionError(null);
+    setAdminActionMessage(null);
+    const { error } = await addAdmin(clean);
+    setAdminActionLoading(false);
+    if (error) {
+      setAdminActionError(error.message || 'Falha ao autorizar novo administrador.');
+    } else {
+      setNewAdminEmail('');
+      setAdminActionMessage(`E-mail ${clean} adicionado à lista de administradores autorizados.`);
+      setTimeout(() => setAdminActionMessage(null), 4000);
+    }
+  };
+
+  const handleRemoveAuthorizedAdmin = async (adminToRemove: string) => {
+    if (authorizedAdmins.length <= 1) {
+      setAdminActionError('Operação negada: Não é permitido remover o único administrador restante.');
+      return;
+    }
+    if (!window.confirm(`Tem certeza que deseja remover ${adminToRemove} da lista de administradores autorizados?`)) {
+      return;
+    }
+    setAdminActionLoading(true);
+    setAdminActionError(null);
+    setAdminActionMessage(null);
+    const { error } = await removeAdmin(adminToRemove);
+    setAdminActionLoading(false);
+    if (error) {
+      setAdminActionError(error.message || 'Falha ao remover administrador.');
+    } else {
+      setAdminActionMessage(`E-mail ${adminToRemove} removido com sucesso.`);
+      setTimeout(() => setAdminActionMessage(null), 4000);
+    }
+  };
 
   // Sync with initial profile if loaded
   useEffect(() => {
@@ -985,6 +1040,128 @@ export const AdminProfilePage: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* 6. Administradores Autorizados (Multi-Admin RLS) */}
+      <section className="bg-[#111113] border border-slate-800/90 rounded-xl p-6 space-y-5" id="admin-management-section">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+          <div>
+            <h2 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>6. Administradores Autorizados (Multi-Admin RLS)</span>
+            </h2>
+            <p className="text-[11px] text-slate-400 mt-0.5">
+              Controle de contas com permissão de escrita e gestão via Row Level Security no PostgreSQL.
+            </p>
+          </div>
+          <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md self-start sm:self-auto">
+            {authorizedAdmins.length} {authorizedAdmins.length === 1 ? 'administrador ativo' : 'administradores ativos'}
+          </span>
+        </div>
+
+        {/* Security Info Card */}
+        <div className="bg-[#16161B] border border-slate-800 rounded-lg p-3.5 space-y-2 text-xs">
+          <div className="flex items-center gap-2 text-slate-300 font-semibold text-xs">
+            <Lock className="w-3.5 h-3.5 text-blue-400" />
+            <span>Regra de Autorização & Proteção Anti-Lockout</span>
+          </div>
+          <p className="text-slate-400 text-[11px] leading-relaxed">
+            Todos os e-mails listados abaixo possuem privilégios de acesso ao painel e permissão de mutação nas tabelas do Supabase via função <code className="text-emerald-400 bg-emerald-500/10 px-1 py-0.5 rounded font-mono">is_authorized_admin()</code>. O banco de dados recusa automaticamente a exclusão do último administrador remanescente para evitar bloqueio acidental.
+          </p>
+        </div>
+
+        {/* Action feedback */}
+        {adminActionMessage && (
+          <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-300 text-xs flex items-center gap-2">
+            <Check className="w-4 h-4 shrink-0" />
+            <span>{adminActionMessage}</span>
+          </div>
+        )}
+
+        {adminActionError && (
+          <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-lg text-rose-300 text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{adminActionError}</span>
+          </div>
+        )}
+
+        {/* Add new admin form */}
+        <div className="bg-[#15151A] border border-slate-800 rounded-xl p-4 space-y-3">
+          <label className="block text-[10px] font-semibold text-slate-300 uppercase tracking-wider">
+            Autorizar Novo E-mail de Administrador
+          </label>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              type="email"
+              value={newAdminEmail}
+              onChange={(e) => setNewAdminEmail(e.target.value)}
+              placeholder="novo.admin@exemplo.com"
+              className="flex-1 bg-[#101013] border border-slate-700 focus:border-blue-500 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none transition-colors"
+            />
+            <button
+              type="button"
+              onClick={handleAddAuthorizedAdmin}
+              disabled={adminActionLoading || !newAdminEmail.trim()}
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-xs font-bold text-white transition-all cursor-pointer shadow-md shadow-blue-600/20"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>{adminActionLoading ? 'Processando...' : 'Adicionar Administrador'}</span>
+            </button>
+          </div>
+          <p className="text-[10px] text-slate-500">
+            O usuário precisará ter uma conta criada no Supabase Auth correspondente a este e-mail para logar com sua senha.
+          </p>
+        </div>
+
+        {/* List of current authorized admins */}
+        <div className="space-y-2">
+          <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+            Administradores Atualmente Autorizados
+          </div>
+          {authorizedAdmins.map((adm) => {
+            const isCurrentUser = authUser?.email?.toLowerCase().trim() === adm.email.toLowerCase().trim();
+            const isOnlyAdmin = authorizedAdmins.length <= 1;
+
+            return (
+              <div
+                key={adm.email}
+                className="bg-[#15151A] border border-slate-800 hover:border-slate-700/80 rounded-xl p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                    <ShieldCheck className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono font-bold text-white">{adm.email}</span>
+                      {isCurrentUser && (
+                        <span className="text-[9px] font-mono text-blue-400 bg-blue-500/10 border border-blue-500/20 px-1.5 py-0.2 rounded">
+                          Sua Sessão
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[10px] text-slate-500 block">
+                      Autorizado em {new Date(adm.added_at).toLocaleDateString('pt-BR')} {adm.added_by ? `• Por ${adm.added_by}` : ''}
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveAuthorizedAdmin(adm.email)}
+                    disabled={adminActionLoading || isOnlyAdmin}
+                    title={isOnlyAdmin ? 'Não é possível remover o único administrador restante' : 'Remover autorização'}
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-rose-950/30 hover:bg-rose-900/50 border border-rose-800/40 disabled:opacity-30 disabled:cursor-not-allowed text-rose-300 text-[11px] font-medium transition-all"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Remover</span>
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 

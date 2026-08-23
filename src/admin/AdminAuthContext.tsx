@@ -1,6 +1,17 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { ADMIN_EMAIL, isAuthorizedAdmin, isSupabaseConfigured, signInWithPassword, signOut, supabase } from '../lib/supabase.ts';
+import {
+  ADMIN_EMAIL,
+  AuthorizedAdminRecord,
+  addAuthorizedAdmin,
+  fetchAuthorizedAdmins,
+  isAuthorizedAdmin,
+  isSupabaseConfigured,
+  removeAuthorizedAdmin,
+  signInWithPassword,
+  signOut,
+  supabase,
+} from '../lib/supabase.ts';
 
 interface AdminAuthContextType {
   user: User | null;
@@ -8,9 +19,13 @@ interface AdminAuthContextType {
   loading: boolean;
   isAuthorized: boolean;
   adminEmail: string;
+  authorizedAdmins: AuthorizedAdminRecord[];
   isConfigured: boolean;
   loginWithPassword: (email: string, password: string) => Promise<{ data: any; error: any }>;
   logout: () => Promise<void>;
+  refreshAuthorizedAdmins: () => Promise<void>;
+  addAdmin: (email: string) => Promise<{ data: any; error: any }>;
+  removeAdmin: (email: string) => Promise<{ data: any; error: any }>;
 }
 
 const AdminAuthContext = createContext<AdminAuthContextType | null>(null);
@@ -19,6 +34,14 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authorizedAdmins, setAuthorizedAdmins] = useState<AuthorizedAdminRecord[]>([]);
+
+  const loadAuthorizedAdmins = useCallback(async () => {
+    const { data } = await fetchAuthorizedAdmins();
+    if (data && data.length > 0) {
+      setAuthorizedAdmins(data);
+    }
+  }, []);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -35,13 +58,16 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       }
     }, 5000);
 
-    // 1. Get existing session (includes token parsed from URL fragment)
+    // 1. Get existing session
     supabase.auth
       .getSession()
-      .then(({ data: { session: currentSession } }) => {
+      .then(async ({ data: { session: currentSession } }) => {
         if (mounted) {
           setSession(currentSession);
           setUser(currentSession?.user ?? null);
+          if (currentSession?.user) {
+            await loadAuthorizedAdmins();
+          }
           setLoading(false);
         }
       })
@@ -55,10 +81,13 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     // 2. Listen for future auth state changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
       if (mounted) {
         setSession(newSession);
         setUser(newSession?.user ?? null);
+        if (newSession?.user) {
+          await loadAuthorizedAdmins();
+        }
         setLoading(false);
       }
     });
@@ -68,13 +97,14 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       clearTimeout(safetyTimeout);
       subscription.unsubscribe();
     };
-  }, []);
+  }, [loadAuthorizedAdmins]);
 
   const loginWithPassword = async (email: string, password: string) => {
     const result = await signInWithPassword(email, password);
     if (result.data?.session) {
       setSession(result.data.session);
       setUser(result.data.session.user);
+      await loadAuthorizedAdmins();
     }
     return result;
   };
@@ -83,9 +113,32 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     await signOut();
     setUser(null);
     setSession(null);
+    setAuthorizedAdmins([]);
   };
 
-  const isAuthorized = isAuthorizedAdmin(user);
+  const handleAddAdmin = async (email: string) => {
+    const res = await addAuthorizedAdmin(email, user?.email || 'admin');
+    if (!res.error) {
+      await loadAuthorizedAdmins();
+    }
+    return res;
+  };
+
+  const handleRemoveAdmin = async (email: string) => {
+    if (authorizedAdmins.length <= 1) {
+      return { data: null, error: new Error('Não é permitido remover o único administrador restante.') };
+    }
+    const res = await removeAuthorizedAdmin(email);
+    if (!res.error) {
+      await loadAuthorizedAdmins();
+    }
+    return res;
+  };
+
+  const isAuthorized = isAuthorizedAdmin(
+    user,
+    authorizedAdmins.map((a) => a.email)
+  );
 
   return (
     <AdminAuthContext.Provider
@@ -94,10 +147,14 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         session,
         loading,
         isAuthorized,
-        adminEmail: ADMIN_EMAIL,
+        adminEmail: authorizedAdmins[0]?.email || ADMIN_EMAIL,
+        authorizedAdmins,
         isConfigured: isSupabaseConfigured,
         loginWithPassword,
         logout,
+        refreshAuthorizedAdmins: loadAuthorizedAdmins,
+        addAdmin: handleAddAdmin,
+        removeAdmin: handleRemoveAdmin,
       }}
     >
       {children}

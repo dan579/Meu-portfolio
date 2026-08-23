@@ -51,8 +51,8 @@ export const AdminAuthGuard: React.FC<AdminAuthGuardProps> = ({ children }) => {
               <span className="text-rose-300 truncate max-w-[200px]">{user.email}</span>
             </div>
             <div className="flex justify-between text-slate-400 border-t border-slate-800/80 pt-2">
-              <span>Conta autorizada:</span>
-              <span className="text-emerald-400">{adminEmail}</span>
+              <span>Status de permissão:</span>
+              <span className="text-rose-400 font-semibold">Conta não autorizada no RLS</span>
             </div>
           </div>
 

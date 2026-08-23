@@ -30,42 +30,30 @@ export const HomePage: React.FC = () => {
       {/* Hero / Identity Quick Header */}
       <section className="relative">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-2">
-          <div className="flex flex-col sm:flex-row items-start gap-5 max-w-2xl">
-            {profile.photoUrl && (
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-tr from-blue-600 via-blue-500 to-cyan-400 p-[2px] shadow-xl shadow-blue-500/15 shrink-0 overflow-hidden hidden sm:block">
-                <img
-                  src={profile.photoUrl}
-                  alt={profile.name}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full rounded-full object-cover"
-                />
-              </div>
-            )}
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
-                <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-                <span>{profile.currentRole} • Transição para Analista de Sistemas / Infra</span>
-              </div>
+          <div className="space-y-3 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
+              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+              <span>{profile.currentRole} • Transição para Analista de Sistemas / Infra</span>
+            </div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
-                {profile.name} <span className="text-blue-500">.</span>
-              </h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+              {profile.name} <span className="text-blue-500">.</span>
+            </h1>
 
-              <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-xl">
-                {profile.shortSummary}
-              </p>
+            <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-xl">
+              {profile.shortSummary}
+            </p>
 
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-1">
-                <span className="flex items-center gap-1.5 text-slate-300">
-                  <MapPin className="w-4 h-4 text-blue-400" />
-                  {profile.location}
-                </span>
-                <span className="text-slate-600">•</span>
-                <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  {profile.availability}
-                </span>
-              </div>
+            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-1">
+              <span className="flex items-center gap-1.5 text-slate-300">
+                <MapPin className="w-4 h-4 text-blue-400" />
+                {profile.location}
+              </span>
+              <span className="text-slate-600">•</span>
+              <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                {profile.availability}
+              </span>
             </div>
           </div>
 
