@@ -180,14 +180,32 @@ export const HomePage: React.FC = () => {
             >
               <div>
                 {/* Project Cover Block */}
-                <div className="w-full h-24 bg-[#16161B] border border-slate-800 rounded-lg mb-4 flex flex-col items-center justify-center p-3 text-center group-hover:border-slate-700 transition-colors relative overflow-hidden">
-                  <div className="absolute inset-0 bg-blue-600/[0.03] group-hover:bg-blue-600/[0.08] transition-colors" />
-                  <span className="text-slate-500 group-hover:text-blue-400 font-mono font-bold text-xs tracking-wider uppercase transition-colors relative z-10">
-                    {proj.title}
-                  </span>
-                  <span className="text-[10px] text-slate-600 font-mono mt-0.5 relative z-10 truncate max-w-full">
-                    {proj.category}
-                  </span>
+                <div className="w-full bg-[#16161B] border border-slate-800 rounded-lg mb-4 flex flex-col justify-between group-hover:border-slate-700 transition-colors relative overflow-hidden">
+                  <div className="absolute inset-0 bg-blue-600/[0.03] group-hover:bg-blue-600/[0.08] transition-colors pointer-events-none" />
+                  
+                  {/* Top Header bar with window dots and badge */}
+                  <div className="flex items-center justify-between px-3 py-2 border-b border-slate-800/70 bg-[#121216] relative z-10">
+                    <div className="flex items-center gap-1 shrink-0">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-500/70" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-amber-500/70" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/70" />
+                    </div>
+                    {proj.badge && (
+                      <span className="text-[9px] font-mono font-medium text-blue-400 bg-blue-950/60 border border-blue-800/40 px-2 py-0.5 rounded truncate max-w-[180px]">
+                        {proj.badge}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Mockup Title Center Body */}
+                  <div className="px-3 py-3.5 flex flex-col items-center justify-center text-center relative z-10 min-h-[58px]">
+                    <span className="text-slate-300 group-hover:text-blue-300 font-mono font-bold text-xs tracking-wider uppercase transition-colors line-clamp-2">
+                      {proj.title}
+                    </span>
+                    <span className="text-[10px] text-slate-500 font-mono mt-0.5 truncate max-w-full">
+                      {proj.category}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-between gap-2 mb-1.5">

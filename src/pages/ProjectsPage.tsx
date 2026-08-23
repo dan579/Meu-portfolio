@@ -81,35 +81,46 @@ export const ProjectsPage: React.FC = () => {
           >
             <div>
               {/* Visual Preview Banner */}
-              <div className="w-full h-36 bg-[#16161B] border border-slate-800 rounded-lg mb-4 flex flex-col items-center justify-center p-4 text-center relative overflow-hidden group-hover:border-slate-700 transition-colors">
-                <div className="absolute top-2 right-2 z-10">
+              <div className="w-full bg-[#16161B] border border-slate-800 rounded-lg mb-4 flex flex-col justify-between overflow-hidden group-hover:border-slate-700 transition-colors relative">
+                <div className="absolute inset-0 bg-blue-600/[0.03] group-hover:bg-blue-600/[0.08] transition-colors pointer-events-none" />
+
+                {/* Top header bar with Chrome Dots and Badge */}
+                <div className="flex items-center justify-between px-3 py-2 border-b border-slate-800/70 bg-[#121216] relative z-10">
+                  <div className="flex items-center gap-1 shrink-0">
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-500/70" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500/70" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/70" />
+                  </div>
                   {project.badge && (
-                    <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-blue-600/20 text-blue-400 border border-blue-500/30">
+                    <span className="text-[9px] font-mono font-medium text-blue-400 bg-blue-950/60 border border-blue-800/40 px-2 py-0.5 rounded truncate max-w-[200px]">
                       {project.badge}
                     </span>
                   )}
                 </div>
 
-                <span className="text-slate-400 group-hover:text-blue-300 font-mono font-extrabold text-base tracking-wider uppercase transition-colors">
-                  {project.title}
-                </span>
-                <span className="text-[11px] text-slate-500 font-mono mt-1 max-w-[90%] truncate">
-                  {project.category}
-                </span>
+                {/* Title & Category Center Body */}
+                <div className="px-4 py-4 flex flex-col items-center justify-center text-center relative z-10">
+                  <span className="text-slate-300 group-hover:text-blue-300 font-mono font-extrabold text-sm tracking-wider uppercase transition-colors line-clamp-2">
+                    {project.title}
+                  </span>
+                  <span className="text-[11px] text-slate-500 font-mono mt-1 max-w-[90%] truncate">
+                    {project.category}
+                  </span>
 
-                {/* Simulated Mini Status */}
-                <div className="mt-3 flex items-center gap-1.5 text-[10px] text-slate-400 bg-[#0E0E11] px-2.5 py-1 rounded border border-slate-800 font-mono">
-                  {project.status === 'completed' ? (
-                    <>
-                      <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                      <span className="text-emerald-400">{project.statusLabel}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Clock className="w-3 h-3 text-blue-400" />
-                      <span className="text-blue-400">{project.statusLabel}</span>
-                    </>
-                  )}
+                  {/* Simulated Mini Status */}
+                  <div className="mt-3 flex items-center gap-1.5 text-[10px] text-slate-400 bg-[#0E0E11] px-2.5 py-1 rounded border border-slate-800 font-mono">
+                    {project.status === 'completed' ? (
+                      <>
+                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                        <span className="text-emerald-400">{project.statusLabel}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Clock className="w-3 h-3 text-blue-400" />
+                        <span className="text-blue-400">{project.statusLabel}</span>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
 
