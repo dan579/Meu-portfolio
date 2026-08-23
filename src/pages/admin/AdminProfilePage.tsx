@@ -192,46 +192,93 @@ export const AdminProfilePage: React.FC = () => {
       const bioEnArray = fullBioEnText.split('\n\n').map(p => p.trim()).filter(Boolean);
 
       if (isSupabaseConfigured) {
-        // Upsert profile in Supabase
-        const { error: profileError } = await supabase.from('profiles').upsert(
-          {
-            name,
-            short_name: shortName,
-            initials,
-            avatar_media_id: avatarMediaId || null,
-            current_role_pt: currentRolePt,
-            current_role_en: currentRoleEn,
-            target_role_pt: targetRolePt,
-            target_role_en: targetRoleEn,
-            headline_pt: headlinePt,
-            headline_en: headlineEn,
-            short_summary_pt: shortSummaryPt,
-            short_summary_en: shortSummaryEn,
-            full_bio_pt: bioPtArray,
-            full_bio_en: bioEnArray,
-            location,
-            email,
-            linkedin,
-            linkedin_display: linkedinDisplay,
-            github,
-            github_display: githubDisplay,
-            availability_pt: availabilityPt,
-            availability_en: availabilityEn,
-            work_focus_infra_label_pt: infraLabelPt,
-            work_focus_infra_label_en: infraLabelEn,
-            work_focus_systems_label_pt: systemsLabelPt,
-            work_focus_systems_label_en: systemsLabelEn,
-            work_focus_description_pt: workFocusDescriptionPt,
-            work_focus_description_en: workFocusDescriptionEn,
-            work_focus_note_pt: workFocusNotePt,
-            work_focus_note_en: workFocusNoteEn,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: 'email' }
-        );
+        // 1. Upsert profile in Supabase using ID lookup to prevent conflict errors
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('id')
+          .limit(1)
+          .maybeSingle();
+
+        const profilePayload = {
+          name,
+          short_name: shortName,
+          initials,
+          avatar_media_id: avatarMediaId || null,
+          current_role_pt: currentRolePt,
+          current_role_en: currentRoleEn,
+          target_role_pt: targetRolePt,
+          target_role_en: targetRoleEn,
+          headline_pt: headlinePt,
+          headline_en: headlineEn,
+          short_summary_pt: shortSummaryPt,
+          short_summary_en: shortSummaryEn,
+          full_bio_pt: bioPtArray,
+          full_bio_en: bioEnArray,
+          location,
+          email,
+          linkedin,
+          linkedin_display: linkedinDisplay,
+          github,
+          github_display: githubDisplay,
+          availability_pt: availabilityPt,
+          availability_en: availabilityEn,
+          work_focus_infra_label_pt: infraLabelPt,
+          work_focus_infra_label_en: infraLabelEn,
+          work_focus_systems_label_pt: systemsLabelPt,
+          work_focus_systems_label_en: systemsLabelEn,
+          work_focus_description_pt: workFocusDescriptionPt,
+          work_focus_description_en: workFocusDescriptionEn,
+          work_focus_note_pt: workFocusNotePt,
+          work_focus_note_en: workFocusNoteEn,
+          updated_at: new Date().toISOString(),
+        };
+
+        const { error: profileError } = existingProfile?.id
+          ? await supabase.from('profiles').update(profilePayload).eq('id', existingProfile.id)
+          : await supabase.from('profiles').insert(profilePayload);
 
         if (profileError) {
           throw profileError;
+        }
+
+        // 2. Synchronize contact_info table for useContact() and /contato public page
+        const { data: existingContact } = await supabase
+          .from('contact_info')
+          .select('id')
+          .limit(1)
+          .maybeSingle();
+
+        const contactPayload = {
+          email,
+          location,
+          linkedin: linkedinDisplay,
+          linkedin_url: linkedin,
+          github: githubDisplay,
+          github_url: github,
+          city_state_country_pt: location,
+          city_state_country_en: location,
+          availability_status_pt: availabilityPt,
+          availability_status_en: availabilityEn,
+          updated_at: new Date().toISOString(),
+        };
+
+        if (existingContact?.id) {
+          await supabase
+            .from('contact_info')
+            .update(contactPayload)
+            .eq('id', existingContact.id);
+        } else {
+          await supabase
+            .from('contact_info')
+            .insert({
+              ...contactPayload,
+              preferred_contact_pt: 'E-mail e LinkedIn',
+              preferred_contact_en: 'Email & LinkedIn',
+              message_note_pt:
+                'Busco oportunidades para aplicar e expandir minhas competências em suporte corporativo, administração de redes, servidores e engenharia de software.',
+              message_note_en:
+                'I am looking for opportunities to apply and expand my competencies in enterprise support, networking, server administration, and software engineering.',
+            });
         }
 
         // Save education items

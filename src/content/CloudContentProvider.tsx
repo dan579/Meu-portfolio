@@ -401,25 +401,38 @@ export const CloudContentProvider: React.FC<CloudContentProviderProps> = ({
 
   // Transform Contact
   const mappedContact: ContactInfo = useMemo(() => {
-    if (!dbData.contact) {
-      return staticFallback.contact;
-    }
-
     const c = dbData.contact;
+    const p = dbData.profile;
     const isPt = language === 'pt';
+
+    const resolvedEmail = c?.email || p?.email || staticFallback.contact.email;
+    const resolvedLinkedin = c?.linkedin || p?.linkedin_display || staticFallback.contact.linkedin;
+    const resolvedLinkedinUrl = c?.linkedin_url || p?.linkedin || staticFallback.contact.linkedinUrl;
+    const resolvedGithub = c?.github || p?.github_display || staticFallback.contact.github;
+    const resolvedGithubUrl = c?.github_url || p?.github || staticFallback.contact.githubUrl;
+    const resolvedLocation = c?.location || p?.location || staticFallback.contact.location;
+
     return {
-      email: c.email || staticFallback.contact.email,
-      linkedin: c.linkedin || staticFallback.contact.linkedin,
-      linkedinUrl: c.linkedin_url || staticFallback.contact.linkedinUrl,
-      github: c.github || staticFallback.contact.github,
-      githubUrl: c.github_url || staticFallback.contact.githubUrl,
-      location: c.location || staticFallback.contact.location,
-      cityStateCountry: isPt ? (c.city_state_country_pt || staticFallback.contact.cityStateCountry) : (c.city_state_country_en || staticFallback.contact.cityStateCountry),
-      availabilityStatus: isPt ? (c.availability_status_pt || staticFallback.contact.availabilityStatus) : (c.availability_status_en || staticFallback.contact.availabilityStatus),
-      preferredContact: isPt ? (c.preferred_contact_pt || staticFallback.contact.preferredContact) : (c.preferred_contact_en || staticFallback.contact.preferredContact),
-      messageNote: isPt ? (c.message_note_pt || staticFallback.contact.messageNote) : (c.message_note_en || staticFallback.contact.messageNote),
+      email: resolvedEmail,
+      linkedin: resolvedLinkedin,
+      linkedinUrl: resolvedLinkedinUrl,
+      github: resolvedGithub,
+      githubUrl: resolvedGithubUrl,
+      location: resolvedLocation,
+      cityStateCountry: isPt
+        ? (c?.city_state_country_pt || p?.location || staticFallback.contact.cityStateCountry)
+        : (c?.city_state_country_en || p?.location || staticFallback.contact.cityStateCountry),
+      availabilityStatus: isPt
+        ? (c?.availability_status_pt || p?.availability_pt || staticFallback.contact.availabilityStatus)
+        : (c?.availability_status_en || p?.availability_en || staticFallback.contact.availabilityStatus),
+      preferredContact: isPt
+        ? (c?.preferred_contact_pt || staticFallback.contact.preferredContact)
+        : (c?.preferred_contact_en || staticFallback.contact.preferredContact),
+      messageNote: isPt
+        ? (c?.message_note_pt || staticFallback.contact.messageNote)
+        : (c?.message_note_en || staticFallback.contact.messageNote),
     };
-  }, [dbData.contact, language, staticFallback.contact]);
+  }, [dbData.contact, dbData.profile, language, staticFallback.contact]);
 
   const getProjectBySlug = useCallback(
     (slug: string): ProjectCase | undefined => {
