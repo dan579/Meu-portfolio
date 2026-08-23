@@ -15,7 +15,7 @@ export const enData: ContentData = {
       'In parallel with infrastructure, I engineer complete software solutions with TypeScript, React, relational SQL database modeling, and scalable architectures. My goal is to solidify the transition into Systems and Infrastructure Analyst roles, merging deep networking foundations with modern software engineering.'
     ],
     location: 'Belo Horizonte, MG • Brazil',
-    email: 'contato@danielsantos.dev',
+    email: '',
     linkedin: 'https://linkedin.com/in/daniel-santos-silva',
     linkedinDisplay: 'linkedin.com/in/daniel-santos-silva',
     github: 'https://github.com/danielsantos-dev',
@@ -499,7 +499,7 @@ export const enData: ContentData = {
   metrics: [],
 
   contact: {
-    email: 'contato@danielsantos.dev',
+    email: '',
     linkedin: 'Daniel Santos',
     linkedinUrl: 'https://linkedin.com/in/daniel-santos-silva',
     github: 'danielsantos-dev',

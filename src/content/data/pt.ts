@@ -15,7 +15,7 @@ export const ptData: ContentData = {
       'Em paralelo à infraestrutura, construo soluções completas de software aplicando TypeScript, React, modelagem relacional SQL e arquiteturas escaláveis. Meu objetivo é consolidar a transição para posições de Analista de Sistemas e Infraestrutura, unindo a visão sistêmica de redes ao ciclo de desenvolvimento de software.'
     ],
     location: 'Belo Horizonte, MG • Brasil',
-    email: 'contato@danielsantos.dev',
+    email: '',
     linkedin: 'https://linkedin.com/in/daniel-santos-silva',
     linkedinDisplay: 'linkedin.com/in/daniel-santos-silva',
     github: 'https://github.com/danielsantos-dev',
@@ -499,7 +499,7 @@ export const ptData: ContentData = {
   metrics: [],
 
   contact: {
-    email: 'contato@danielsantos.dev',
+    email: '',
     linkedin: 'Daniel Santos',
     linkedinUrl: 'https://linkedin.com/in/daniel-santos-silva',
     github: 'danielsantos-dev',
