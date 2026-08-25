@@ -94,16 +94,7 @@ export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) =
           </View>
         </View>
 
-        {/* 2. Composição de Atuação Técnica (Apenas texto descritivo) */}
-        {profile.workFocus && (
-          <View style={styles.compositionContainer}>
-            <Text style={styles.compositionDesc}>
-              {profile.workFocus.description || profile.shortSummary}
-            </Text>
-          </View>
-        )}
-
-        {/* 3. Trajetória & Perfil Técnico */}
+        {/* 2. Trajetória & Perfil Técnico */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Trajetória & Perfil Técnico</Text>
           {(profile.fullBio || [profile.shortSummary]).map((p, idx) => (
@@ -113,7 +104,7 @@ export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) =
           ))}
         </View>
 
-        {/* 4. Experiência Profissional (Espaçamento claro entre cargos) */}
+        {/* 3. Experiência Profissional (Espaçamento claro entre cargos) */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Experiência Profissional</Text>
           {experiences.map((exp) => (

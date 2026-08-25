@@ -94,8 +94,8 @@ export const pdfStyles = StyleSheet.create({
     fontFamily: 'Helvetica-Bold',
     color: pdfColors.accent,
     letterSpacing: -0.2,
-    lineHeight: 1.2,
-    marginBottom: 5,
+    lineHeight: 1.25,
+    marginBottom: 6,
   },
 
   // Role / Subtitle Headline

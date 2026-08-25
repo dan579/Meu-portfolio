@@ -13,8 +13,7 @@ import {
   CheckCircle2,
   Clock,
   Database,
-  Lock,
-  Activity
+  Lock
 } from 'lucide-react';
 
 export const AdminDashboardPage: React.FC = () => {
@@ -252,39 +251,6 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
           </Link>
 
-          {/* Metrics Card */}
-          <Link
-            to="/admin/metricas"
-            id="admin-card-metricas"
-            className="group bg-[#111113] hover:bg-[#141418] border border-slate-800/90 hover:border-blue-500/40 rounded-xl p-6 transition-all duration-200 flex flex-col justify-between space-y-4"
-          >
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-105 transition-transform">
-                  <Activity className="w-5 h-5" />
-                </div>
-                <span className="text-[10px] font-mono font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" />
-                  Snapshots Operis Ativos
-                </span>
-              </div>
-
-              <div>
-                <h3 className="text-base font-bold text-white group-hover:text-blue-400 transition-colors">
-                  Métricas & Evidências Operacionais
-                </h3>
-                <p className="text-xs text-slate-400 leading-relaxed mt-1">
-                  Gestão manual de snapshots periódicos (SLA, volumes, indicadores do ecossistema Operis) prontos para automação de jobs futura sem alteração de schema.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs font-bold text-blue-400 pt-2 border-t border-slate-800/60">
-              <span>Gerenciar Métricas</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </Link>
-
           {/* Media Card */}
           <Link
             to="/admin/media"
@@ -330,18 +296,18 @@ export const AdminDashboardPage: React.FC = () => {
             </h2>
           </div>
           <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
-            Fases 1 a 5 Concluídas (100% dos Módulos Operacionais)
+            Fases Concluídas (100% dos Módulos Operacionais)
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
           <div className="bg-[#141418] border border-slate-800 p-3.5 rounded-lg space-y-1">
             <div className="flex items-center gap-2 text-slate-300 text-xs font-bold">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
               <span>Fases 1 & 2 • Auth & Perfil</span>
             </div>
             <p className="text-[11px] text-slate-400">
-              Google OAuth, RLS no PostgreSQL e gestão de biografia, formação e composição de foco.
+              Google OAuth, RLS no PostgreSQL e gestão de biografia, formação e credenciais.
             </p>
           </div>
 
@@ -352,16 +318,6 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
             <p className="text-[11px] text-slate-400">
               Experiências, infraestrutura em 2 níveis, competências práticas, cases de projetos e assets reais.
-            </p>
-          </div>
-
-          <div className="bg-[#141418] border border-slate-800 p-3.5 rounded-lg space-y-1">
-            <div className="flex items-center gap-2 text-slate-300 text-xs font-bold">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Fase 5 • Métricas Operis</span>
-            </div>
-            <p className="text-[11px] text-slate-400">
-              Snapshots manuais agregados com suporte futuro nativo para automação por jobs.
             </p>
           </div>
         </div>

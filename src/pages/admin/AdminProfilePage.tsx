@@ -16,8 +16,6 @@ import {
   GraduationCap,
   Award,
   Globe,
-  Sliders,
-  Info,
   Layers,
   Sparkles,
   Image as ImageIcon,
@@ -72,21 +70,6 @@ export const AdminProfilePage: React.FC = () => {
   const [fullBioEnText, setFullBioEnText] = useState(currentProfile.fullBio.join('\n\n'));
   const [availabilityPt, setAvailabilityPt] = useState(currentProfile.availability);
   const [availabilityEn, setAvailabilityEn] = useState('Available for new opportunities & career transition');
-
-  // Work Focus (Qualitative Description & Pillars)
-  const [infraLabelPt, setInfraLabelPt] = useState(currentProfile.workFocus.infraLabel);
-  const [infraLabelEn, setInfraLabelEn] = useState('Infrastructure & Networks');
-  const [systemsLabelPt, setSystemsLabelPt] = useState(currentProfile.workFocus.systemsLabel);
-  const [systemsLabelEn, setSystemsLabelEn] = useState('Systems & Development');
-  const [workFocusDescriptionPt, setWorkFocusDescriptionPt] = useState(
-    currentProfile.workFocus.description ||
-      'Atuação integrada que combina a sustentação operacional de infraestrutura corporativa, servidores Windows/Linux, virtualização e redes com o desenvolvimento de software moderno (React, TypeScript, SQL).'
-  );
-  const [workFocusDescriptionEn, setWorkFocusDescriptionEn] = useState(
-    'Integrated technical approach bridging enterprise infrastructure management, Windows/Linux server administration, virtualization, and network operations with modern software engineering (React, TypeScript, SQL).'
-  );
-  const [workFocusNotePt, setWorkFocusNotePt] = useState(currentProfile.workFocus.note || '');
-  const [workFocusNoteEn, setWorkFocusNoteEn] = useState('Technical focus structured around real competency synergy — avoiding arbitrary proficiency scores.');
 
   // Education list
   const [educationList, setEducationList] = useState<EducationItem[]>(currentProfile.education || []);
@@ -154,14 +137,6 @@ export const AdminProfilePage: React.FC = () => {
     setLinkedinDisplay(currentProfile.linkedinDisplay);
     setGithub(currentProfile.github);
     setGithubDisplay(currentProfile.githubDisplay);
-    setInfraLabelPt(currentProfile.workFocus.infraLabel);
-    setSystemsLabelPt(currentProfile.workFocus.systemsLabel);
-    if (currentProfile.workFocus.description) {
-      setWorkFocusDescriptionPt(currentProfile.workFocus.description);
-    }
-    if (currentProfile.workFocus.note) {
-      setWorkFocusNotePt(currentProfile.workFocus.note);
-    }
     setEducationList(currentProfile.education || []);
     setCertificationsList(currentProfile.certifications || []);
   }, [currentProfile]);
@@ -277,14 +252,6 @@ export const AdminProfilePage: React.FC = () => {
           github_display: githubDisplay,
           availability_pt: availabilityPt,
           availability_en: availabilityEn,
-          work_focus_infra_label_pt: infraLabelPt,
-          work_focus_infra_label_en: infraLabelEn,
-          work_focus_systems_label_pt: systemsLabelPt,
-          work_focus_systems_label_en: systemsLabelEn,
-          work_focus_description_pt: workFocusDescriptionPt,
-          work_focus_description_en: workFocusDescriptionEn,
-          work_focus_note_pt: workFocusNotePt,
-          work_focus_note_en: workFocusNoteEn,
           updated_at: new Date().toISOString(),
         };
 
@@ -759,99 +726,12 @@ export const AdminProfilePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 3. Work Focus (Composição de Atuação Técnica - Descrição Qualitativa) */}
-      <section className="bg-[#111113] border border-slate-800/90 rounded-xl p-6 space-y-5">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-            <Sliders className="w-4 h-4 text-blue-400" />
-            <span>3. Composição de Atuação Técnica (Sinergia Qualitativa)</span>
-          </h2>
-          <span className="text-xs font-mono font-bold px-2.5 py-1 rounded border bg-blue-500/10 text-blue-400 border-blue-500/20">
-            Qualitativo & Contextual
-          </span>
-        </div>
-
-        {/* Pillar Labels */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-[11px] font-semibold text-blue-400 uppercase tracking-wider mb-1">
-              Rótulo do Pilar 1 ({activeLangTab.toUpperCase()})
-            </label>
-            <input
-              type="text"
-              value={activeLangTab === 'pt' ? infraLabelPt : infraLabelEn}
-              onChange={(e) =>
-                activeLangTab === 'pt' ? setInfraLabelPt(e.target.value) : setInfraLabelEn(e.target.value)
-              }
-              className="w-full bg-[#16161B] border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-[11px] font-semibold text-emerald-400 uppercase tracking-wider mb-1">
-              Rótulo do Pilar 2 ({activeLangTab.toUpperCase()})
-            </label>
-            <input
-              type="text"
-              value={activeLangTab === 'pt' ? systemsLabelPt : systemsLabelEn}
-              onChange={(e) =>
-                activeLangTab === 'pt' ? setSystemsLabelPt(e.target.value) : setSystemsLabelEn(e.target.value)
-              }
-              className="w-full bg-[#16161B] border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none"
-              required
-            />
-          </div>
-        </div>
-
-        {/* Qualitative Description Field */}
-        <div className="space-y-2">
-          <label className="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider">
-            Descrição Qualitativa da Sinergia ({activeLangTab.toUpperCase()})
-          </label>
-          <p className="text-[11px] text-slate-400 leading-relaxed">
-            Explica a complementaridade entre a vivência de infraestrutura/suporte e a engenharia de software/sistemas, sem usar porcentagens ou rankings artificiais.
-          </p>
-          <textarea
-            rows={4}
-            value={activeLangTab === 'pt' ? workFocusDescriptionPt : workFocusDescriptionEn}
-            onChange={(e) =>
-              activeLangTab === 'pt'
-                ? setWorkFocusDescriptionPt(e.target.value)
-                : setWorkFocusDescriptionEn(e.target.value)
-            }
-            className="w-full bg-[#16161B] border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none leading-relaxed"
-            required
-          />
-        </div>
-
-        {/* Note field */}
-        <div className="space-y-2 pt-2 border-t border-slate-800/80">
-          <div className="flex items-center gap-1.5 text-xs text-slate-300 font-bold">
-            <Info className="w-4 h-4 text-blue-400" />
-            <span>Nota Metodológica de Posicionamento ({activeLangTab.toUpperCase()})</span>
-          </div>
-          <p className="text-[11px] text-slate-400 leading-relaxed">
-            Reforça que a atuação técnica é fundamentada na aplicação prática e na sinergia entre áreas.
-          </p>
-          <textarea
-            rows={2}
-            value={activeLangTab === 'pt' ? workFocusNotePt : workFocusNoteEn}
-            onChange={(e) =>
-              activeLangTab === 'pt' ? setWorkFocusNotePt(e.target.value) : setWorkFocusNoteEn(e.target.value)
-            }
-            className="w-full bg-[#16161B] border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none leading-relaxed"
-            required
-          />
-        </div>
-      </section>
-
-      {/* 4. Formação Acadêmica (Education) */}
+      {/* 3. Formação Acadêmica (Education) */}
       <section className="bg-[#111113] border border-slate-800/90 rounded-xl p-6 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
             <GraduationCap className="w-4 h-4 text-blue-400" />
-            <span>4. Formação Acadêmica & Graduação ({educationList.length})</span>
+            <span>3. Formação Acadêmica & Graduação ({educationList.length})</span>
           </h2>
 
           <button
@@ -958,12 +838,12 @@ export const AdminProfilePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 5. Certificações (Certifications) */}
+      {/* 4. Certificações (Certifications) */}
       <section className="bg-[#111113] border border-slate-800/90 rounded-xl p-6 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
             <Award className="w-4 h-4 text-blue-400" />
-            <span>5. Certificações & Cursos Técnicos ({certificationsList.length})</span>
+            <span>4. Certificações & Cursos Técnicos ({certificationsList.length})</span>
           </h2>
 
           <button
@@ -1043,13 +923,13 @@ export const AdminProfilePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 6. Administradores Autorizados (Multi-Admin RLS) */}
+      {/* 5. Administradores Autorizados (Multi-Admin RLS) */}
       <section className="bg-[#111113] border border-slate-800/90 rounded-xl p-6 space-y-5" id="admin-management-section">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
           <div>
             <h2 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>6. Administradores Autorizados (Multi-Admin RLS)</span>
+              <span>5. Administradores Autorizados (Multi-Admin RLS)</span>
             </h2>
             <p className="text-[11px] text-slate-400 mt-0.5">
               Controle de contas com permissão de escrita e gestão via Row Level Security no PostgreSQL.

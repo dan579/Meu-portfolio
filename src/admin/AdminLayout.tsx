@@ -13,8 +13,7 @@ import {
   Server,
   Layers,
   Sparkles,
-  Database,
-  Activity
+  Database
 } from 'lucide-react';
 
 export const AdminLayout: React.FC = () => {
@@ -67,13 +66,6 @@ export const AdminLayout: React.FC = () => {
       to: '/admin/projetos',
       label: 'Projetos & Cases',
       icon: Layers,
-      end: false,
-      ready: true,
-    },
-    {
-      to: '/admin/metricas',
-      label: 'Métricas (Operis)',
-      icon: Activity,
       end: false,
       ready: true,
     },

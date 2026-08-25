@@ -13,7 +13,6 @@ import { ExperiencePage } from './pages/ExperiencePage.tsx';
 import { InfrastructurePage } from './pages/InfrastructurePage.tsx';
 import { ProjectsPage } from './pages/ProjectsPage.tsx';
 import { ProjectDetailPage } from './pages/ProjectDetailPage.tsx';
-import { MetricsPage } from './pages/MetricsPage.tsx';
 import { ContactPage } from './pages/ContactPage.tsx';
 
 // Admin Pages
@@ -24,7 +23,6 @@ import { AdminExperiencePage } from './pages/admin/AdminExperiencePage.tsx';
 import { AdminInfrastructurePage } from './pages/admin/AdminInfrastructurePage.tsx';
 import { AdminSkillsPage } from './pages/admin/AdminSkillsPage.tsx';
 import { AdminProjectsPage } from './pages/admin/AdminProjectsPage.tsx';
-import { AdminMetricsPage } from './pages/admin/AdminMetricsPage.tsx';
 import { AdminMediaPage } from './pages/admin/AdminMediaPage.tsx';
 
 function ScrollToTop() {
@@ -74,7 +72,6 @@ export default function App() {
               <Route path="infraestrutura" element={<AdminInfrastructurePage />} />
               <Route path="competencias" element={<AdminSkillsPage />} />
               <Route path="projetos" element={<AdminProjectsPage />} />
-              <Route path="metricas" element={<AdminMetricsPage />} />
               <Route path="media" element={<AdminMediaPage />} />
             </Route>
 

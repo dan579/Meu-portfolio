@@ -7,7 +7,6 @@ import {
   useContent
 } from '../content/ContentProvider.tsx';
 import { downloadResumePdf } from '../pdf/pdfGenerator.ts';
-import { WorkCompositionCard } from '../components/common/WorkCompositionCard.tsx';
 import { TechBadge } from '../components/common/TechBadge.tsx';
 import {
   ArrowRight,
@@ -132,11 +131,8 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Grid: Work Composition Card + Primary Stack */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <WorkCompositionCard />
-
-        {/* Primary Stack Overview Card */}
+      {/* Primary Stack Overview Card */}
+      <section>
         <div className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 flex flex-col justify-between hover:border-blue-500/30 transition-all duration-300 shadow-lg shadow-black/20">
           <div>
             <div className="flex items-center justify-between gap-2 mb-4">
@@ -146,7 +142,7 @@ export const HomePage: React.FC = () => {
               <span className="text-[10px] text-slate-500 font-mono">Infra + Software</span>
             </div>
 
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <span className="text-[11px] text-slate-400 font-mono font-semibold uppercase tracking-wider mb-2 flex items-center gap-1.5">
                   <Server className="w-3.5 h-3.5 text-blue-400" />
@@ -161,7 +157,7 @@ export const HomePage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-800/60">
+              <div>
                 <span className="text-[11px] text-slate-400 font-mono font-semibold uppercase tracking-wider mb-2 flex items-center gap-1.5">
                   <Code className="w-3.5 h-3.5 text-blue-400" />
                   Desenvolvimento & Bancos

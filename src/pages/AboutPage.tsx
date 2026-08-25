@@ -4,7 +4,6 @@ import {
   useSkillCategories,
   useUILabels
 } from '../content/ContentProvider.tsx';
-import { WorkCompositionCard } from '../components/common/WorkCompositionCard.tsx';
 import { TechBadge } from '../components/common/TechBadge.tsx';
 import {
   User,
@@ -51,14 +50,6 @@ export const AboutPage: React.FC = () => {
             </p>
           ))}
         </div>
-      </section>
-
-      {/* Composição de Atuação em Destaque */}
-      <section className="space-y-3">
-        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-          {labels.common.workCompositionTitle}
-        </h3>
-        <WorkCompositionCard compact={false} />
       </section>
 
       {/* Formação & Certificações */}
