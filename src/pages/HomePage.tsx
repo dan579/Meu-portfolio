@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   useProfile,
@@ -6,7 +6,7 @@ import {
   useUILabels,
   useContent
 } from '../content/ContentProvider.tsx';
-import { downloadResumePdf } from '../pdf/pdfGenerator.ts';
+import { downloadResumePdf, downloadPortfolioPdf } from '../pdf/pdfGenerator.ts';
 import { TechBadge } from '../components/common/TechBadge.tsx';
 import {
   ArrowRight,
@@ -22,7 +22,9 @@ import {
   FileText,
   Loader2,
   Check,
-  Download
+  Download,
+  BookOpen,
+  ChevronDown
 } from 'lucide-react';
 
 export const HomePage: React.FC = () => {
@@ -30,19 +32,54 @@ export const HomePage: React.FC = () => {
   const profile = useProfile();
   const projects = useProjects();
   const labels = useUILabels();
-  const [downloadingCv, setDownloadingCv] = useState(false);
-  const [cvDownloaded, setCvDownloaded] = useState(false);
+  const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
+  const [downloadingFormat, setDownloadingFormat] = useState<'resume' | 'portfolio' | null>(null);
+  const [downloadedFormat, setDownloadedFormat] = useState<'resume' | 'portfolio' | null>(null);
+  const downloadMenuRef = useRef<HTMLDivElement>(null);
 
-  const handleDownloadCv = async () => {
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        downloadMenuRef.current &&
+        !downloadMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsDownloadMenuOpen(false);
+      }
+    };
+
+    if (isDownloadMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDownloadMenuOpen]);
+
+  const handleDownloadResume = async () => {
+    setIsDownloadMenuOpen(false);
     try {
-      setDownloadingCv(true);
+      setDownloadingFormat('resume');
       await downloadResumePdf(content);
-      setCvDownloaded(true);
-      setTimeout(() => setCvDownloaded(false), 3000);
+      setDownloadedFormat('resume');
+      setTimeout(() => setDownloadedFormat(null), 3000);
     } catch (err) {
-      console.error('Erro ao baixar CV:', err);
+      console.error('Erro ao baixar Currículo:', err);
     } finally {
-      setDownloadingCv(false);
+      setDownloadingFormat(null);
+    }
+  };
+
+  const handleDownloadPortfolio = async () => {
+    setIsDownloadMenuOpen(false);
+    try {
+      setDownloadingFormat('portfolio');
+      await downloadPortfolioPdf(content);
+      setDownloadedFormat('portfolio');
+      setTimeout(() => setDownloadedFormat(null), 3000);
+    } catch (err) {
+      console.error('Erro ao baixar Portfólio:', err);
+    } finally {
+      setDownloadingFormat(null);
     }
   };
 
@@ -89,21 +126,95 @@ export const HomePage: React.FC = () => {
               <span>{labels.common.getInTouch}</span>
             </Link>
 
-            <button
-              onClick={handleDownloadCv}
-              disabled={downloadingCv}
-              id="hero-download-cv-btn"
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#16161c] hover:bg-[#1f1f27] border border-slate-800/90 hover:border-blue-500/40 text-slate-200 hover:text-white text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 hover:-translate-y-0.5 shadow-sm"
-            >
-              {downloadingCv ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400" />
-              ) : cvDownloaded ? (
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
-              ) : (
-                <Download className="w-3.5 h-3.5 text-blue-400" />
+            {/* Download CV Dropdown */}
+            <div className="relative" ref={downloadMenuRef}>
+              <button
+                onClick={() => setIsDownloadMenuOpen((prev) => !prev)}
+                disabled={downloadingFormat !== null}
+                id="hero-download-cv-btn"
+                aria-expanded={isDownloadMenuOpen}
+                aria-haspopup="true"
+                className="w-full inline-flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl bg-[#16161c] hover:bg-[#1f1f27] border border-slate-800/90 hover:border-blue-500/40 text-slate-200 hover:text-white text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 hover:-translate-y-0.5 shadow-sm"
+              >
+                <div className="flex items-center gap-2">
+                  {downloadingFormat !== null ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400" />
+                  ) : downloadedFormat ? (
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  ) : (
+                    <Download className="w-3.5 h-3.5 text-blue-400" />
+                  )}
+                  <span>
+                    {downloadingFormat !== null
+                      ? 'Gerando PDF...'
+                      : downloadedFormat === 'resume'
+                      ? 'Currículo Baixado'
+                      : downloadedFormat === 'portfolio'
+                      ? 'Portfólio Baixado'
+                      : 'Baixar CV (PDF)'}
+                  </span>
+                </div>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
+                    isDownloadMenuOpen ? 'rotate-180 text-blue-400' : ''
+                  }`}
+                />
+              </button>
+
+              {/* Dropdown Menu */}
+              {isDownloadMenuOpen && (
+                <div
+                  id="hero-download-menu"
+                  className="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 w-72 sm:w-80 bg-[#16161c] border border-slate-800 rounded-xl shadow-2xl shadow-black/80 p-2 z-50 space-y-1.5 backdrop-blur-md animate-in fade-in slide-in-from-top-1 duration-150"
+                >
+                  {/* Option 1: Currículo Tradicional */}
+                  <button
+                    type="button"
+                    onClick={handleDownloadResume}
+                    id="hero-dropdown-resume-btn"
+                    className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-[#1f1f28] border border-transparent hover:border-blue-500/30 transition-all duration-150 text-left group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-105 transition-transform shrink-0">
+                        <FileText className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-white group-hover:text-blue-400 transition-colors">
+                          Currículo Tradicional (PDF)
+                        </div>
+                        <div className="text-[10px] text-slate-400">
+                          Formato ATS · Enxuto
+                        </div>
+                      </div>
+                    </div>
+                    <Download className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 group-hover:translate-y-0.5 transition-all shrink-0 ml-2" />
+                  </button>
+
+                  {/* Option 2: Portfólio Completo */}
+                  <button
+                    type="button"
+                    onClick={handleDownloadPortfolio}
+                    id="hero-dropdown-portfolio-btn"
+                    className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-[#1f1f28] border border-transparent hover:border-emerald-500/30 transition-all duration-150 text-left group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform shrink-0">
+                        <BookOpen className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors">
+                          Portfólio Completo (PDF)
+                        </div>
+                        <div className="text-[10px] text-slate-400">
+                          Com projetos, arquitetura e QR Code
+                        </div>
+                      </div>
+                    </div>
+                    <Download className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 group-hover:translate-y-0.5 transition-all shrink-0 ml-2" />
+                  </button>
+                </div>
               )}
-              <span>{cvDownloaded ? 'CV Baixado' : 'Baixar CV (PDF)'}</span>
-            </button>
+            </div>
 
             <div className="flex items-center gap-2">
               <a
