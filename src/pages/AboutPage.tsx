@@ -25,20 +25,20 @@ export const AboutPage: React.FC = () => {
     <div className="space-y-10" id="about-page-container">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-2">
+        <div className="flex items-center gap-2 text-blue-400 text-xs font-mono font-semibold uppercase tracking-wider mb-2">
           <User className="w-4 h-4" />
           <span>Perfil & Carreira</span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
           Sobre {profile.name} <span className="text-blue-500">.</span>
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mt-1">
+        <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mt-1 leading-relaxed">
           Histórico profissional, mentalidade de engenharia, formação acadêmica e escopo de atuação técnica.
         </p>
       </div>
 
       {/* Trajetória Completa (Bio) */}
-      <section className="bg-[#111113] border border-slate-800/80 rounded-xl p-6 sm:p-8 space-y-4">
+      <section className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg shadow-black/20">
         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
           <Compass className="w-4 h-4 text-blue-400" />
           <span>Trajetória & Posicionamento Profissional</span>
@@ -64,7 +64,7 @@ export const AboutPage: React.FC = () => {
       {/* Formação & Certificações */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Educação */}
-        <div className="bg-[#111113] border border-slate-800/80 rounded-xl p-6 space-y-4">
+        <div className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 space-y-4 shadow-lg shadow-black/20">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
             <GraduationCap className="w-4 h-4 text-blue-400" />
             <span>Formação Acadêmica</span>
@@ -74,7 +74,7 @@ export const AboutPage: React.FC = () => {
             {profile.education.map((edu) => (
               <div key={edu.id} className="border-l-2 border-blue-500/50 pl-4 space-y-2">
                 <div>
-                  <h4 className="text-sm font-bold text-white">{edu.institution}</h4>
+                  <h4 className="text-sm font-bold text-white tracking-tight">{edu.institution}</h4>
                   <p className="text-xs text-blue-400 font-medium">
                     {edu.degree} • {edu.field}
                   </p>
@@ -93,7 +93,7 @@ export const AboutPage: React.FC = () => {
                   <ul className="space-y-1 pt-1">
                     {edu.highlights.map((h, i) => (
                       <li key={i} className="text-xs text-slate-400 flex items-start gap-1.5">
-                        <CheckCircle className="w-3.5 h-3.5 text-blue-400/70 shrink-0 mt-0.5" />
+                        <CheckCircle className="w-3.5 h-3.5 text-blue-400/80 shrink-0 mt-0.5" />
                         <span>{h}</span>
                       </li>
                     ))}
@@ -105,7 +105,7 @@ export const AboutPage: React.FC = () => {
         </div>
 
         {/* Certificações & Cursos Técnicos */}
-        <div className="bg-[#111113] border border-slate-800/80 rounded-xl p-6 space-y-4">
+        <div className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 space-y-4 shadow-lg shadow-black/20">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
             <Award className="w-4 h-4 text-blue-400" />
             <span>Certificações & Especializações</span>
@@ -115,13 +115,13 @@ export const AboutPage: React.FC = () => {
             {profile.certifications?.map((cert) => (
               <div
                 key={cert.id}
-                className="bg-[#151519] border border-slate-800/70 rounded-lg p-3.5 flex items-start justify-between gap-3"
+                className="bg-[#16161c] border border-slate-800/80 hover:border-slate-700/80 rounded-xl p-3.5 flex items-start justify-between gap-3 transition-colors"
               >
                 <div>
                   <h4 className="text-xs font-bold text-slate-200">{cert.name}</h4>
                   <p className="text-[11px] text-slate-500 mt-0.5">{cert.issuer}</p>
                 </div>
-                <span className="text-[10px] font-mono font-bold text-blue-400/90 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20 shrink-0">
+                <span className="text-[10px] font-mono font-medium text-blue-400 bg-blue-500/10 px-2.5 py-0.5 rounded-md border border-blue-500/25 shrink-0">
                   {cert.year}
                 </span>
               </div>
@@ -130,7 +130,7 @@ export const AboutPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Competências com Contexto Real de Uso (Regra Estrita: Sem barras falsas de %) */}
+      {/* Competências com Contexto Real de Uso */}
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
           <div className="flex items-center gap-2">
@@ -148,20 +148,20 @@ export const AboutPage: React.FC = () => {
           {skillCategories.map((category) => (
             <div
               key={category.id}
-              className="bg-[#111113] border border-slate-800/80 rounded-xl p-5 space-y-3 flex flex-col justify-between"
+              className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 hover:border-slate-700/80 rounded-2xl p-5 space-y-3 flex flex-col justify-between transition-all shadow-lg shadow-black/20"
             >
               <div>
                 <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-1">
                   {category.title}
                 </h4>
-                <p className="text-[11px] text-slate-500 leading-snug mb-3">
+                <p className="text-[11px] text-slate-400 leading-snug mb-3">
                   {category.description}
                 </p>
 
                 <div className="space-y-2.5">
                   {category.skills.map((skill, index) => (
-                    <div key={index} className="bg-[#151519] border border-slate-800/60 p-2.5 rounded-lg">
-                      <div className="text-xs font-semibold text-blue-300 mb-1">
+                    <div key={index} className="bg-[#16161c] border border-slate-800/80 hover:border-blue-500/30 p-3 rounded-xl transition-colors">
+                      <div className="text-xs font-mono font-semibold text-blue-300 mb-1">
                         {skill.name}
                       </div>
                       <p className="text-[11px] text-slate-400 leading-relaxed">

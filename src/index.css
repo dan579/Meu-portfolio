@@ -1,1 +1,31 @@
 @import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #09090b;
+    color: #e2e8f0;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: rgba(59, 130, 246, 0.25);
+    color: #60a5fa;
+  }
+}
+
+/* Background Subtle Dot Pattern */
+.bg-tech-dots {
+  background-image: radial-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Ambient Radial Glow */
+.ambient-glow-top {
+  background: radial-gradient(circle 400px at 50% 0%, rgba(59, 130, 246, 0.06), transparent 70%);
+}
+
+.ambient-glow-card {
+  background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.03), transparent 60%);
+}

@@ -90,9 +90,9 @@ export const ProjectDetailPage: React.FC = () => {
       {/* Camada 1: O Problema */}
       <section
         id="case-section-problem"
-        className="bg-[#111113] border border-slate-800/90 rounded-xl p-6 sm:p-8 space-y-3"
+        className="bg-[#141014]/80 backdrop-blur-sm border border-rose-500/20 rounded-2xl p-6 sm:p-8 space-y-3 shadow-lg shadow-black/20"
       >
-        <div className="flex items-center gap-2 text-rose-400 text-xs font-bold uppercase tracking-widest">
+        <div className="flex items-center gap-2 text-rose-400 text-xs font-bold uppercase tracking-widest font-mono">
           <AlertCircle className="w-4 h-4 text-rose-400" />
           <span>{labels.common.problem}</span>
         </div>
@@ -104,9 +104,9 @@ export const ProjectDetailPage: React.FC = () => {
       {/* Camada 2: A Solução */}
       <section
         id="case-section-solution"
-        className="bg-[#111113] border border-slate-800/90 rounded-xl p-6 sm:p-8 space-y-3"
+        className="bg-[#101514]/80 backdrop-blur-sm border border-emerald-500/20 rounded-2xl p-6 sm:p-8 space-y-3 shadow-lg shadow-black/20"
       >
-        <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-widest">
+        <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-widest font-mono">
           <Lightbulb className="w-4 h-4 text-emerald-400" />
           <span>{labels.common.solution}</span>
         </div>
@@ -118,9 +118,9 @@ export const ProjectDetailPage: React.FC = () => {
       {/* Camada 3: Arquitetura & Engenharia */}
       <section
         id="case-section-architecture"
-        className="bg-[#111113] border border-slate-800/90 rounded-xl p-6 sm:p-8 space-y-4"
+        className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg shadow-black/20"
       >
-        <div className="flex items-center gap-2 text-blue-400 text-xs font-bold uppercase tracking-widest">
+        <div className="flex items-center gap-2 text-blue-400 text-xs font-bold uppercase tracking-widest font-mono">
           <Network className="w-4 h-4 text-blue-400" />
           <span>{labels.common.architecture}</span>
         </div>
@@ -130,21 +130,21 @@ export const ProjectDetailPage: React.FC = () => {
         </p>
 
         {project.architecture.diagramDescription && (
-          <div className="bg-[#151519] border border-slate-800 p-3 rounded-lg font-mono text-[11px] text-blue-300 flex items-center gap-2">
+          <div className="bg-[#16161c] border border-slate-800/80 p-3.5 rounded-xl font-mono text-[11px] text-blue-300 flex items-center gap-2">
             <span className="text-slate-500 font-bold">Fluxo:</span>
             <span>{project.architecture.diagramDescription}</span>
           </div>
         )}
 
-        <div className="space-y-2 pt-2">
-          <span className="text-[11px] text-slate-500 font-semibold uppercase tracking-wider block">
+        <div className="space-y-2.5 pt-2">
+          <span className="text-[11px] text-slate-400 font-mono font-semibold uppercase tracking-wider block">
             Destaques de Engenharia & Segurança
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {project.architecture.highlights.map((item, idx) => (
               <div
                 key={idx}
-                className="bg-[#141418] border border-slate-800/70 p-3 rounded-lg flex items-start gap-2.5 text-xs text-slate-300"
+                className="bg-[#16161c] border border-slate-800/80 p-3.5 rounded-xl flex items-start gap-2.5 text-xs text-slate-300 transition-colors hover:border-slate-700/80"
               >
                 <ShieldCheck className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
                 <span>{item}</span>
@@ -157,9 +157,9 @@ export const ProjectDetailPage: React.FC = () => {
       {/* Camada 4: Funcionalidades Principais */}
       <section
         id="case-section-features"
-        className="bg-[#111113] border border-slate-800/90 rounded-xl p-6 sm:p-8 space-y-4"
+        className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg shadow-black/20"
       >
-        <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest">
+        <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest font-mono">
           <CheckCircle2 className="w-4 h-4 text-blue-400" />
           <span>{labels.common.keyFeatures}</span>
         </div>
@@ -168,9 +168,9 @@ export const ProjectDetailPage: React.FC = () => {
           {project.features.map((feature, idx) => (
             <div
               key={idx}
-              className="bg-[#151519] border border-slate-800/60 p-3.5 rounded-lg flex items-start gap-3 text-xs text-slate-200"
+              className="bg-[#16161c] border border-slate-800/80 p-3.5 rounded-xl flex items-start gap-3 text-xs text-slate-200 transition-colors hover:border-slate-700/80"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0 shadow-sm shadow-blue-400/50" />
               <span>{feature}</span>
             </div>
           ))}
@@ -180,9 +180,9 @@ export const ProjectDetailPage: React.FC = () => {
       {/* Camada 5: Tecnologias & Papel da Ferramenta */}
       <section
         id="case-section-technologies"
-        className="bg-[#111113] border border-slate-800/90 rounded-xl p-6 sm:p-8 space-y-4"
+        className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg shadow-black/20"
       >
-        <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest">
+        <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest font-mono">
           <Cpu className="w-4 h-4 text-blue-400" />
           <span>{labels.common.technologiesUsed}</span>
         </div>
@@ -191,9 +191,9 @@ export const ProjectDetailPage: React.FC = () => {
           {project.technologies.map((t) => (
             <div
               key={t.name}
-              className="bg-[#151519] border border-slate-800/70 p-3 rounded-lg space-y-1"
+              className="bg-[#16161c] border border-slate-800/80 hover:border-blue-500/30 p-3.5 rounded-xl space-y-1 transition-colors"
             >
-              <span className="text-xs font-bold text-white block">{t.name}</span>
+              <span className="text-xs font-mono font-bold text-white block">{t.name}</span>
               <span className="text-[11px] text-slate-400 leading-tight block">{t.role}</span>
             </div>
           ))}
@@ -203,15 +203,15 @@ export const ProjectDetailPage: React.FC = () => {
       {/* Camada 6: Participação & Papel de Daniel */}
       <section
         id="case-section-daniel-role"
-        className="bg-gradient-to-br from-[#111113] to-[#15151C] border border-blue-500/20 rounded-xl p-6 sm:p-8 space-y-4 shadow-lg shadow-blue-500/5"
+        className="bg-[#111118]/90 backdrop-blur-sm border border-blue-500/25 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg shadow-blue-500/5"
       >
-        <div className="flex items-center gap-2 text-blue-400 text-xs font-bold uppercase tracking-widest">
+        <div className="flex items-center gap-2 text-blue-400 text-xs font-bold uppercase tracking-widest font-mono">
           <UserCheck className="w-4 h-4 text-blue-400" />
           <span>{labels.common.danielParticipation}</span>
         </div>
 
         <div className="space-y-1">
-          <h3 className="text-sm font-bold text-white">{project.danielRole.title}</h3>
+          <h3 className="text-sm font-bold text-white tracking-tight">{project.danielRole.title}</h3>
         </div>
 
         <div className="space-y-2">
@@ -229,7 +229,7 @@ export const ProjectDetailPage: React.FC = () => {
         id="case-section-gallery"
         className="space-y-4"
       >
-        <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest">
+        <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest font-mono">
           <Image className="w-4 h-4 text-blue-400" />
           <span>{labels.common.galleryMockups}</span>
         </div>
@@ -245,9 +245,9 @@ export const ProjectDetailPage: React.FC = () => {
       {project.links && project.links.length > 0 && (
         <section
           id="case-section-links"
-          className="bg-[#111113] border border-slate-800/90 rounded-xl p-6 space-y-3"
+          className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 space-y-3 shadow-lg shadow-black/20"
         >
-          <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest">
+          <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest font-mono">
             <ExternalLink className="w-4 h-4 text-blue-400" />
             <span>{labels.common.linksResources}</span>
           </div>
@@ -259,11 +259,11 @@ export const ProjectDetailPage: React.FC = () => {
                 href={link.url}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#16161B] hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-blue-400 hover:text-white transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#16161c] hover:bg-blue-600 hover:text-white border border-slate-800/90 text-xs font-semibold text-blue-400 hover:text-white transition-all duration-200 shadow-sm"
               >
                 <Github className="w-4 h-4" />
                 <span>{link.label}</span>
-                <ExternalLink className="w-3 h-3 text-slate-500" />
+                <ExternalLink className="w-3 h-3 opacity-60" />
               </a>
             ))}
           </div>

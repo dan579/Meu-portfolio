@@ -19,14 +19,14 @@ export const ExperiencePage: React.FC = () => {
     <div className="space-y-8" id="experience-page-container">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-2">
+        <div className="flex items-center gap-2 text-blue-400 text-xs font-mono font-semibold uppercase tracking-wider mb-2">
           <Briefcase className="w-4 h-4" />
           <span>Trajetória Prática</span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
           Experiência Profissional <span className="text-blue-500">.</span>
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mt-1">
+        <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mt-1 leading-relaxed">
           Histórico de atuação, rotina operacional, tecnologias aplicadas e resultados em ambientes corporativos e acadêmicos.
         </p>
       </div>
@@ -37,36 +37,36 @@ export const ExperiencePage: React.FC = () => {
           <div
             key={exp.id}
             id={`exp-card-${exp.id}`}
-            className="bg-[#111113] border border-slate-800/90 rounded-xl p-6 sm:p-8 space-y-6 relative overflow-hidden"
+            className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 hover:border-slate-700/80 rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden transition-all shadow-lg shadow-black/20"
           >
             {/* Top row */}
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-slate-800/70">
-              <div className="space-y-1">
-                <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-slate-800/60">
+              <div className="space-y-1.5">
+                <div className="flex flex-wrap items-center gap-2.5">
                   <h2 className="text-lg font-bold text-white tracking-tight">{exp.role}</h2>
                   {exp.current && (
-                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                    <span className="text-[10px] font-mono font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-2.5 py-0.5 rounded-md uppercase tracking-wider">
                       {labels.common.currentPosition}
                     </span>
                   )}
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
-                  <span className="flex items-center gap-1 text-slate-300 font-medium">
+                <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 font-mono">
+                  <span className="flex items-center gap-1.5 text-slate-300 font-medium">
                     <Building2 className="w-3.5 h-3.5 text-blue-400" />
                     {exp.company}
                   </span>
-                  <span>•</span>
+                  <span className="text-slate-700">•</span>
                   <span className="flex items-center gap-1 text-slate-400">
                     <MapPin className="w-3.5 h-3.5 text-slate-500" />
                     {exp.location}
                   </span>
-                  <span>•</span>
-                  <span className="text-slate-500 font-mono">{exp.type}</span>
+                  <span className="text-slate-700">•</span>
+                  <span className="text-slate-500">{exp.type}</span>
                 </div>
               </div>
 
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#16161B] border border-slate-800 text-xs font-mono text-blue-400 shrink-0">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#16161c] border border-slate-800/80 text-xs font-mono text-blue-400 shrink-0 shadow-sm">
                 <Calendar className="w-3.5 h-3.5" />
                 <span>{exp.period}</span>
               </div>
@@ -88,7 +88,7 @@ export const ExperiencePage: React.FC = () => {
                 {exp.responsibilities.map((resp, idx) => (
                   <div
                     key={idx}
-                    className="bg-[#151519] border border-slate-800/60 p-3 rounded-lg flex items-start gap-2.5 text-xs text-slate-300 leading-relaxed"
+                    className="bg-[#16161c] border border-slate-800/80 hover:border-slate-700/80 p-3.5 rounded-xl flex items-start gap-2.5 text-xs text-slate-300 leading-relaxed transition-colors"
                   >
                     <CheckCircle2 className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
                     <span>{resp}</span>
@@ -99,8 +99,8 @@ export const ExperiencePage: React.FC = () => {
 
             {/* Key Achievements */}
             {exp.keyAchievements && exp.keyAchievements.length > 0 && (
-              <div className="bg-blue-600/[0.04] border border-blue-500/20 rounded-lg p-4 space-y-2">
-                <h4 className="text-xs font-bold text-blue-300 uppercase tracking-wider flex items-center gap-2">
+              <div className="bg-blue-500/[0.04] border border-blue-500/20 rounded-xl p-4 space-y-2">
+                <h4 className="text-xs font-mono font-bold text-blue-300 uppercase tracking-wider flex items-center gap-2">
                   <Trophy className="w-3.5 h-3.5 text-blue-400" />
                   <span>Destaques & Entregas Operacionais</span>
                 </h4>
@@ -116,8 +116,8 @@ export const ExperiencePage: React.FC = () => {
             )}
 
             {/* Technologies Used in this role */}
-            <div className="space-y-2 pt-2 border-t border-slate-800/60">
-              <span className="text-[11px] text-slate-500 font-semibold uppercase tracking-wider block">
+            <div className="space-y-2.5 pt-2 border-t border-slate-800/60">
+              <span className="text-[11px] text-slate-500 font-mono font-semibold uppercase tracking-wider block">
                 {labels.common.technologiesUsed}
               </span>
               <div className="flex flex-wrap gap-1.5">

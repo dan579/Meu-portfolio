@@ -15,17 +15,17 @@ export const MockupVisualizer: React.FC<MockupVisualizerProps> = ({ item, projec
 
   return (
     <>
-      <div className="bg-[#111113] border border-slate-800 rounded-xl p-4 transition-all duration-300 hover:border-slate-700 flex flex-col justify-between space-y-3">
+      <div className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-4 sm:p-5 transition-all duration-300 hover:border-slate-700/80 flex flex-col justify-between space-y-3.5 shadow-lg shadow-black/20">
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <h4 className="text-sm font-semibold text-white flex items-center gap-2">
+            <h4 className="text-sm font-bold text-white flex items-center gap-2 tracking-tight">
               {item.title}
             </h4>
             {hasImage && (
               <button
                 type="button"
                 onClick={() => setIsModalOpen(true)}
-                className="text-slate-500 hover:text-blue-400 p-1 rounded transition-colors"
+                className="text-slate-400 hover:text-blue-400 p-1.5 rounded-lg hover:bg-[#16161c] transition-colors cursor-pointer"
                 title="Ampliar visualização"
               >
                 <Maximize2 className="w-3.5 h-3.5" />
@@ -36,7 +36,7 @@ export const MockupVisualizer: React.FC<MockupVisualizerProps> = ({ item, projec
         </div>
 
         {/* Mockup Frame */}
-        <div className="bg-[#0D0D10] border border-slate-800/90 rounded-lg overflow-hidden flex flex-col">
+        <div className="bg-[#0D0D10] border border-slate-800/90 rounded-xl overflow-hidden flex flex-col">
           {/* Header bar / Window Chrome */}
           <div className="flex items-center justify-between px-3 py-2 bg-[#141418] border-b border-slate-800/80">
             <div className="flex items-center gap-1.5">
@@ -51,7 +51,7 @@ export const MockupVisualizer: React.FC<MockupVisualizerProps> = ({ item, projec
                   : 'interactive-cv.preview'}
               </span>
             </div>
-            <span className="text-[9px] font-mono text-blue-400 bg-blue-950/60 border border-blue-800/40 px-1.5 py-0.5 rounded uppercase">
+            <span className="text-[9px] font-mono font-medium text-blue-400 bg-blue-950/60 border border-blue-800/40 px-2 py-0.5 rounded-md uppercase tracking-wider">
               {hasImage ? 'Screenshot Real' : 'Mockup Blueprint'}
             </span>
           </div>
@@ -70,7 +70,7 @@ export const MockupVisualizer: React.FC<MockupVisualizerProps> = ({ item, projec
                 onError={() => setImageError(true)}
                 className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
               />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white text-xs font-medium">
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white text-xs font-medium backdrop-blur-[2px]">
                 <Maximize2 className="w-4 h-4 text-blue-400" />
                 <span>Clique para ampliar</span>
               </div>

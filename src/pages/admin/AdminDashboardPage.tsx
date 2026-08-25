@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAdminAuth } from '../../admin/AdminAuthContext.tsx';
+import { PdfDownloadButtons } from '../../components/common/PdfDownloadButtons.tsx';
 import {
   User,
   Briefcase,
@@ -34,6 +35,9 @@ export const AdminDashboardPage: React.FC = () => {
           Gestão centralizada dos dados do Interactive CV com persistência relacional e controle de Row Level Security.
         </p>
       </div>
+
+      {/* Dynamic PDF Export Section (Fase 7) */}
+      <PdfDownloadButtons variant="admin" />
 
       {/* Security & System Status Banner */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
