@@ -1,206 +1,7 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Link } from '@react-pdf/renderer';
+import { Document, Page, Text, View, Link } from '@react-pdf/renderer';
 import { ResumeData } from './types.ts';
-
-const styles = StyleSheet.create({
-  page: {
-    paddingTop: 32,
-    paddingBottom: 36,
-    paddingHorizontal: 36,
-    fontFamily: 'Helvetica',
-    fontSize: 9,
-    lineHeight: 1.35,
-    color: '#1f2937', // dark slate
-    backgroundColor: '#ffffff',
-  },
-  headerContainer: {
-    borderBottomWidth: 1.5,
-    borderBottomColor: '#2563eb', // royal blue
-    paddingBottom: 10,
-    marginBottom: 12,
-  },
-  name: {
-    fontSize: 18,
-    fontFamily: 'Helvetica-Bold',
-    color: '#0f172a',
-    letterSpacing: -0.3,
-    marginBottom: 2,
-  },
-  roleHeadline: {
-    fontSize: 10,
-    fontFamily: 'Helvetica-Bold',
-    color: '#2563eb',
-    marginBottom: 6,
-  },
-  contactRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    fontSize: 8.5,
-    color: '#4b5563',
-    marginTop: 2,
-  },
-  contactItemText: {
-    fontSize: 8.5,
-    color: '#4b5563',
-  },
-  contactSeparator: {
-    fontSize: 8.5,
-    color: '#94a3b8',
-    marginHorizontal: 3,
-  },
-  contactLink: {
-    fontSize: 8.5,
-    color: '#1d4ed8',
-    textDecoration: 'none',
-  },
-  section: {
-    marginBottom: 10,
-  },
-  sectionTitle: {
-    fontSize: 9.5,
-    fontFamily: 'Helvetica-Bold',
-    color: '#1d4ed8',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    borderBottomWidth: 0.75,
-    borderBottomColor: '#cbd5e1',
-    paddingBottom: 2,
-    marginBottom: 6,
-  },
-  summaryText: {
-    fontSize: 8.5,
-    lineHeight: 1.4,
-    color: '#374151',
-    textAlign: 'justify',
-  },
-  expBlock: {
-    marginBottom: 8,
-  },
-  expHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 2,
-  },
-  expRole: {
-    fontSize: 9.5,
-    fontFamily: 'Helvetica-Bold',
-    color: '#111827',
-  },
-  expCompany: {
-    fontSize: 8.5,
-    fontFamily: 'Helvetica',
-    color: '#4b5563',
-  },
-  expPeriod: {
-    fontSize: 8,
-    fontFamily: 'Helvetica-Bold',
-    color: '#2563eb',
-    textAlign: 'right',
-  },
-  bulletRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginTop: 2,
-    marginBottom: 1,
-    paddingLeft: 4,
-  },
-  bulletPoint: {
-    width: 8,
-    fontSize: 8.5,
-    color: '#2563eb',
-  },
-  bulletText: {
-    flex: 1,
-    fontSize: 8,
-    lineHeight: 1.3,
-    color: '#374151',
-  },
-  techStackRow: {
-    flexDirection: 'row',
-    marginTop: 3,
-    paddingLeft: 4,
-  },
-  techLabel: {
-    fontSize: 7.5,
-    fontFamily: 'Helvetica-Bold',
-    color: '#4b5563',
-  },
-  techList: {
-    flex: 1,
-    fontSize: 7.5,
-    color: '#6b7280',
-  },
-  eduBlock: {
-    marginBottom: 5,
-  },
-  eduDegree: {
-    fontSize: 9,
-    fontFamily: 'Helvetica-Bold',
-    color: '#111827',
-  },
-  eduInstitution: {
-    fontSize: 8.5,
-    color: '#4b5563',
-  },
-  eduPeriod: {
-    fontSize: 8,
-    color: '#6b7280',
-    textAlign: 'right',
-  },
-  certRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 3,
-  },
-  certName: {
-    fontSize: 8.5,
-    fontFamily: 'Helvetica-Bold',
-    color: '#1f2937',
-  },
-  certIssuer: {
-    fontSize: 8,
-    color: '#6b7280',
-  },
-  certYear: {
-    fontSize: 8,
-    fontFamily: 'Helvetica-Bold',
-    color: '#2563eb',
-  },
-  skillCategoryRow: {
-    marginBottom: 3,
-    flexDirection: 'row',
-  },
-  skillCategoryTitle: {
-    width: 140,
-    fontSize: 8,
-    fontFamily: 'Helvetica-Bold',
-    color: '#1f2937',
-  },
-  skillItemsText: {
-    flex: 1,
-    fontSize: 8,
-    color: '#4b5563',
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 16,
-    left: 36,
-    right: 36,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderTopWidth: 0.5,
-    borderTopColor: '#e2e8f0',
-    paddingTop: 6,
-    fontSize: 7.5,
-    color: '#94a3b8',
-  },
-  footerLink: {
-    color: '#2563eb',
-    textDecoration: 'none',
-  },
-});
+import { pdfStyles as styles } from './sharedStyles.ts';
 
 export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
   const { profile, experiences, skillCategories, contact, siteUrl } = data;
@@ -277,7 +78,7 @@ export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
           </Text>
         </View>
 
-        {/* 3. Experiência Profissional (max 4 bullets per role) */}
+        {/* 3. Experiência Profissional (max 4 bullets per role, clear margin between roles) */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Experiência Profissional</Text>
           {experiences.map((exp) => {
@@ -337,7 +138,7 @@ export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
           </View>
         )}
 
-        {/* 5. Certificações */}
+        {/* 5. Certificações & Cursos Técnicos */}
         {profile.certifications && profile.certifications.length > 0 && (
           <View style={styles.section} wrap={false}>
             <Text style={styles.sectionTitle}>Certificações & Cursos Técnicos</Text>
@@ -378,6 +179,7 @@ export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
             </Link>
           </Text>
           <Text
+            style={styles.pageNumber}
             render={({ pageNumber, totalPages }) =>
               `Página ${pageNumber} de ${totalPages}`
             }
@@ -387,3 +189,4 @@ export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
     </Document>
   );
 };
+

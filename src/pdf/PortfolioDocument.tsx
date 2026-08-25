@@ -1,331 +1,7 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Image, Link } from '@react-pdf/renderer';
+import { Document, Page, Text, View, Image, Link } from '@react-pdf/renderer';
 import { PortfolioData } from './types.ts';
-
-const styles = StyleSheet.create({
-  page: {
-    paddingTop: 28,
-    paddingBottom: 36,
-    paddingHorizontal: 32,
-    fontFamily: 'Helvetica',
-    fontSize: 8.5,
-    lineHeight: 1.35,
-    color: '#1e293b',
-    backgroundColor: '#ffffff',
-  },
-  // Capa / Hero Header Block
-  heroHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f8fafc',
-    borderColor: '#e2e8f0',
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 14,
-    marginBottom: 12,
-  },
-  avatarContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    overflow: 'hidden',
-    borderWidth: 2,
-    borderColor: '#2563eb',
-    marginRight: 14,
-    backgroundColor: '#e2e8f0',
-  },
-  avatarImg: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-  },
-  avatarFallback: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#1e293b',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarFallbackText: {
-    color: '#60a5fa',
-    fontSize: 16,
-    fontFamily: 'Helvetica-Bold',
-  },
-  heroContent: {
-    flex: 1,
-  },
-  heroName: {
-    fontSize: 16,
-    fontFamily: 'Helvetica-Bold',
-    color: '#0f172a',
-    marginBottom: 2,
-  },
-  heroRole: {
-    fontSize: 9.5,
-    fontFamily: 'Helvetica-Bold',
-    color: '#2563eb',
-    marginBottom: 4,
-  },
-  heroContactsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    fontSize: 7.5,
-    color: '#475569',
-  },
-  contactItemText: {
-    fontSize: 7.5,
-    color: '#475569',
-  },
-  contactSeparator: {
-    fontSize: 7.5,
-    color: '#94a3b8',
-    marginHorizontal: 3,
-  },
-  contactLink: {
-    fontSize: 7.5,
-    color: '#2563eb',
-    textDecoration: 'none',
-  },
-  // Composition focus bar
-  compositionBox: {
-    backgroundColor: '#f1f5f9',
-    borderColor: '#cbd5e1',
-    borderWidth: 0.75,
-    borderRadius: 6,
-    padding: 8,
-    marginBottom: 12,
-  },
-  compositionTitleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-  compositionLabelLeft: {
-    fontSize: 8,
-    fontFamily: 'Helvetica-Bold',
-    color: '#1e40af',
-  },
-  compositionLabelRight: {
-    fontSize: 8,
-    fontFamily: 'Helvetica-Bold',
-    color: '#047857',
-  },
-  compositionDesc: {
-    fontSize: 7.5,
-    color: '#475569',
-    lineHeight: 1.25,
-  },
-  // Section Headers
-  section: {
-    marginBottom: 10,
-  },
-  sectionTitle: {
-    fontSize: 9.5,
-    fontFamily: 'Helvetica-Bold',
-    color: '#1d4ed8',
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e2e8f0',
-    paddingBottom: 2,
-    marginBottom: 6,
-  },
-  bioParagraph: {
-    fontSize: 8,
-    lineHeight: 1.35,
-    color: '#334155',
-    marginBottom: 4,
-    textAlign: 'justify',
-  },
-  // Experiences
-  expCard: {
-    marginBottom: 8,
-    paddingBottom: 6,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#f1f5f9',
-  },
-  expHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-    marginBottom: 2,
-  },
-  expRole: {
-    fontSize: 9,
-    fontFamily: 'Helvetica-Bold',
-    color: '#0f172a',
-  },
-  expCompany: {
-    fontSize: 8,
-    color: '#475569',
-  },
-  expPeriod: {
-    fontSize: 8,
-    fontFamily: 'Helvetica-Bold',
-    color: '#2563eb',
-  },
-  expSummary: {
-    fontSize: 7.5,
-    color: '#475569',
-    marginBottom: 3,
-    fontStyle: 'italic',
-  },
-  bulletRow: {
-    flexDirection: 'row',
-    marginTop: 1.5,
-    paddingLeft: 4,
-  },
-  bulletPoint: {
-    width: 8,
-    fontSize: 8,
-    color: '#2563eb',
-  },
-  bulletText: {
-    flex: 1,
-    fontSize: 7.5,
-    color: '#334155',
-    lineHeight: 1.25,
-  },
-  // Projects Cards
-  projectCard: {
-    backgroundColor: '#fafaf9',
-    borderColor: '#e2e8f0',
-    borderWidth: 0.75,
-    borderRadius: 6,
-    padding: 8,
-    marginBottom: 8,
-  },
-  projectHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 2,
-  },
-  projectTitle: {
-    fontSize: 9.5,
-    fontFamily: 'Helvetica-Bold',
-    color: '#0f172a',
-  },
-  projectBadge: {
-    fontSize: 7,
-    fontFamily: 'Helvetica-Bold',
-    color: '#2563eb',
-    backgroundColor: '#dbeafe',
-    paddingHorizontal: 4,
-    paddingVertical: 1,
-    borderRadius: 3,
-  },
-  projectSubtitle: {
-    fontSize: 7.5,
-    fontFamily: 'Helvetica-Bold',
-    color: '#475569',
-    marginBottom: 3,
-  },
-  probSolRow: {
-    marginBottom: 3,
-  },
-  probSolLabel: {
-    fontSize: 7.5,
-    fontFamily: 'Helvetica-Bold',
-    color: '#0f172a',
-  },
-  probSolText: {
-    fontSize: 7.5,
-    color: '#334155',
-    lineHeight: 1.25,
-  },
-  projectTechList: {
-    fontSize: 7,
-    color: '#64748b',
-    marginTop: 2,
-  },
-  // Infra & Skills
-  infraAreaBlock: {
-    marginBottom: 6,
-  },
-  infraAreaName: {
-    fontSize: 8.5,
-    fontFamily: 'Helvetica-Bold',
-    color: '#0f172a',
-    marginBottom: 2,
-  },
-  infraItemRow: {
-    fontSize: 7.5,
-    color: '#334155',
-    marginBottom: 2,
-    paddingLeft: 4,
-  },
-  infraTechName: {
-    fontFamily: 'Helvetica-Bold',
-    color: '#1e40af',
-  },
-  skillCategoryBox: {
-    marginBottom: 4,
-  },
-  skillCategoryHeading: {
-    fontSize: 8,
-    fontFamily: 'Helvetica-Bold',
-    color: '#0f172a',
-    marginBottom: 1,
-  },
-  skillItemInline: {
-    fontSize: 7.5,
-    color: '#475569',
-    paddingLeft: 4,
-    marginBottom: 2,
-  },
-  // Education & Certs
-  grid2Col: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  colHalf: {
-    width: '48%',
-  },
-  // Footer with QR Code
-  footer: {
-    position: 'absolute',
-    bottom: 14,
-    left: 32,
-    right: 32,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderTopWidth: 0.75,
-    borderTopColor: '#e2e8f0',
-    paddingTop: 6,
-  },
-  footerTextContainer: {
-    flex: 1,
-    paddingRight: 10,
-  },
-  footerTitle: {
-    fontSize: 7.5,
-    fontFamily: 'Helvetica-Bold',
-    color: '#0f172a',
-  },
-  footerSubtext: {
-    fontSize: 6.5,
-    color: '#64748b',
-    marginTop: 1,
-  },
-  qrContainer: {
-    width: 32,
-    height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  qrImg: {
-    width: 32,
-    height: 32,
-  },
-  pageNumber: {
-    fontSize: 7,
-    color: '#94a3b8',
-    marginLeft: 8,
-  },
-});
+import { pdfStyles as styles } from './sharedStyles.ts';
 
 export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) => {
   const {
@@ -387,7 +63,7 @@ export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) =
       keywords="Portfólio, Daniel Santos, Sistemas, Infraestrutura, Provedor, Supabase, Operis"
     >
       <Page size="A4" style={styles.page}>
-        {/* 1. Capa / Header com Foto e Dados */}
+        {/* 1. Capa / Header com Foto e Dados de Contato */}
         <View style={styles.heroHeader}>
           <View style={styles.avatarContainer}>
             {profile.photoUrl ? (
@@ -401,13 +77,13 @@ export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) =
             )}
           </View>
 
-          <View style={styles.heroContent}>
-            <Text style={styles.heroName}>{profile.name}</Text>
-            <Text style={styles.heroRole}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.name}>{profile.name}</Text>
+            <Text style={styles.roleHeadline}>
               {profile.currentRole} • Transição para {profile.targetRole}
             </Text>
 
-            <View style={styles.heroContactsRow}>
+            <View style={styles.contactRow}>
               {contactItems.map((item, index) => (
                 <React.Fragment key={index}>
                   {index > 0 && <Text style={styles.contactSeparator}> • </Text>}
@@ -418,17 +94,9 @@ export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) =
           </View>
         </View>
 
-        {/* 2. Composição de Atuação Técnica (60/40) */}
+        {/* 2. Composição de Atuação Técnica (Apenas texto descritivo) */}
         {profile.workFocus && (
-          <View style={styles.compositionBox}>
-            <View style={styles.compositionTitleRow}>
-              <Text style={styles.compositionLabelLeft}>
-                60% {profile.workFocus.infraLabel || 'Infraestrutura & Redes'}
-              </Text>
-              <Text style={styles.compositionLabelRight}>
-                40% {profile.workFocus.systemsLabel || 'Sistemas & Desenvolvimento'}
-              </Text>
-            </View>
+          <View style={styles.compositionContainer}>
             <Text style={styles.compositionDesc}>
               {profile.workFocus.description || profile.shortSummary}
             </Text>
@@ -445,12 +113,12 @@ export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) =
           ))}
         </View>
 
-        {/* 4. Experiência Profissional */}
+        {/* 4. Experiência Profissional (Espaçamento claro entre cargos) */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Experiência Profissional</Text>
           {experiences.map((exp) => (
-            <View key={exp.id || exp.role} style={styles.expCard} wrap={false}>
-              <View style={styles.expHeader}>
+            <View key={exp.id || exp.role} style={styles.expBlock} wrap={false}>
+              <View style={styles.expHeaderRow}>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.expRole}>{exp.role}</Text>
                   <Text style={styles.expCompany}>
@@ -472,11 +140,9 @@ export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) =
               ))}
 
               {exp.technologies && exp.technologies.length > 0 && (
-                <View style={[styles.bulletRow, { marginTop: 3 }]}>
-                  <Text style={[styles.bulletText, { fontSize: 7, color: '#64748b' }]}>
-                    <Text style={{ fontFamily: 'Helvetica-Bold', color: '#475569' }}>
-                      Stack:{' '}
-                    </Text>
+                <View style={styles.techStackRow}>
+                  <Text style={styles.techLabel}>Tecnologias: </Text>
+                  <Text style={styles.techList}>
                     {exp.technologies.join(' • ')}
                   </Text>
                 </View>
@@ -530,7 +196,7 @@ export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) =
                       <Text style={styles.probSolLabel}>Destaques Arquiteturais:</Text>
                       {proj.architecture.highlights.slice(0, 3).map((h: string, i: number) => (
                         <View key={i} style={styles.bulletRow}>
-                          <Text style={[styles.bulletPoint, { color: '#059669' }]}>•</Text>
+                          <Text style={styles.bulletPoint}>•</Text>
                           <Text style={styles.bulletText}>{h}</Text>
                         </View>
                       ))}
@@ -538,10 +204,10 @@ export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) =
                   )}
 
                   {techNames ? (
-                    <Text style={styles.projectTechList}>
-                      <Text style={{ fontFamily: 'Helvetica-Bold' }}>Tecnologias: </Text>
-                      {techNames}
-                    </Text>
+                    <View style={styles.techStackRow}>
+                      <Text style={styles.techLabel}>Tecnologias: </Text>
+                      <Text style={styles.techList}>{techNames}</Text>
+                    </View>
                   ) : null}
                 </View>
               );
@@ -576,7 +242,7 @@ export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) =
                 <Text style={styles.skillCategoryHeading}>{cat.title}</Text>
                 {(cat.skills || []).map((s: any) => (
                   <Text key={s.name} style={styles.skillItemInline}>
-                    • <Text style={{ fontFamily: 'Helvetica-Bold' }}>{s.name}: </Text>
+                    • <Text style={{ fontFamily: 'Helvetica-Bold', color: '#111827' }}>{s.name}: </Text>
                     {s.appliedContext}
                   </Text>
                 ))}
@@ -591,14 +257,18 @@ export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) =
             <View style={styles.colHalf}>
               <Text style={styles.sectionTitle}>Formação Acadêmica</Text>
               {profile.education.map((edu) => (
-                <View key={edu.id || edu.field} style={{ marginBottom: 4 }}>
-                  <Text style={styles.expRole}>
-                    {edu.degree} — {edu.field}
-                  </Text>
-                  <Text style={styles.expCompany}>{edu.institution}</Text>
-                  <Text style={styles.expPeriod}>
-                    {edu.period} {edu.status ? `(${edu.status})` : ''}
-                  </Text>
+                <View key={edu.id || edu.field} style={styles.eduBlock}>
+                  <View style={styles.expHeaderRow}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.eduDegree}>
+                        {edu.degree} — {edu.field}
+                      </Text>
+                      <Text style={styles.eduInstitution}>{edu.institution}</Text>
+                    </View>
+                    <Text style={styles.eduPeriod}>
+                      {edu.period} {edu.status ? `(${edu.status})` : ''}
+                    </Text>
+                  </View>
                 </View>
               ))}
             </View>
@@ -608,11 +278,12 @@ export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) =
             <View style={styles.colHalf}>
               <Text style={styles.sectionTitle}>Certificações</Text>
               {profile.certifications.map((cert) => (
-                <View key={cert.id || cert.name} style={{ marginBottom: 4 }}>
-                  <Text style={styles.expRole}>{cert.name}</Text>
-                  <Text style={styles.expCompany}>
-                    {cert.issuer} • {cert.year}
-                  </Text>
+                <View key={cert.id || cert.name} style={styles.certRow}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.certName}>{cert.name}</Text>
+                    <Text style={styles.certIssuer}>{cert.issuer}</Text>
+                  </View>
+                  <Text style={styles.certYear}>{cert.year}</Text>
                 </View>
               ))}
             </View>
@@ -626,8 +297,8 @@ export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) =
               Interactive CV & Portfólio de Daniel Santos
             </Text>
             <Text style={styles.footerSubtext}>
-              Acesse a versão interativa completa com métricas e logs em tempo real:{' '}
-              <Link style={styles.contactLink} src={siteUrl}>{siteUrl}</Link>
+              Acesse a versão interativa com métricas em tempo real:{' '}
+              <Link style={styles.footerLink} src={siteUrl}>{siteUrl}</Link>
             </Text>
           </View>
 
@@ -639,10 +310,11 @@ export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) =
 
           <Text
             style={styles.pageNumber}
-            render={({ pageNumber, totalPages }) => `${pageNumber}/${totalPages}`}
+            render={({ pageNumber, totalPages }) => `Página ${pageNumber} de ${totalPages}`}
           />
         </View>
       </Page>
     </Document>
   );
 };
+
