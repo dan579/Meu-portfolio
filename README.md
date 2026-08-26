@@ -1,20 +1,20 @@
 # Meu Portfolio — Documentação Técnica
 
-**Autor:** Daniel Santos da Silva  
-**Versão atual:** v0.5 (CMS completo)  
-**URL de produção:** https://meu-portfolio-dusky-ten.vercel.app  
-**Repositório:** github.com/dan579/Meu-portfolio (privado)  
-**Última atualização:** 21 de agosto de 2026
+**Autor:** Daniel Santos da Silva
+**Versão atual:** v1.0.0 (Lançamento inicial)
+**URL de produção:** https://meu-portfolio-dusky-ten.vercel.app
+**Repositório:** github.com/dan579/Meu-portfolio (público, MIT)
+**Última atualização:** 26 de agosto de 2026
 
 ---
 
 ## O que é este projeto
 
-O Interactive CV é um currículo profissional digital, interativo e administrável, construído como um sistema próprio. Ele apresenta a trajetória, competências, experiência em infraestrutura, projetos e métricas profissionais de Daniel Santos da Silva, e é, ao mesmo tempo, uma demonstração prática da capacidade técnica de quem o construiu.
+O Interactive CV é um currículo profissional digital, interativo e administrável, construído como um sistema próprio. Ele apresenta a trajetória, competências, experiência em infraestrutura e projetos de Daniel Santos da Silva, e é, ao mesmo tempo, uma demonstração prática da capacidade técnica de quem o construiu.
 
 > "O currículo é também um produto. Meu currículo é um sistema que eu mesmo construí e mantenho."
 
-Isso significa que numa entrevista, Daniel pode abrir o site, entrar no painel administrativo e demonstrar ao vivo: autenticação, autorização, banco de dados relacional, storage, arquitetura de conteúdo e CMS próprio — tudo funcionando em produção.
+Isso significa que numa entrevista, Daniel pode abrir o site, entrar no painel administrativo e demonstrar ao vivo: autenticação, autorização, banco de dados relacional, storage, arquitetura de conteúdo e CMS próprio — tudo funcionando em produção. A versão v1.0.0 foi testada ao vivo, incluindo tentativas reais de ataque contra as políticas de segurança do banco (ver seção Segurança).
 
 ---
 
@@ -29,6 +29,7 @@ Isso significa que numa entrevista, Daniel pode abrir o site, entrar no painel a
 | Autenticação | Supabase Auth (email + senha) |
 | Autorização | Row-Level Security (RLS) no PostgreSQL |
 | Storage de mídia | Supabase Storage |
+| Geração de PDF | @react-pdf/renderer + qrcode |
 | Deploy | Vercel |
 | CI/CD | GitHub → Vercel (automático a cada push na `main`) |
 
@@ -48,35 +49,38 @@ Hooks (useProfile, useExperiences, useProjects, ...)
 ContentContext (interface abstrata)
      ↓
 CloudContentProvider → Supabase (produção)
-StaticContentProvider → dados estáticos (desenvolvimento)
+StaticContentProvider → dados estáticos (desenvolvimento/fallback)
 ```
 
 Isso permite trocar a fonte de dados sem alterar nenhuma página pública. A troca de `StaticContentProvider` para `CloudContentProvider` foi feita sem modificar uma única linha de código de página.
 
 ### Modelo de segurança
 
-Existe apenas uma conta autorizada a administrar o sistema. A segurança opera em duas camadas independentes:
+O acesso administrativo é multi-admin: uma lista de e-mails autorizados fica na tabela `authorized_admins`, e não em uma única conta fixa. A segurança opera em duas camadas independentes:
 
 **Frontend (`AdminAuthGuard`):** bloqueia visualmente o acesso a `/admin/*` se o usuário não estiver autenticado.
 
-**Backend (RLS no PostgreSQL):** a função `is_authorized_admin()` valida o e-mail do JWT autenticado contra a tabela `app_config`. Todas as políticas de `INSERT`/`UPDATE`/`DELETE` em todas as tabelas dependem dessa função. A leitura pública é sempre restrita a registros com `status = 'published'`.
+**Backend (RLS no PostgreSQL):** a função `is_authorized_admin()` verifica se o e-mail do JWT autenticado existe na tabela `authorized_admins`. Todas as políticas de `INSERT`/`UPDATE`/`DELETE` em todas as tabelas administráveis dependem dessa função. A leitura pública é sempre liberada para o conteúdo publicado do site.
 
 ```sql
 CREATE OR REPLACE FUNCTION is_authorized_admin()
 RETURNS BOOLEAN AS $$
-DECLARE admin_email TEXT;
 BEGIN
-    SELECT value INTO admin_email FROM app_config WHERE key = 'admin_email';
-    RETURN (
-        auth.role() = 'authenticated' AND
-        admin_email IS NOT NULL AND
-        admin_email = auth.jwt() ->> 'email'
+    RETURN EXISTS (
+        SELECT 1 FROM authorized_admins
+        WHERE LOWER(email) = LOWER(auth.jwt() ->> 'email')
     );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 ```
 
-O banco recusa qualquer escrita de contas não autorizadas, mesmo que alguém manipule o frontend ou chame a API diretamente.
+Um gatilho (`prevent_delete_last_admin`) impede a remoção do último administrador da lista, evitando que o sistema fique sem nenhum acesso administrativo por engano. O banco recusa qualquer escrita de contas não autorizadas, mesmo que alguém manipule o frontend ou chame a API diretamente — isso foi validado ao vivo em produção (ver seção Segurança).
+
+Hoje a gestão da lista de `authorized_admins` é feita diretamente no banco (SQL Editor do Supabase ou pelas funções auxiliares em `src/lib/supabase.ts`); ainda não existe uma tela dedicada no painel admin para adicionar/remover administradores pela interface.
+
+### Segurança testada em produção
+
+Além da revisão de código, o RLS foi validado com tentativas reais de ataque contra o ambiente de produção, usando a chave pública (anon key) sem nenhuma sessão autenticada: tentativas de `UPDATE` em `profiles` e `DELETE` de um projeto real foram bloqueadas silenciosamente (0 linhas afetadas, comportamento correto do RLS), e uma tentativa de `INSERT` de um projeto falso foi rejeitada explicitamente com HTTP 401 e código Postgres `42501`. Esse processo revelou e permitiu corrigir, antes do lançamento, um bug real: a tabela `authorized_admins` nunca havia sido criada em produção porque a migração 007 nunca tinha sido executada manualmente — só existia no código exportado.
 
 ---
 
@@ -86,7 +90,7 @@ O banco recusa qualquer escrita de contas não autorizadas, mesmo que alguém ma
 
 | Tabela | Descrição |
 |---|---|
-| `profiles` | Linha única com identidade, biografia, foco profissional e referência à foto |
+| `profiles` | Linha única com identidade, biografia e referência à foto |
 | `education_items` | Formação acadêmica |
 | `certification_items` | Certificações |
 | `experiences` | Histórico profissional |
@@ -97,20 +101,20 @@ O banco recusa qualquer escrita de contas não autorizadas, mesmo que alguém ma
 | `projects` | Cases de projeto completos |
 | `media_assets` | Metadados de arquivos de mídia |
 | `project_media` | Relação normalizada entre projetos e imagens de galeria |
-| `metrics_snapshots` | Períodos de métricas agregadas (origem: Operis) |
-| `metric_items` | Métricas individuais dentro de cada snapshot |
-| `app_config` | Configurações internas (e-mail de admin) |
+| `authorized_admins` | Lista de e-mails autorizados a administrar o sistema — base do RLS de escrita |
 | `contact_info` | Dados de contato público |
+| `metrics_snapshots` / `metric_items` | Legado do antigo painel de Métricas, removido do produto (ver Roadmap). Tabelas mantidas no banco sem uso pela aplicação. |
+| `app_config` | Configuração interna legada (armazenava o e-mail de admin antes do modelo multi-admin) |
 
 ### Padrões aplicados em todas as tabelas de conteúdo
 
 - `status TEXT CHECK (status IN ('draft', 'published', 'archived'))` — publicação controlada
 - `sort_order INTEGER` — ordenação manual sem alterar código
-- RLS habilitado com leitura pública de `published` e escrita restrita ao admin
+- RLS habilitado com leitura pública liberada e escrita restrita ao admin autorizado
 
 ### Storage
 
-Bucket `media` (público para leitura, escrito apenas pelo admin via RLS de Storage). Arquivos físicos separados de metadados: o banco guarda apenas referências em `media_assets`, nunca o arquivo em si.
+Bucket `media` (público para leitura, escrito apenas por administradores autorizados via RLS de Storage, limite de 5MB por arquivo). Arquivos físicos separados de metadados: o banco guarda apenas referências em `media_assets`, nunca o arquivo em si.
 
 ---
 
@@ -118,14 +122,14 @@ Bucket `media` (público para leitura, escrito apenas pelo admin via RLS de Stor
 
 | Rota | Descrição |
 |---|---|
-| `/` | Home — identidade, foco profissional, stack principal, projetos em destaque |
+| `/` | Home — identidade, foco profissional, stack principal, projetos em destaque, download de CV em PDF |
 | `/sobre` | Trajetória completa, formação, competências por categoria |
 | `/experiencia` | Histórico profissional cronológico |
 | `/infraestrutura` | Catálogo por área operacional com contexto de uso real |
 | `/projetos` | Lista de cases de projeto |
 | `/projetos/:slug` | Case detalhado: Problema → Solução → Arquitetura → Features → Tech → Papel → Galeria → Links |
-| `/metricas` | Métricas agregadas de atuação (origem: Operis) |
-| `/contato` | Canais de contato |
+| `/contato` | Canais de contato e download de CV em PDF |
+| `/metricas` | Descontinuada — mantida apenas como redirecionamento para a Home |
 
 ---
 
@@ -133,20 +137,19 @@ Bucket `media` (público para leitura, escrito apenas pelo admin via RLS de Stor
 
 ### Autenticação
 
-Email + senha via `supabase.auth.signInWithPassword()`. Sessão gerenciada pelo Supabase Auth com `onAuthStateChange`.
+Email + senha via `supabase.auth.signInWithPassword()`. Sessão gerenciada pelo Supabase Auth com `onAuthStateChange`. Qualquer e-mail presente na tabela `authorized_admins` pode entrar.
 
 ### Áreas disponíveis
 
 | Rota | Descrição |
 |---|---|
 | `/admin` | Dashboard com status e atalhos |
-| `/admin/perfil` | Edição de identidade, foto (via MediaPicker), foco profissional, formação, certificações |
+| `/admin/perfil` | Edição de identidade, foto (via MediaPicker), formação, certificações |
 | `/admin/experiencia` | CRUD de experiências com status e ordenação |
 | `/admin/infraestrutura` | Gestão em dois níveis: áreas → tecnologias |
 | `/admin/competencias` | Gestão em dois níveis: categorias → competências (sem porcentagem) |
-| `/admin/projetos` | CRUD completo de cases com galeria real de imagens |
-| `/admin/midia` | Biblioteca de mídia com upload, busca e gestão |
-| `/admin/metricas` | CRUD de snapshots de métricas profissionais |
+| `/admin/projetos` | CRUD completo de cases com galeria real de imagens e geração de PDF |
+| `/admin/media` | Biblioteca de mídia com upload, busca e gestão |
 
 ### Componente MediaPicker
 
@@ -156,6 +159,10 @@ Componente reutilizável para seleção/upload de imagens. Usado tanto na galeri
 - Busca de assets existentes
 - Preview antes de confirmar
 - Exclusão com confirmação (arquivo preservado em `media_assets` por padrão)
+
+### Geração de currículo em PDF
+
+Dois formatos, gerados sob demanda a partir do mesmo conteúdo cadastrado no CMS, com @react-pdf/renderer: **Currículo Tradicional** (formato ATS, enxuto) e **Portfólio Completo** (com projetos, arquitetura e QR Code de acesso ao site). Disponível por um menu suspenso a partir de um único botão em três pontos do site: Home, Contato e Admin.
 
 ---
 
@@ -170,9 +177,9 @@ O sistema não usa barras de progresso, estrelas ou porcentagens para competênc
 
 Isso é defensável numa entrevista. "Active Directory 75%" não é.
 
-### Foco profissional com percentual
+### Evolução do Foco Profissional: de percentual à remoção completa
 
-O único lugar do sistema com percentual é o bloco de **Composição de Atuação** (ex: 60% Infraestrutura / 40% Sistemas). Esse número representa composição de dedicação/escopo, não nível de domínio técnico. O formulário exige que a soma seja exatamente 100% e tem label explícito explicando a distinção.
+O sistema teve, em versões anteriores, um bloco de "Composição de Atuação" que expressava a dedicação entre Infraestrutura e Sistemas como um percentual (ex: 60%/40%). Essa abordagem foi abandonada em duas etapas: primeiro a migração 006 substituiu a exigência de percentual por uma descrição qualitativa em texto livre (mantendo as colunas numéricas apenas por compatibilidade, sem restrição de soma); depois, para manter consistência com o princípio de "sem autoavaliação numérica" já aplicado às competências, o bloco foi removido por completo da interface pública e do painel admin. As colunas `work_focus_*` continuam existindo em `profiles` sem uso pela aplicação.
 
 ### Projetos como evidência
 
@@ -181,9 +188,9 @@ Cada projeto segue obrigatoriamente a estrutura:
 
 Não são "itens de portfólio decorativos" — são cases que demonstram processo de pensamento, decisões técnicas e participação real.
 
-### Métricas via snapshot manual
+### Métricas: feature descontinuada
 
-As métricas do Operis são inseridas manualmente no CMS como snapshots periódicos. Cada snapshot tem `entry_method` (`manual`/`automated`) e a constraint `UNIQUE (source_system, period_start, period_end)` previne duplicação e permite futura automação via job sem alterar schema.
+O projeto teve, em versões anteriores, um painel de Métricas com snapshots agregados (origem: Operis). Essa feature foi descontinuada e removida do produto — nav, rota pública e painel admin — antes do lançamento da v1.0.0, para manter o foco do currículo no que está efetivamente validado e evitar exibir números sem lastro atualizado. As tabelas `metrics_snapshots`/`metric_items` continuam no banco, sem uso pela aplicação.
 
 ---
 
@@ -195,24 +202,28 @@ As métricas do Operis são inseridas manualmente no CMS como snapshots periódi
 |---|---|
 | `VITE_SUPABASE_URL` | URL do projeto Supabase |
 | `VITE_SUPABASE_ANON_KEY` | Chave pública anon do Supabase |
-| `VITE_ADMIN_EMAIL` | E-mail do administrador autorizado |
+| `VITE_ADMIN_EMAIL` | E-mail de administrador usado como referência/fallback de bootstrap |
+| `GEMINI_API_KEY` | Chave da API Gemini, injetada automaticamente pelo ambiente do Google AI Studio |
+| `APP_URL` | URL pública da aplicação |
 
 ### Configuração do banco (passo único após criar projeto Supabase)
 
 ```sql
 -- 1. Executar schema.sql
--- 2. Executar migrations em ordem: 002, 003, 004, 005
--- 3. Configurar e-mail de admin
-INSERT INTO app_config (key, value) VALUES ('admin_email', 'seu@email.com');
+-- 2. Executar as migrations em ordem: 002, 003, 004, 005, 006, 007
+-- 3. A migração 007 já inclui um bootstrap anti-lockout que tenta preencher
+--    authorized_admins automaticamente a partir do e-mail configurado; se
+--    precisar adicionar manualmente:
+INSERT INTO authorized_admins (email, added_by) VALUES ('seu@email.com', 'setup');
 -- 4. Criar usuário admin
-UPDATE auth.users 
+UPDATE auth.users
 SET encrypted_password = crypt('sua_senha', gen_salt('bf'))
 WHERE email = 'seu@email.com';
 ```
 
 ### Criar bucket de Storage
 
-No painel do Supabase → Storage → New bucket → nome: `media` → Public bucket.
+No painel do Supabase → Storage → New bucket → nome: `media` → Public bucket. (A migração 003 também cria o bucket e suas políticas de RLS automaticamente, caso ainda não exista.)
 
 ---
 
@@ -220,18 +231,19 @@ No painel do Supabase → Storage → New bucket → nome: `media` → Public bu
 
 | Arquivo | Descrição |
 |---|---|
-| `schema.sql` | Schema completo — todas as tabelas, RLS, função `is_authorized_admin()` |
+| `schema.sql` | Schema inicial — tabelas base e RLS |
 | `002_fix_admin_email_config.sql` | Tabela `app_config` substituindo `ALTER DATABASE` (sem permissão no Supabase hospedado) |
-| `003_media_assets_and_projects.sql` | Tabelas de mídia, projetos e políticas de Storage RLS |
+| `003_media_assets_and_projects.sql` | Bucket de Storage, tabelas de mídia, projetos e políticas de RLS |
 | `004_profile_avatar_media.sql` | Coluna `avatar_media_id` em `profiles` |
-| `005_metrics_snapshots.sql` | Tabelas de métricas com `entry_method` e constraint de unicidade por período |
+| `005_metrics_snapshots.sql` | Tabelas de métricas com `entry_method` e constraint de unicidade por período (feature depois descontinuada) |
+| `006_qualitative_work_focus.sql` | Substitui a exigência de percentual de foco profissional por descrição qualitativa |
+| `007_authorized_admins_list.sql` | Cria a tabela `authorized_admins`, redefine `is_authorized_admin()` para multi-admin e adiciona o gatilho anti-lockout |
 
 ---
 
 ## Bilinguismo
 
 O site suporta PT-BR e EN-US. A separação é:
-
 - **Conteúdo profissional** (descrições, títulos, competências): colunas `_pt` e `_en` no banco
 - **Rótulos de interface** (botões, labels): i18n no código
 
@@ -249,17 +261,20 @@ O `ContentProvider` expõe os dados no idioma selecionado. A troca de idioma nã
 | 3 — Admin núcleo | ✅ | Auth, perfil, experiência |
 | 4 — CMS completo | ✅ | Infraestrutura, competências, projetos, mídia, foto |
 | 4.2 — Consolidação | ✅ | Foto por upload, competências sem porcentagem |
-| 5 — Métricas | ✅ | Snapshots manuais do Operis, preparado para automação |
+| 4.6 — Multi-admin | ✅ | Tabela `authorized_admins`, RLS multi-admin, anti-lockout |
+| 5 — Métricas | ❌ Descontinuada | Removida do produto antes da v1.0.0 (ver Decisões de design) |
+| 7 — PDF | ✅ | Geração de currículo em dois formatos (ATS e Portfólio Completo), disponível em Home/Contato/Admin |
+| Lançamento v1.0.0 | ✅ | Testes de segurança reais em produção, licença MIT, release publicada, histórico de commits auditado |
 | 6 — Histórico | ⏳ | Evolução do sistema exposta ao visitante |
-| 7 — PDF | ⏳ | Geração de currículo PDF a partir do CMS |
-| Refinamento | ⏳ | Performance, SEO, acessibilidade, otimização |
+| Conteúdo de imagens | ⏳ | Imagens reais nos cases de Sistema de Agendamento Acadêmico e Interactive CV |
+| Refinamento | ⏳ | Cross-browser (Firefox/Safari), responsividade completa, auditoria Lighthouse, domínio customizado |
 
 ---
 
 ## Projetos apresentados no currículo
 
 ### Operis
-SaaS multi-tenant para gestão operacional. Construído com Row-Level Security para isolamento total entre tenants, lógica de SLA e homologação documentada de segurança. O próprio currículo consome métricas agregadas do Operis via snapshots.
+SaaS multi-tenant para gestão operacional. Construído com Row-Level Security para isolamento total entre tenants, lógica de SLA e homologação documentada de segurança.
 
 ### Sistema de Agendamento Acadêmico (UNIFENAS)
 Sistema institucional para agendamento de salas desenvolvido internamente na UNIFENAS. Apresentado como case de experiência profissional (não portfólio pessoal, dado que a propriedade é institucional).
@@ -269,30 +284,10 @@ O currículo em si é um dos cases. Meta-demonstração: o sistema que apresenta
 
 ---
 
-*Documentação gerada em 21/08/2026. Para dúvidas ou contribuições, entre em contato via danielsan579@gmail.com*
+## Licença
+
+Distribuído sob a licença MIT — veja [LICENSE](./LICENSE).
 
 ---
 
-## Estado atual do conteúdo (22/08/2026)
-
-O CMS foi preenchido com conteúdo real. O site está em produção em `https://meu-portfolio-dusky-ten.vercel.app`.
-
-### Conteúdo publicado
-
-**Perfil:** foto real, composição de atuação 60/40, bio completa, disponível em PT-BR e EN-US.
-
-**Experiência:** 4 cargos (UNIFENAS, iBeautty, Selpe/INSS, AeC), todos com responsabilidades reais, tecnologias e destaques operacionais.
-
-**Infraestrutura:** 4 áreas operacionais, 9 tecnologias, cada uma com finalidade técnica + contexto real de aplicação na UNIFENAS.
-
-**Competências:** 3 categorias, sem porcentagem, com contexto de uso real em cada item.
-
-**Projetos:** 3 cases completos (Operis, Sistema de Agendamento Acadêmico, Interactive CV).
-
-### Pendências
-
-| Item | Status |
-|---|---|
-| Imagens reais nos mockups de projetos | ⏳ Pendente |
-| Seção de Métricas | ⏳ A esconder do menu (sem dados reais) |
-| Campo de e-mail na tela de login | ⏳ A remover |
+*Documentação atualizada em 26/08/2026, refletindo o estado real da v1.0.0. Para dúvidas ou contribuições, entre em contato via danielsan579@gmail.com*
