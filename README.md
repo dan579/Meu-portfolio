@@ -10,7 +10,7 @@
 
 ## O que é este projeto
 
-O Interactive CV é um currículo profissional digital, interativo e administrável, construído como um sistema próprio. Ele apresenta a trajetória, competências, experiência em infraestrutura, projetos e métricas profissionais de Daniel Santos da Silva — e é, ao mesmo tempo, uma demonstração prática da capacidade técnica de quem o construiu.
+O Interactive CV é um currículo profissional digital, interativo e administrável, construído como um sistema próprio. Ele apresenta a trajetória, competências, experiência em infraestrutura, projetos e métricas profissionais de Daniel Santos da Silva, e é, ao mesmo tempo, uma demonstração prática da capacidade técnica de quem o construiu.
 
 > "O currículo é também um produto. Meu currículo é um sistema que eu mesmo construí e mantenho."
 
@@ -76,7 +76,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 ```
 
-O banco recusa qualquer escrita de contas não autorizadas — mesmo que alguém manipule o frontend ou chame a API diretamente.
+O banco recusa qualquer escrita de contas não autorizadas, mesmo que alguém manipule o frontend ou chame a API diretamente.
 
 ---
 
@@ -168,7 +168,7 @@ O sistema não usa barras de progresso, estrelas ou porcentagens para competênc
 - **Categoria** (infra, systems, devops, tools, methods)
 - **Contexto de aplicação** (texto livre descrevendo onde e como foi usado)
 
-Isso é defensável numa entrevista. "Active Directory — 75%" não é.
+Isso é defensável numa entrevista. "Active Directory 75%" não é.
 
 ### Foco profissional com percentual
 
@@ -265,7 +265,7 @@ SaaS multi-tenant para gestão operacional. Construído com Row-Level Security p
 Sistema institucional para agendamento de salas desenvolvido internamente na UNIFENAS. Apresentado como case de experiência profissional (não portfólio pessoal, dado que a propriedade é institucional).
 
 ### Interactive CV (este site)
-O currículo em si é um dos cases. Meta-demonstração: o sistema que apresenta os projetos é ele mesmo um projeto — construído, mantido e evoluído por Daniel.
+O currículo em si é um dos cases. Meta-demonstração: o sistema que apresenta os projetos é ele mesmo um projeto, construído, mantido e evoluído por Daniel.
 
 ---
 
