@@ -269,7 +269,7 @@ O currículo em si é um dos cases. Meta-demonstração: o sistema que apresenta
 
 ---
 
-*Documentação gerada em 21/08/2026. Para dúvidas ou contribuições, entre em contato via contato@danielsantos.dev*
+*Documentação gerada em 21/08/2026. Para dúvidas ou contribuições, entre em contato via danielsan579@gmail.com*
 
 ---
 
