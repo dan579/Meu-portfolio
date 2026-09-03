@@ -85,85 +85,45 @@ export async function generateLinkedInText(
 ): Promise<{ text: string } | { error: string }> {
   const prompt = buildLinkedInTextPrompt(language, project);
 
-  const modelsToTry = ['gemini-3.6-flash', 'gemini-2.5-flash'];
-  for (const model of modelsToTry) {
-    try {
-      const response = await ai.models.generateContent({
-        model,
-        contents: prompt,
-      });
-
-      const text = response.text?.trim();
-      if (text) {
-        return { text };
-      }
-    } catch (err: any) {
-      console.warn(`[generateLinkedInText] Falha com modelo ${model}:`, err?.message || err);
-      // Se for o último modelo, propaga erro
-      if (model === modelsToTry[modelsToTry.length - 1]) {
-        return { error: 'Falha ao gerar o post com a API Gemini. Tente novamente em instantes.' };
-      }
-    }
-  }
-
-  return { error: 'A API Gemini não retornou nenhum conteúdo.' };
-}
-
-export function buildLinkedInImagePrompt(project: LinkedInPostProjectInput): string {
-  const category = project.category_pt || project.category_en || 'tecnologia e infraestrutura';
-  const techs = (project.technologies || []).filter(Boolean).join(', ');
-
-  return `Crie uma imagem ilustrativa, abstrata e profissional para acompanhar um post de LinkedIn sobre um projeto de tecnologia chamado "${project.title}" (${category}). Tema visual: infraestrutura de TI, sistemas distribuídos, redes e nuvem, com elementos abstratos que remetam a ${techs || 'arquitetura de software moderna'}. Paleta escura, tons de azul e slate, estilo moderno e minimalista, iluminação sutil tipo glow, composição limpa em formato paisagem widescreen. MUITO IMPORTANTE: a imagem não pode conter nenhum texto, palavra, letra, número, logotipo ou marca d'água — apenas elementos visuais abstratos.`;
-}
-
-export async function generateLinkedInImage(
-  ai: GoogleGenAI,
-  project: LinkedInPostProjectInput
-): Promise<{ mimeType: string; data: string } | { error: string }> {
-  const prompt = buildLinkedInImagePrompt(project);
-
-  // Tentativa primária com gemini-2.5-flash-image
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image',
+      model: 'gemini-2.5-flash',
       contents: prompt,
     });
 
-    const parts = response.candidates?.[0]?.content?.parts || [];
-    const imagePart = parts.find((part: any) => part.inlineData?.data);
+    const text = extractGeminiText(response);
 
-    if (imagePart?.inlineData?.data) {
-      return {
-        mimeType: imagePart.inlineData.mimeType || 'image/png',
-        data: imagePart.inlineData.data,
-      };
+    if (text) {
+      return { text };
     }
-  } catch (primaryError) {
-    console.warn('[generate-linkedin-image] Tentativa com gemini-2.5-flash-image falhou, tentando fallback com imagen-3.0-generate-002:', primaryError);
+
+    console.error(
+      '[generateLinkedInText] Resposta sem texto extraível. finishReason:',
+      (response as any)?.candidates?.[0]?.finishReason,
+      'promptFeedback:',
+      JSON.stringify((response as any)?.promptFeedback)
+    );
+    return { error: 'A API Gemini não retornou nenhum conteúdo.' };
+  } catch (err: any) {
+    console.error('[generateLinkedInText] Erro ao chamar a API Gemini:', err?.message || err);
+    return { error: 'Falha ao gerar o post com a API Gemini. Tente novamente em instantes.' };
   }
-
-  // Fallback para geração via imagen-3.0-generate-002 com generateImages
-  try {
-    const imageResponse = await ai.models.generateImages({
-      model: 'imagen-3.0-generate-002',
-      prompt,
-      config: {
-        numberOfImages: 1,
-        aspectRatio: '16:9',
-        outputMimeType: 'image/jpeg',
-      },
-    });
-
-    const base64Data = imageResponse.generatedImages?.[0]?.image?.imageBytes;
-    if (base64Data) {
-      return {
-        mimeType: 'image/jpeg',
-        data: base64Data,
-      };
-    }
-  } catch (fallbackError) {
-    console.error('[generate-linkedin-image] Erro ao gerar imagem via fallback:', fallbackError);
-  }
-
-  return { error: 'Falha ao gerar a imagem com a API Gemini. Tente novamente em instantes.' };
 }
+
+function extractGeminiText(response: any): string {
+  if (typeof response?.text === 'string' && response.text.trim()) {
+    return response.text.trim();
+  }
+
+  const parts = response?.candidates?.[0]?.content?.parts;
+  if (Array.isArray(parts)) {
+    const joined = parts
+      .map((part: any) => (typeof part?.text === 'string' ? part.text : ''))
+      .join('')
+      .trim();
+    if (joined) return joined;
+  }
+
+  return '';
+}
+

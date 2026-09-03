@@ -624,10 +624,10 @@ export const AdminProjectsPage: React.FC = () => {
                     type="button"
                     onClick={() => setIsLinkedInModalOpen(true)}
                     className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-[#1A1A22] hover:bg-slate-800 border border-slate-800 rounded-lg text-xs text-blue-400 hover:text-blue-300 font-semibold"
-                    title="Gerar um rascunho de post para LinkedIn com base neste projeto"
+                    title="Gerar um rascunho de texto para divulgar este projeto no LinkedIn"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
-                    <span>Gerar Post LinkedIn</span>
+                    <span>Divulgar Projeto</span>
                   </button>
                 )}
                 <button

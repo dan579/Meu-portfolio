@@ -5,14 +5,13 @@ import {defineConfig, Plugin, ViteDevServer} from 'vite';
 import {
   getGeminiClient,
   generateLinkedInText,
-  generateLinkedInImage,
 } from './api/_shared/gemini.ts';
 
 // Middleware só para desenvolvimento/preview (inclui o preview do AI Studio),
 // que roda em cima do Vite puro e não conhece o formato de Serverless
-// Functions da Vercel. Em produção na Vercel, essas mesmas rotas
-// (/api/generate-linkedin-post e /api/generate-linkedin-image) são
-// atendidas pelos arquivos correspondentes dentro de api/, não por este
+// Functions da Vercel. Em produção na Vercel, a rota
+// /api/generate-linkedin-post é
+// atendida pelo arquivo correspondente dentro de api/, não por este
 // plugin — ele só existe dentro do configureServer, que não roda em
 // `vite build`.
 function readJsonBody(req: any): Promise<any> {
@@ -72,40 +71,6 @@ function linkedInApiDevPlugin(): Plugin {
           console.error('[dev-middleware] generate-linkedin-post erro:', error);
           sendJson(res, 502, {
             error: 'Falha ao gerar o post com a API Gemini. Tente novamente em instantes.',
-          });
-        }
-      });
-
-      server.middlewares.use('/api/generate-linkedin-image', async (req, res) => {
-        if (req.method !== 'POST') {
-          sendJson(res, 405, { error: 'Método não permitido.' });
-          return;
-        }
-
-        const client = getGeminiClient();
-        if ('error' in client) {
-          sendJson(res, 500, { error: client.error });
-          return;
-        }
-
-        try {
-          const body = await readJsonBody(req);
-          if (!body?.project?.title) {
-            sendJson(res, 400, { error: 'Dados do projeto ausentes na requisição.' });
-            return;
-          }
-
-          const result = await generateLinkedInImage(client.ai, body.project);
-          if ('error' in result) {
-            sendJson(res, 502, { error: result.error });
-            return;
-          }
-
-          sendJson(res, 200, { mimeType: result.mimeType, data: result.data });
-        } catch (error) {
-          console.error('[dev-middleware] generate-linkedin-image erro:', error);
-          sendJson(res, 502, {
-            error: 'Falha ao gerar a imagem com a API Gemini. Tente novamente em instantes.',
           });
         }
       });

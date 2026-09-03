@@ -68,6 +68,24 @@ ${project.project_url ? `- Case link: ${project.project_url}` : ''}
 Return only the final post text, ready to paste into LinkedIn, with no extra commentary, no surrounding quotes, and no markdown.`;
 }
 
+function extractText(response: any): string {
+  if (typeof response?.text === 'string' && response.text.trim()) {
+    return response.text.trim();
+  }
+
+  const candidate = response?.candidates?.[0];
+  const parts = candidate?.content?.parts;
+  if (Array.isArray(parts)) {
+    const joined = parts
+      .map((part: any) => (typeof part?.text === 'string' ? part.text : ''))
+      .join('')
+      .trim();
+    if (joined) return joined;
+  }
+
+  return '';
+}
+
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Método não permitido.' });
@@ -102,22 +120,20 @@ export default async function handler(req: any, res: any) {
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    let text = '';
-    const modelsToTry = ['gemini-3.6-flash', 'gemini-2.5-flash'];
-    for (const model of modelsToTry) {
-      try {
-        const response = await ai.models.generateContent({
-          model,
-          contents: prompt,
-        });
-        text = response.text?.trim() || '';
-        if (text) break;
-      } catch (modelErr) {
-        console.warn(`[generate-linkedin-post] Modelo ${model} falhou:`, modelErr);
-      }
-    }
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    });
+
+    const text = extractText(response);
 
     if (!text) {
+      console.error(
+        '[generate-linkedin-post] Resposta sem texto extraível. finishReason:',
+        response?.candidates?.[0]?.finishReason,
+        'promptFeedback:',
+        JSON.stringify(response?.promptFeedback)
+      );
       res.status(502).json({ error: 'A API Gemini não retornou nenhum conteúdo.' });
       return;
     }
