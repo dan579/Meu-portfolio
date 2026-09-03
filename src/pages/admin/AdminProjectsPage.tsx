@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase.ts';
 import { MediaPicker } from '../../admin/components/MediaPicker.tsx';
+import { LinkedInPostModal } from '../../admin/components/LinkedInPostModal.tsx';
 import { MediaAsset } from '../../content/types.ts';
 import {
   Layers,
@@ -133,6 +134,7 @@ export const AdminProjectsPage: React.FC = () => {
 
   // Media Picker Sub-Modal State
   const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
+  const [isLinkedInModalOpen, setIsLinkedInModalOpen] = useState(false);
   const [targetGalleryIndex, setTargetGalleryIndex] = useState<number | null>(null);
 
   // Delete Confirmation State
@@ -616,13 +618,26 @@ export const AdminProjectsPage: React.FC = () => {
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2">
+                {editingProject && (
+                  <button
+                    type="button"
+                    onClick={() => setIsLinkedInModalOpen(true)}
+                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-[#1A1A22] hover:bg-slate-800 border border-slate-800 rounded-lg text-xs text-blue-400 hover:text-blue-300 font-semibold"
+                    title="Gerar um rascunho de post para LinkedIn com base neste projeto"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Gerar Post LinkedIn</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Modal Tabs */}
@@ -1738,6 +1753,31 @@ export const AdminProjectsPage: React.FC = () => {
             setTargetGalleryIndex(null);
           }}
           onSelect={handleMediaSelected}
+        />
+      )}
+
+      {/* LINKEDIN POST GENERATOR MODAL */}
+      {isLinkedInModalOpen && editingProject && (
+        <LinkedInPostModal
+          isOpen={isLinkedInModalOpen}
+          onClose={() => setIsLinkedInModalOpen(false)}
+          project={{
+            title: formData.title,
+            subtitle_pt: formData.subtitle_pt,
+            subtitle_en: formData.subtitle_en,
+            short_summary_pt: formData.short_summary_pt,
+            short_summary_en: formData.short_summary_en,
+            category_pt: formData.category_pt,
+            category_en: formData.category_en,
+            problem_pt: formData.problem_pt,
+            problem_en: formData.problem_en,
+            solution_pt: formData.solution_pt,
+            solution_en: formData.solution_en,
+            features_pt: formData.features_pt.filter(Boolean),
+            features_en: formData.features_en.filter(Boolean),
+            technologies: formData.technologies.map((t) => t.name).filter(Boolean),
+            project_url: `${window.location.origin}/projetos/${formData.slug}`,
+          }}
         />
       )}
 
