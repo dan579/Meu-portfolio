@@ -134,7 +134,7 @@ export const AdminProjectsPage: React.FC = () => {
 
   // Media Picker Sub-Modal State
   const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
-  const [isLinkedInModalOpen, setIsLinkedInModalOpen] = useState(false);
+  const [linkedInProject, setLinkedInProject] = useState<ProjectRecord | null>(null);
   const [targetGalleryIndex, setTargetGalleryIndex] = useState<number | null>(null);
 
   // Delete Confirmation State
@@ -535,7 +535,7 @@ export const AdminProjectsPage: React.FC = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-1.5 self-end md:self-center shrink-0">
+                <div className="flex flex-wrap items-center justify-end gap-1.5 self-end md:self-center shrink-0">
                   {/* Reorder */}
                   <div className="flex items-center bg-[#16161B] border border-slate-800 rounded-lg p-0.5">
                     <button
@@ -568,6 +568,16 @@ export const AdminProjectsPage: React.FC = () => {
                   >
                     <ExternalLink className="w-4 h-4" />
                   </a>
+
+                  {/* Divulgar Projeto */}
+                  <button
+                    type="button"
+                    onClick={() => setLinkedInProject(proj)}
+                    className="p-2 bg-[#16161B] hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-400 hover:text-blue-400 transition-colors"
+                    title="Divulgar projeto (gerar texto para LinkedIn)"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                  </button>
 
                   {/* Edit */}
                   <button
@@ -619,17 +629,6 @@ export const AdminProjectsPage: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                {editingProject && (
-                  <button
-                    type="button"
-                    onClick={() => setIsLinkedInModalOpen(true)}
-                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-[#1A1A22] hover:bg-slate-800 border border-slate-800 rounded-lg text-xs text-blue-400 hover:text-blue-300 font-semibold"
-                    title="Gerar um rascunho de texto para divulgar este projeto no LinkedIn"
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Divulgar Projeto</span>
-                  </button>
-                )}
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
@@ -1757,26 +1756,26 @@ export const AdminProjectsPage: React.FC = () => {
       )}
 
       {/* LINKEDIN POST GENERATOR MODAL */}
-      {isLinkedInModalOpen && editingProject && (
+      {linkedInProject && (
         <LinkedInPostModal
-          isOpen={isLinkedInModalOpen}
-          onClose={() => setIsLinkedInModalOpen(false)}
+          isOpen={!!linkedInProject}
+          onClose={() => setLinkedInProject(null)}
           project={{
-            title: formData.title,
-            subtitle_pt: formData.subtitle_pt,
-            subtitle_en: formData.subtitle_en,
-            short_summary_pt: formData.short_summary_pt,
-            short_summary_en: formData.short_summary_en,
-            category_pt: formData.category_pt,
-            category_en: formData.category_en,
-            problem_pt: formData.problem_pt,
-            problem_en: formData.problem_en,
-            solution_pt: formData.solution_pt,
-            solution_en: formData.solution_en,
-            features_pt: formData.features_pt.filter(Boolean),
-            features_en: formData.features_en.filter(Boolean),
-            technologies: formData.technologies.map((t) => t.name).filter(Boolean),
-            project_url: `${window.location.origin}/projetos/${formData.slug}`,
+            title: linkedInProject.title,
+            subtitle_pt: linkedInProject.subtitle_pt,
+            subtitle_en: linkedInProject.subtitle_en,
+            short_summary_pt: linkedInProject.short_summary_pt,
+            short_summary_en: linkedInProject.short_summary_en,
+            category_pt: linkedInProject.category_pt,
+            category_en: linkedInProject.category_en,
+            problem_pt: linkedInProject.problem_pt,
+            problem_en: linkedInProject.problem_en,
+            solution_pt: linkedInProject.solution_pt,
+            solution_en: linkedInProject.solution_en,
+            features_pt: (linkedInProject.features_pt || []).filter(Boolean),
+            features_en: (linkedInProject.features_en || []).filter(Boolean),
+            technologies: (linkedInProject.technologies || []).map((t) => t.name).filter(Boolean),
+            project_url: `${window.location.origin}/projetos/${linkedInProject.slug}`,
           }}
         />
       )}
