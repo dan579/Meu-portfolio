@@ -121,32 +121,28 @@ export default async function handler(req: any, res: any) {
   try {
     const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.6-flash',
       contents: prompt,
     });
 
     const text = extractText(response);
 
     if (!text) {
-      const reason = response?.candidates?.[0]?.finishReason;
-      const feedback = JSON.stringify(response?.promptFeedback || {});
       console.error(
         '[generate-linkedin-post] Resposta sem texto extraível. finishReason:',
-        reason,
+        response?.candidates?.[0]?.finishReason,
         'promptFeedback:',
-        feedback
+        JSON.stringify(response?.promptFeedback)
       );
-      res.status(502).json({
-        error: `[DIAGNÓSTICO] Resposta sem texto. finishReason=${reason || 'indefinido'} promptFeedback=${feedback}`,
-      });
+      res.status(502).json({ error: 'A API Gemini não retornou nenhum conteúdo.' });
       return;
     }
 
     res.status(200).json({ post: text });
-  } catch (error: any) {
+  } catch (error) {
     console.error('[generate-linkedin-post] Erro ao chamar a API Gemini:', error);
     res.status(502).json({
-      error: `[DIAGNÓSTICO] Erro ao chamar a API Gemini: ${error?.message || JSON.stringify(error) || 'erro desconhecido'}`,
+      error: 'Falha ao gerar o post com a API Gemini. Tente novamente em instantes.',
     });
   }
 }

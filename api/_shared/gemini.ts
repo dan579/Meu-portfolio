@@ -87,7 +87,7 @@ export async function generateLinkedInText(
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.6-flash',
       contents: prompt,
     });
 
@@ -97,13 +97,16 @@ export async function generateLinkedInText(
       return { text };
     }
 
-    const reason = (response as any)?.candidates?.[0]?.finishReason;
-    const feedback = JSON.stringify((response as any)?.promptFeedback || {});
-    console.error('[generateLinkedInText] Resposta sem texto extraível. finishReason:', reason, 'promptFeedback:', feedback);
-    return { error: `[DIAGNÓSTICO] Resposta sem texto. finishReason=${reason || 'indefinido'} promptFeedback=${feedback}` };
+    console.error(
+      '[generateLinkedInText] Resposta sem texto extraível. finishReason:',
+      (response as any)?.candidates?.[0]?.finishReason,
+      'promptFeedback:',
+      JSON.stringify((response as any)?.promptFeedback)
+    );
+    return { error: 'A API Gemini não retornou nenhum conteúdo.' };
   } catch (err: any) {
     console.error('[generateLinkedInText] Erro ao chamar a API Gemini:', err?.message || err);
-    return { error: `[DIAGNÓSTICO] Erro ao chamar a API Gemini: ${err?.message || JSON.stringify(err) || 'erro desconhecido'}` };
+    return { error: 'Falha ao gerar o post com a API Gemini. Tente novamente em instantes.' };
   }
 }
 
