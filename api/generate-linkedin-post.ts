@@ -120,10 +120,25 @@ export default async function handler(req: any, res: any) {
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: prompt,
-    });
+    let response: any;
+    try {
+      response = await ai.models.generateContent({
+        model: 'gemini-3.6-flash',
+        contents: prompt,
+        config: {
+          thinkingConfig: { thinkingLevel: 'minimal' },
+        } as any,
+      });
+    } catch (primaryErr: any) {
+      console.warn('[generate-linkedin-post] gemini-3.6-flash falhou, tentando fallback com gemini-3.8-flash:', primaryErr?.message || primaryErr);
+      response = await ai.models.generateContent({
+        model: 'gemini-3.8-flash',
+        contents: prompt,
+        config: {
+          thinkingConfig: { thinkingLevel: 'minimal' },
+        } as any,
+      });
+    }
 
     const text = extractText(response);
 

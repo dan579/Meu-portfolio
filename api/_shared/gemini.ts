@@ -33,7 +33,16 @@ export function getGeminiClient(): { ai: GoogleGenAI } | { error: string } {
         'GEMINI_API_KEY não está configurada neste ambiente. No AI Studio isso costuma vir do painel de Secrets do projeto; na Vercel, configure em Project Settings → Environment Variables e refaça o deploy.',
     };
   }
-  return { ai: new GoogleGenAI({ apiKey }) };
+  return {
+    ai: new GoogleGenAI({
+      apiKey,
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        },
+      },
+    }),
+  };
 }
 
 export function buildLinkedInTextPrompt(language: 'pt' | 'en', project: LinkedInPostProjectInput): string {
@@ -86,10 +95,25 @@ export async function generateLinkedInText(
   const prompt = buildLinkedInTextPrompt(language, project);
 
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: prompt,
-    });
+    let response: any;
+    try {
+      response = await ai.models.generateContent({
+        model: 'gemini-3.6-flash',
+        contents: prompt,
+        config: {
+          thinkingConfig: { thinkingLevel: 'minimal' },
+        } as any,
+      });
+    } catch (primaryErr: any) {
+      console.warn('[generateLinkedInText] gemini-3.6-flash falhou, tentando fallback com gemini-3.8-flash:', primaryErr?.message || primaryErr);
+      response = await ai.models.generateContent({
+        model: 'gemini-3.8-flash',
+        contents: prompt,
+        config: {
+          thinkingConfig: { thinkingLevel: 'minimal' },
+        } as any,
+      });
+    }
 
     const text = extractGeminiText(response);
 
