@@ -120,44 +120,35 @@ export default async function handler(req: any, res: any) {
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    let response: any;
-    try {
-      response = await ai.models.generateContent({
-        model: 'gemini-3.6-flash',
-        contents: prompt,
-        config: {
-          thinkingConfig: { thinkingLevel: 'minimal' },
-        } as any,
-      });
-    } catch (primaryErr: any) {
-      console.warn('[generate-linkedin-post] gemini-3.6-flash falhou, tentando fallback com gemini-3.8-flash:', primaryErr?.message || primaryErr);
-      response = await ai.models.generateContent({
-        model: 'gemini-3.8-flash',
-        contents: prompt,
-        config: {
-          thinkingConfig: { thinkingLevel: 'minimal' },
-        } as any,
-      });
-    }
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.8-flash',
+      contents: prompt,
+      config: {
+        thinkingConfig: { thinkingLevel: 'minimal' },
+      } as any,
+    });
 
     const text = extractText(response);
 
     if (!text) {
+      const reason = response?.candidates?.[0]?.finishReason;
       console.error(
         '[generate-linkedin-post] Resposta sem texto extraível. finishReason:',
-        response?.candidates?.[0]?.finishReason,
+        reason,
         'promptFeedback:',
         JSON.stringify(response?.promptFeedback)
       );
-      res.status(502).json({ error: 'A API Gemini não retornou nenhum conteúdo.' });
+      res.status(502).json({
+        error: `A API Gemini não retornou nenhum conteúdo (finishReason: ${reason || 'desconhecido'}).`,
+      });
       return;
     }
 
     res.status(200).json({ post: text });
-  } catch (error) {
+  } catch (error: any) {
     console.error('[generate-linkedin-post] Erro ao chamar a API Gemini:', error);
     res.status(502).json({
-      error: 'Falha ao gerar o post com a API Gemini. Tente novamente em instantes.',
+      error: `Falha ao gerar o post com a API Gemini. Tente novamente em instantes. (detalhe técnico: ${error?.message || 'erro desconhecido'})`,
     });
   }
 }

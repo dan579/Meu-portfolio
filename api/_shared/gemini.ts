@@ -95,25 +95,13 @@ export async function generateLinkedInText(
   const prompt = buildLinkedInTextPrompt(language, project);
 
   try {
-    let response: any;
-    try {
-      response = await ai.models.generateContent({
-        model: 'gemini-3.6-flash',
-        contents: prompt,
-        config: {
-          thinkingConfig: { thinkingLevel: 'minimal' },
-        } as any,
-      });
-    } catch (primaryErr: any) {
-      console.warn('[generateLinkedInText] gemini-3.6-flash falhou, tentando fallback com gemini-3.8-flash:', primaryErr?.message || primaryErr);
-      response = await ai.models.generateContent({
-        model: 'gemini-3.8-flash',
-        contents: prompt,
-        config: {
-          thinkingConfig: { thinkingLevel: 'minimal' },
-        } as any,
-      });
-    }
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.8-flash',
+      contents: prompt,
+      config: {
+        thinkingConfig: { thinkingLevel: 'minimal' },
+      } as any,
+    });
 
     const text = extractGeminiText(response);
 
@@ -121,16 +109,19 @@ export async function generateLinkedInText(
       return { text };
     }
 
+    const reason = (response as any)?.candidates?.[0]?.finishReason;
     console.error(
       '[generateLinkedInText] Resposta sem texto extraível. finishReason:',
-      (response as any)?.candidates?.[0]?.finishReason,
+      reason,
       'promptFeedback:',
       JSON.stringify((response as any)?.promptFeedback)
     );
-    return { error: 'A API Gemini não retornou nenhum conteúdo.' };
+    return { error: `A API Gemini não retornou nenhum conteúdo (finishReason: ${reason || 'desconhecido'}).` };
   } catch (err: any) {
     console.error('[generateLinkedInText] Erro ao chamar a API Gemini:', err?.message || err);
-    return { error: 'Falha ao gerar o post com a API Gemini. Tente novamente em instantes.' };
+    return {
+      error: `Falha ao gerar o post com a API Gemini. Tente novamente em instantes. (detalhe técnico: ${err?.message || 'erro desconhecido'})`,
+    };
   }
 }
 
