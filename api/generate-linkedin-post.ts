@@ -128,21 +128,25 @@ export default async function handler(req: any, res: any) {
     const text = extractText(response);
 
     if (!text) {
+      const reason = response?.candidates?.[0]?.finishReason;
+      const feedback = JSON.stringify(response?.promptFeedback || {});
       console.error(
         '[generate-linkedin-post] Resposta sem texto extraível. finishReason:',
-        response?.candidates?.[0]?.finishReason,
+        reason,
         'promptFeedback:',
-        JSON.stringify(response?.promptFeedback)
+        feedback
       );
-      res.status(502).json({ error: 'A API Gemini não retornou nenhum conteúdo.' });
+      res.status(502).json({
+        error: `[DIAGNÓSTICO] Resposta sem texto. finishReason=${reason || 'indefinido'} promptFeedback=${feedback}`,
+      });
       return;
     }
 
     res.status(200).json({ post: text });
-  } catch (error) {
+  } catch (error: any) {
     console.error('[generate-linkedin-post] Erro ao chamar a API Gemini:', error);
     res.status(502).json({
-      error: 'Falha ao gerar o post com a API Gemini. Tente novamente em instantes.',
+      error: `[DIAGNÓSTICO] Erro ao chamar a API Gemini: ${error?.message || JSON.stringify(error) || 'erro desconhecido'}`,
     });
   }
 }

@@ -97,16 +97,13 @@ export async function generateLinkedInText(
       return { text };
     }
 
-    console.error(
-      '[generateLinkedInText] Resposta sem texto extraível. finishReason:',
-      (response as any)?.candidates?.[0]?.finishReason,
-      'promptFeedback:',
-      JSON.stringify((response as any)?.promptFeedback)
-    );
-    return { error: 'A API Gemini não retornou nenhum conteúdo.' };
+    const reason = (response as any)?.candidates?.[0]?.finishReason;
+    const feedback = JSON.stringify((response as any)?.promptFeedback || {});
+    console.error('[generateLinkedInText] Resposta sem texto extraível. finishReason:', reason, 'promptFeedback:', feedback);
+    return { error: `[DIAGNÓSTICO] Resposta sem texto. finishReason=${reason || 'indefinido'} promptFeedback=${feedback}` };
   } catch (err: any) {
     console.error('[generateLinkedInText] Erro ao chamar a API Gemini:', err?.message || err);
-    return { error: 'Falha ao gerar o post com a API Gemini. Tente novamente em instantes.' };
+    return { error: `[DIAGNÓSTICO] Erro ao chamar a API Gemini: ${err?.message || JSON.stringify(err) || 'erro desconhecido'}` };
   }
 }
 
