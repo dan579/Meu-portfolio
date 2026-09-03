@@ -99,7 +99,7 @@ export async function generateLinkedInText(
       model: 'gemini-3.8-flash',
       contents: prompt,
       config: {
-        thinkingConfig: { thinkingLevel: 'minimal' },
+        thinkingConfig: { thinkingLevel: 'low' },
       } as any,
     });
 
