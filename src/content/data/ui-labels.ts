@@ -16,7 +16,7 @@ export const uiLabels: Record<Language, UILabels> = {
       viewCaseStudy: 'Explorar Case Study →',
       backToProjects: '← Voltar para todos os projetos',
       currentPosition: 'Cargo Atual',
-      availableForProjects: 'Disponível para Projetos e Transição',
+      availableForProjects: 'Disponível para Projetos e Oportunidades',
       workCompositionTitle: 'Composição de Atuação',
       workCompositionNote: 'Foco prático e divisão de atividades diárias — não representa limitação ou percentual de capacidade.',
       primaryStack: 'Stack Principal',

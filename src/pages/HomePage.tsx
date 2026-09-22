@@ -91,7 +91,7 @@ export const HomePage: React.FC = () => {
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/25 text-blue-400 text-xs font-mono font-medium tracking-wide">
               <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-              <span>{profile.currentRole} • Transição para Analista de Sistemas / Infra</span>
+              <span>{profile.headline}</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">

@@ -80,7 +80,7 @@ export const PortfolioDocument: React.FC<{ data: PortfolioData }> = ({ data }) =
           <View style={{ flex: 1 }}>
             <Text style={styles.name}>{profile.name}</Text>
             <Text style={styles.roleHeadline}>
-              {profile.currentRole} • Transição para {profile.targetRole}
+              {profile.headline || `${profile.currentRole} • ${profile.targetRole}`}
             </Text>
 
             <View style={styles.contactRow}>

@@ -7,12 +7,11 @@ export const ptData: ContentData = {
     initials: 'DS',
     currentRole: 'Técnico de Suporte de TI (N1)',
     targetRole: 'Analista de Sistemas / Infraestrutura',
-    headline: 'Técnico de Suporte de TI em transição para Analista de Sistemas e Infraestrutura',
-    shortSummary: 'Profissional de TI com experiência prática em suporte corporativo, administração de redes, servidores Windows/Linux e virtualização, expandindo competências em desenvolvimento de software moderno (React/TS, SQL) e arquitetura de sistemas.',
+    headline: 'Infraestrutura & Suporte Técnico • Sistemas e Automação',
+    shortSummary: 'Profissional de TI com experiência prática em suporte técnico, infraestrutura, redes e sistemas, atuando na resolução de problemas e sustentação de ambientes tecnológicos. Também desenvolvo soluções, automações e sistemas próprios para transformar problemas operacionais em processos mais eficientes.',
     fullBio: [
-      'Atuo diariamente na sustentação e otimização do ecossistema tecnológico da UNIFENAS (Belo Horizonte), atendendo centenas de usuários acadêmicos e administrativos.',
-      'Minha rotina abrange desde o gerenciamento de chamados de alta prioridade via GLPI, administração de contas e políticas via Active Directory, até a manutenção de redes com pfSense e MikroTik, além de monitoramento contínuo de disponibilidade de serviços com Zabbix.',
-      'Em paralelo à infraestrutura, construo soluções completas de software aplicando TypeScript, React, modelagem relacional SQL e arquiteturas escaláveis. Meu objetivo é consolidar a transição para posições de Analista de Sistemas e Infraestrutura, unindo a visão sistêmica de redes ao ciclo de desenvolvimento de software.'
+      'Sou profissional de Tecnologia da Informação com experiência prática em suporte técnico, infraestrutura, redes e sistemas. Atuo diretamente na sustentação de ambientes tecnológicos — resolvendo problemas de conectividade, servidores, Active Directory, monitoramento e ativos de rede no dia a dia. Paralelamente, desenvolvo sistemas, automações e produtos próprios, usando esse contato direto com a operação para identificar problemas reais e construir soluções completas para eles — da regra de negócio à interface. A automação é o elo natural entre essas duas frentes: boa parte do que automatizo nasce de gargalos que eu mesmo vejo na rotina de suporte e infraestrutura. Tenho também interesse crescente em Inteligência Artificial aplicada a sistemas e processos — um diferencial em construção, não o centro da minha atuação. O Operis, sistema que desenvolvo para gestão de processos operacionais, é o exemplo mais direto dessa combinação: nasce da minha vivência em suporte e infraestrutura e se materializa como sistema completo, da regra de negócio à interface.',
+      'Minha rotina abrange desde o gerenciamento de chamados de alta prioridade via GLPI, administração de contas e políticas via Active Directory, até a manutenção de redes com pfSense e MikroTik, além de monitoramento contínuo de disponibilidade de serviços com Zabbix.'
     ],
     location: 'Belo Horizonte, MG • Brasil',
     email: '',
@@ -20,7 +19,7 @@ export const ptData: ContentData = {
     linkedinDisplay: 'linkedin.com/in/daniel-santos-silva',
     github: 'https://github.com/danielsantos-dev',
     githubDisplay: 'github.com/danielsantos-dev',
-    availability: 'Disponível para novas oportunidades e transição de carreira',
+    availability: 'Disponível para novas oportunidades em Suporte, Infraestrutura e Sistemas',
     workFocus: {
       infraLabel: 'Infraestrutura & Redes',
       systemsLabel: 'Sistemas & Desenvolvimento',

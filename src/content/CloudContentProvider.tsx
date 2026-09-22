@@ -141,6 +141,32 @@ export const CloudContentProvider: React.FC<CloudContentProviderProps> = ({
             metricsSnapshots: metricsRes.data || [],
             contact: contactRes.data || null,
           });
+
+          // Proactively migrate legacy transition texts in database if present
+          const isLegacy = profileRes.data && (
+            profileRes.data.headline_pt?.toLowerCase().includes('transição') ||
+            profileRes.data.headline_pt?.includes('Analista de Sistemas & Infraestrutura • Redes') ||
+            profileRes.data.availability_pt?.toLowerCase().includes('transição') ||
+            profileRes.data.availability_pt?.includes('em Sistemas, Infraestrutura e Desenvolvimento') ||
+            profileRes.data.short_summary_pt?.includes('expandindo competências em desenvolvimento') ||
+            (Array.isArray(profileRes.data.full_bio_pt) && profileRes.data.full_bio_pt.some((p: string) => 
+              p.toLowerCase().includes('transição') || p.includes('atuação combinada em infraestrutura')
+            ))
+          );
+
+          if (isLegacy) {
+            supabase.from('profiles').update({
+              headline_pt: ptData.profile.headline,
+              headline_en: enData.profile.headline,
+              short_summary_pt: ptData.profile.shortSummary,
+              short_summary_en: enData.profile.shortSummary,
+              availability_pt: ptData.profile.availability,
+              availability_en: enData.profile.availability,
+              full_bio_pt: ptData.profile.fullBio,
+              full_bio_en: enData.profile.fullBio,
+              updated_at: new Date().toISOString()
+            }).eq('id', profileRes.data.id).then(() => {});
+          }
         }
       } catch (error) {
         console.warn('Could not fetch cloud data, falling back to static seed data:', error);
@@ -203,6 +229,37 @@ export const CloudContentProvider: React.FC<CloudContentProviderProps> = ({
       (staticFallback.profile as any).photoUrl ||
       '';
 
+    const rawHeadline = isPt ? (p.headline_pt || staticFallback.profile.headline) : (p.headline_en || staticFallback.profile.headline);
+    const resolvedHeadline = rawHeadline && (
+      rawHeadline.toLowerCase().includes('transição') ||
+      rawHeadline.toLowerCase().includes('transitioning') ||
+      rawHeadline.includes('Analista de Sistemas & Infraestrutura • Redes') ||
+      rawHeadline.includes('Systems & Infrastructure Analyst • Networks')
+    ) ? staticFallback.profile.headline : rawHeadline;
+
+    const rawAvailability = isPt ? (p.availability_pt || staticFallback.profile.availability) : (p.availability_en || staticFallback.profile.availability);
+    const resolvedAvailability = rawAvailability && (
+      rawAvailability.toLowerCase().includes('transição') ||
+      rawAvailability.toLowerCase().includes('transition') ||
+      rawAvailability.includes('em Sistemas, Infraestrutura e Desenvolvimento') ||
+      rawAvailability.includes('in Systems, Infrastructure and Development')
+    ) ? staticFallback.profile.availability : rawAvailability;
+
+    const rawShortSummary = isPt ? (p.short_summary_pt || staticFallback.profile.shortSummary) : (p.short_summary_en || staticFallback.profile.shortSummary);
+    const resolvedShortSummary = rawShortSummary && (
+      rawShortSummary.includes('expandindo competências em desenvolvimento') ||
+      rawShortSummary.includes('expanding capabilities into modern software')
+    ) ? staticFallback.profile.shortSummary : rawShortSummary;
+
+    const rawBio = isPt ? (p.full_bio_pt || staticFallback.profile.fullBio) : (p.full_bio_en || staticFallback.profile.fullBio);
+    const hasLegacyBio = !Array.isArray(rawBio) || rawBio.length === 0 || rawBio.some((paragraph: string) => 
+      paragraph.toLowerCase().includes('transição') ||
+      paragraph.toLowerCase().includes('transition into') ||
+      paragraph.includes('atuação combinada em infraestrutura') ||
+      paragraph.includes('working across infrastructure, networks')
+    );
+    const resolvedFullBio = hasLegacyBio ? staticFallback.profile.fullBio : rawBio;
+
     return {
       name: p.name || staticFallback.profile.name,
       shortName: p.short_name || staticFallback.profile.shortName,
@@ -211,16 +268,16 @@ export const CloudContentProvider: React.FC<CloudContentProviderProps> = ({
       avatarMediaId: p.avatar_media_id || p.avatar_media?.id || undefined,
       currentRole: isPt ? (p.current_role_pt || staticFallback.profile.currentRole) : (p.current_role_en || staticFallback.profile.currentRole),
       targetRole: isPt ? (p.target_role_pt || staticFallback.profile.targetRole) : (p.target_role_en || staticFallback.profile.targetRole),
-      headline: isPt ? (p.headline_pt || staticFallback.profile.headline) : (p.headline_en || staticFallback.profile.headline),
-      shortSummary: isPt ? (p.short_summary_pt || staticFallback.profile.shortSummary) : (p.short_summary_en || staticFallback.profile.shortSummary),
-      fullBio: isPt ? (p.full_bio_pt || staticFallback.profile.fullBio) : (p.full_bio_en || staticFallback.profile.fullBio),
+      headline: resolvedHeadline,
+      shortSummary: resolvedShortSummary,
+      fullBio: resolvedFullBio,
       location: p.location || staticFallback.profile.location,
       email: p.email || staticFallback.profile.email,
       linkedin: p.linkedin || staticFallback.profile.linkedin,
       linkedinDisplay: p.linkedin_display || staticFallback.profile.linkedinDisplay,
       github: p.github || staticFallback.profile.github,
       githubDisplay: p.github_display || staticFallback.profile.githubDisplay,
-      availability: isPt ? (p.availability_pt || staticFallback.profile.availability) : (p.availability_en || staticFallback.profile.availability),
+      availability: resolvedAvailability,
       workFocus: {
         infraLabel: isPt
           ? (p.work_focus_infra_label_pt || staticFallback.profile.workFocus.infraLabel)
@@ -412,6 +469,13 @@ export const CloudContentProvider: React.FC<CloudContentProviderProps> = ({
     const resolvedGithubUrl = c?.github_url || p?.github || staticFallback.contact.githubUrl;
     const resolvedLocation = c?.location || p?.location || staticFallback.contact.location;
 
+    const rawContactAvail = isPt
+      ? (c?.availability_status_pt || p?.availability_pt || staticFallback.contact.availabilityStatus)
+      : (c?.availability_status_en || p?.availability_en || staticFallback.contact.availabilityStatus);
+    const resolvedContactAvail = rawContactAvail && (rawContactAvail.toLowerCase().includes('transição') || rawContactAvail.toLowerCase().includes('transition'))
+      ? staticFallback.contact.availabilityStatus
+      : rawContactAvail;
+
     return {
       email: resolvedEmail,
       linkedin: resolvedLinkedin,
@@ -422,9 +486,7 @@ export const CloudContentProvider: React.FC<CloudContentProviderProps> = ({
       cityStateCountry: isPt
         ? (c?.city_state_country_pt || p?.location || staticFallback.contact.cityStateCountry)
         : (c?.city_state_country_en || p?.location || staticFallback.contact.cityStateCountry),
-      availabilityStatus: isPt
-        ? (c?.availability_status_pt || p?.availability_pt || staticFallback.contact.availabilityStatus)
-        : (c?.availability_status_en || p?.availability_en || staticFallback.contact.availabilityStatus),
+      availabilityStatus: resolvedContactAvail,
       preferredContact: isPt
         ? (c?.preferred_contact_pt || staticFallback.contact.preferredContact)
         : (c?.preferred_contact_en || staticFallback.contact.preferredContact),

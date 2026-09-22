@@ -7,12 +7,11 @@ export const enData: ContentData = {
     initials: 'DS',
     currentRole: 'IT Support Technician (Tier 1)',
     targetRole: 'Systems & Infrastructure Analyst',
-    headline: 'IT Support Specialist transitioning to Systems & Infrastructure Analyst',
-    shortSummary: 'IT professional with hands-on enterprise support, network administration, Windows/Linux server management, and virtualization experience, expanding capabilities into modern software engineering (React/TS, SQL) and system architecture.',
+    headline: 'Infrastructure & Technical Support • Systems and Automation',
+    shortSummary: 'IT professional with hands-on experience in technical support, infrastructure, networks and systems, working on problem resolution and keeping technology environments running. I also build solutions, automations and systems of my own to turn operational problems into more efficient processes.',
     fullBio: [
-      'I actively maintain and optimize the technological ecosystem at UNIFENAS (Belo Horizonte campus), supporting hundreds of academic, administrative, and clinical users daily.',
-      'My routine ranges from managing high-priority incidents via GLPI, managing enterprise identities and policies via Active Directory, to managing networks with pfSense and MikroTik, as well as proactive service availability monitoring with Zabbix.',
-      'In parallel with infrastructure, I engineer complete software solutions with TypeScript, React, relational SQL database modeling, and scalable architectures. My goal is to solidify the transition into Systems and Infrastructure Analyst roles, merging deep networking foundations with modern software engineering.'
+      'I\'m an IT professional with hands-on experience in technical support, infrastructure, networks and systems. I work directly on keeping technology environments running — solving connectivity, server, Active Directory, monitoring and network asset issues day to day. In parallel, I build systems, automations and products of my own, using that direct contact with operations to spot real problems and build complete solutions for them — from business rule to interface. Automation is the natural bridge between the two: most of what I automate comes from bottlenecks I see firsthand in support and infrastructure work. I also have growing interest in AI applied to systems and processes — an emerging edge, not the center of what I do. Operis, a system I\'m building for operations management, is the clearest example of this combination: it comes from my hands-on support and infrastructure experience and takes shape as a complete system, from business rule to interface.',
+      'My routine ranges from managing high-priority incidents via GLPI, managing enterprise identities and policies via Active Directory, to managing networks with pfSense and MikroTik, as well as proactive service availability monitoring with Zabbix.'
     ],
     location: 'Belo Horizonte, MG • Brazil',
     email: '',
@@ -20,7 +19,7 @@ export const enData: ContentData = {
     linkedinDisplay: 'linkedin.com/in/daniel-santos-silva',
     github: 'https://github.com/danielsantos-dev',
     githubDisplay: 'github.com/danielsantos-dev',
-    availability: 'Available for career transition opportunities and technical projects',
+    availability: 'Available for new opportunities in Support, Infrastructure and Systems',
     workFocus: {
       infraLabel: 'Infrastructure & Networking',
       systemsLabel: 'Systems & Software Development',

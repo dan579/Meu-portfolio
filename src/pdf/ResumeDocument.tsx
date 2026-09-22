@@ -57,7 +57,7 @@ export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
         <View style={styles.headerContainer}>
           <Text style={styles.name}>{profile.name}</Text>
           <Text style={styles.roleHeadline}>
-            {profile.currentRole} • Transição para {profile.targetRole}
+            {profile.headline || `${profile.currentRole} • ${profile.targetRole}`}
           </Text>
 
           <View style={styles.contactRow}>

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useProfile } from '../../content/ContentProvider.tsx';
+import { ptData } from '../../content/data/pt.ts';
+import { enData } from '../../content/data/en.ts';
 import { isSupabaseConfigured, supabase } from '../../lib/supabase.ts';
 import { useAdminAuth } from '../../admin/AdminAuthContext.tsx';
 import { MediaPicker } from '../../admin/components/MediaPicker.tsx';
@@ -57,19 +59,37 @@ export const AdminProfilePage: React.FC = () => {
   const [adminActionMessage, setAdminActionMessage] = useState<string | null>(null);
   const [adminActionError, setAdminActionError] = useState<string | null>(null);
 
+  // Helper checkers to avoid displaying outdated prompt v1 or transition texts
+  const isOutdatedHeadline = (h?: string) => !h || h.toLowerCase().includes('transição') || h.toLowerCase().includes('transition') || h.includes('Analista de Sistemas & Infraestrutura • Redes') || h.includes('Systems & Infrastructure Analyst • Networks');
+  const isOutdatedAvailability = (a?: string) => !a || a.toLowerCase().includes('transição') || a.toLowerCase().includes('transition') || a.includes('em Sistemas, Infraestrutura e Desenvolvimento') || a.includes('in Systems, Infrastructure and Development');
+  const isOutdatedShortSummary = (s?: string) => !s || s.includes('expandindo competências em desenvolvimento') || s.includes('expanding capabilities into modern software');
+  const isOutdatedBio = (bio?: string[] | string) => {
+    if (!bio) return true;
+    const arr = Array.isArray(bio) ? bio : [bio];
+    return arr.some(p => p.toLowerCase().includes('transição') || p.toLowerCase().includes('transition') || p.includes('atuação combinada em infraestrutura') || p.includes('working across infrastructure, networks'));
+  };
+
   // Bilingual Roles & Bio
-  const [currentRolePt, setCurrentRolePt] = useState(currentProfile.currentRole);
-  const [currentRoleEn, setCurrentRoleEn] = useState('IT Support Technician (L1)');
-  const [targetRolePt, setTargetRolePt] = useState(currentProfile.targetRole);
-  const [targetRoleEn, setTargetRoleEn] = useState('Systems & Infrastructure Analyst');
-  const [headlinePt, setHeadlinePt] = useState(currentProfile.headline);
-  const [headlineEn, setHeadlineEn] = useState('IT Support Technician transitioning to Systems & Infrastructure Analyst');
-  const [shortSummaryPt, setShortSummaryPt] = useState(currentProfile.shortSummary);
-  const [shortSummaryEn, setShortSummaryEn] = useState('IT professional with hands-on experience in corporate IT support...');
-  const [fullBioPtText, setFullBioPtText] = useState(currentProfile.fullBio.join('\n\n'));
-  const [fullBioEnText, setFullBioEnText] = useState(currentProfile.fullBio.join('\n\n'));
-  const [availabilityPt, setAvailabilityPt] = useState(currentProfile.availability);
-  const [availabilityEn, setAvailabilityEn] = useState('Available for new opportunities & career transition');
+  const [currentRolePt, setCurrentRolePt] = useState(currentProfile.currentRole || ptData.profile.currentRole);
+  const [currentRoleEn, setCurrentRoleEn] = useState(enData.profile.currentRole);
+  const [targetRolePt, setTargetRolePt] = useState(currentProfile.targetRole || ptData.profile.targetRole);
+  const [targetRoleEn, setTargetRoleEn] = useState(enData.profile.targetRole);
+  const [headlinePt, setHeadlinePt] = useState(
+    !isOutdatedHeadline(currentProfile.headline) ? currentProfile.headline : ptData.profile.headline
+  );
+  const [headlineEn, setHeadlineEn] = useState(enData.profile.headline);
+  const [shortSummaryPt, setShortSummaryPt] = useState(
+    !isOutdatedShortSummary(currentProfile.shortSummary) ? currentProfile.shortSummary : ptData.profile.shortSummary
+  );
+  const [shortSummaryEn, setShortSummaryEn] = useState(enData.profile.shortSummary);
+  const [fullBioPtText, setFullBioPtText] = useState(
+    !isOutdatedBio(currentProfile.fullBio) ? currentProfile.fullBio.join('\n\n') : ptData.profile.fullBio.join('\n\n')
+  );
+  const [fullBioEnText, setFullBioEnText] = useState(enData.profile.fullBio.join('\n\n'));
+  const [availabilityPt, setAvailabilityPt] = useState(
+    !isOutdatedAvailability(currentProfile.availability) ? currentProfile.availability : ptData.profile.availability
+  );
+  const [availabilityEn, setAvailabilityEn] = useState(enData.profile.availability);
 
   // Education list
   const [educationList, setEducationList] = useState<EducationItem[]>(currentProfile.education || []);
@@ -139,7 +159,79 @@ export const AdminProfilePage: React.FC = () => {
     setGithubDisplay(currentProfile.githubDisplay);
     setEducationList(currentProfile.education || []);
     setCertificationsList(currentProfile.certifications || []);
+
+    if (currentProfile.headline && !isOutdatedHeadline(currentProfile.headline)) {
+      setHeadlinePt(currentProfile.headline);
+    }
+    if (currentProfile.availability && !isOutdatedAvailability(currentProfile.availability)) {
+      setAvailabilityPt(currentProfile.availability);
+    }
+    if (currentProfile.shortSummary && !isOutdatedShortSummary(currentProfile.shortSummary)) {
+      setShortSummaryPt(currentProfile.shortSummary);
+    }
+    if (currentProfile.fullBio?.length && !isOutdatedBio(currentProfile.fullBio)) {
+      setFullBioPtText(currentProfile.fullBio.join('\n\n'));
+    }
   }, [currentProfile]);
+
+  // Load bilingual profile fields from Supabase if available
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    async function loadDbProfile() {
+      try {
+        const { data: dbProfile } = await supabase.from('profiles').select('*').limit(1).maybeSingle();
+        if (dbProfile) {
+          if (dbProfile.headline_pt && !isOutdatedHeadline(dbProfile.headline_pt)) {
+            setHeadlinePt(dbProfile.headline_pt);
+          } else {
+            setHeadlinePt(ptData.profile.headline);
+          }
+          if (dbProfile.headline_en && !isOutdatedHeadline(dbProfile.headline_en)) {
+            setHeadlineEn(dbProfile.headline_en);
+          } else {
+            setHeadlineEn(enData.profile.headline);
+          }
+          if (dbProfile.availability_pt && !isOutdatedAvailability(dbProfile.availability_pt)) {
+            setAvailabilityPt(dbProfile.availability_pt);
+          } else {
+            setAvailabilityPt(ptData.profile.availability);
+          }
+          if (dbProfile.availability_en && !isOutdatedAvailability(dbProfile.availability_en)) {
+            setAvailabilityEn(dbProfile.availability_en);
+          } else {
+            setAvailabilityEn(enData.profile.availability);
+          }
+          if (dbProfile.short_summary_pt && !isOutdatedShortSummary(dbProfile.short_summary_pt)) {
+            setShortSummaryPt(dbProfile.short_summary_pt);
+          } else {
+            setShortSummaryPt(ptData.profile.shortSummary);
+          }
+          if (dbProfile.short_summary_en && !isOutdatedShortSummary(dbProfile.short_summary_en)) {
+            setShortSummaryEn(dbProfile.short_summary_en);
+          } else {
+            setShortSummaryEn(enData.profile.shortSummary);
+          }
+          if (dbProfile.current_role_pt) setCurrentRolePt(dbProfile.current_role_pt);
+          if (dbProfile.current_role_en) setCurrentRoleEn(dbProfile.current_role_en);
+          if (dbProfile.target_role_pt) setTargetRolePt(dbProfile.target_role_pt);
+          if (dbProfile.target_role_en) setTargetRoleEn(dbProfile.target_role_en);
+          if (Array.isArray(dbProfile.full_bio_pt) && dbProfile.full_bio_pt.length > 0 && !isOutdatedBio(dbProfile.full_bio_pt)) {
+            setFullBioPtText(dbProfile.full_bio_pt.join('\n\n'));
+          } else {
+            setFullBioPtText(ptData.profile.fullBio.join('\n\n'));
+          }
+          if (Array.isArray(dbProfile.full_bio_en) && dbProfile.full_bio_en.length > 0 && !isOutdatedBio(dbProfile.full_bio_en)) {
+            setFullBioEnText(dbProfile.full_bio_en.join('\n\n'));
+          } else {
+            setFullBioEnText(enData.profile.fullBio.join('\n\n'));
+          }
+        }
+      } catch (err) {
+        console.warn('Could not load bilingual profile from Supabase:', err);
+      }
+    }
+    loadDbProfile();
+  }, []);
 
   // Education helpers
   const handleAddEducation = () => {

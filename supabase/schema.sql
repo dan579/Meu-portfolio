@@ -417,19 +417,17 @@ INSERT INTO profiles (
     'IT Support Technician (L1)',
     'Analista de Sistemas / Infraestrutura',
     'Systems & Infrastructure Analyst',
-    'Técnico de Suporte de TI em transição para Analista de Sistemas e Infraestrutura',
-    'IT Support Technician transitioning to Systems & Infrastructure Analyst',
-    'Profissional de TI com experiência prática em suporte corporativo, administração de redes, servidores Windows/Linux e virtualização, expandindo competências em desenvolvimento de software moderno (React/TS, SQL) e arquitetura de sistemas.',
-    'IT professional with hands-on experience in corporate IT support, network administration, Windows/Linux server management, and virtualization, expanding skills in modern software development (React/TS, SQL) and systems architecture.',
+    'Infraestrutura & Suporte Técnico • Sistemas e Automação',
+    'Infrastructure & Technical Support • Systems and Automation',
+    'Profissional de TI com experiência prática em suporte técnico, infraestrutura, redes e sistemas, atuando na resolução de problemas e sustentação de ambientes tecnológicos. Também desenvolvo soluções, automações e sistemas próprios para transformar problemas operacionais em processos mais eficientes.',
+    'IT professional with hands-on experience in technical support, infrastructure, networks and systems, working on problem resolution and keeping technology environments running. I also build solutions, automations and systems of my own to turn operational problems into more efficient processes.',
     ARRAY[
-        'Atuo diariamente na sustentação e otimização do ecossistema tecnológico da UNIFENAS (Belo Horizonte), atendendo centenas de usuários acadêmicos e administrativos.',
-        'Minha rotina abrange desde o gerenciamento de chamados de alta prioridade via GLPI, administração de contas e políticas via Active Directory, até a manutenção de redes com pfSense e MikroTik, além de monitoramento contínuo de disponibilidade de serviços com Zabbix.',
-        'Em paralelo à infraestrutura, construo soluções completas de software aplicando TypeScript, React, modelagem relacional SQL e arquiteturas escaláveis. Meu objetivo é consolidar a transição para posições de Analista de Sistemas e Infraestrutura, unindo a visão sistêmica de redes ao ciclo de desenvolvimento de software.'
+        'Sou profissional de Tecnologia da Informação com experiência prática em suporte técnico, infraestrutura, redes e sistemas. Atuo diretamente na sustentação de ambientes tecnológicos — resolvendo problemas de conectividade, servidores, Active Directory, monitoramento e ativos de rede no dia a dia. Paralelamente, desenvolvo sistemas, automações e produtos próprios, usando esse contato direto com a operação para identificar problemas reais e construir soluções completas para eles — da regra de negócio à interface. A automação é o elo natural entre essas duas frentes: boa parte do que automatizo nasce de gargalos que eu mesmo vejo na rotina de suporte e infraestrutura. Tenho também interesse crescente em Inteligência Artificial aplicada a sistemas e processos — um diferencial em construção, não o centro da minha atuação. O Operis, sistema que desenvolvo para gestão de processos operacionais, é o exemplo mais direto dessa combinação: nasce da minha vivência em suporte e infraestrutura e se materializa como sistema completo, da regra de negócio à interface.',
+        'Minha rotina abrange desde o gerenciamento de chamados de alta prioridade via GLPI, administração de contas e políticas via Active Directory, até a manutenção de redes com pfSense e MikroTik, além de monitoramento contínuo de disponibilidade de serviços com Zabbix.'
     ],
     ARRAY[
-        'I work daily in maintaining and optimizing the technological ecosystem of UNIFENAS (Belo Horizonte), supporting hundreds of academic and administrative users.',
-        'My routine spans high-priority ticket management via GLPI, corporate identity and policy administration in Active Directory, network operations with pfSense and MikroTik, and proactive service availability monitoring with Zabbix.',
-        'In parallel with infrastructure, I engineer complete software solutions applying TypeScript, React, relational SQL modeling, and scalable architectures. My goal is to consolidate my transition into Systems & Infrastructure Analyst roles, combining networking systems vision with software development lifecycle.'
+        'I''m an IT professional with hands-on experience in technical support, infrastructure, networks and systems. I work directly on keeping technology environments running — solving connectivity, server, Active Directory, monitoring and network asset issues day to day. In parallel, I build systems, automations and products of my own, using that direct contact with operations to spot real problems and build complete solutions for them — from business rule to interface. Automation is the natural bridge between the two: most of what I automate comes from bottlenecks I see firsthand in support and infrastructure work. I also have growing interest in AI applied to systems and processes — an emerging edge, not the center of what I do. Operis, a system I''m building for operations management, is the clearest example of this combination: it comes from my hands-on support and infrastructure experience and takes shape as a complete system, from business rule to interface.',
+        'My routine ranges from managing high-priority incidents via GLPI, managing enterprise identities and policies via Active Directory, to managing networks with pfSense and MikroTik, as well as proactive service availability monitoring with Zabbix.'
     ],
     'Belo Horizonte, MG • Brasil',
     'contato@danielsantos.dev',
@@ -437,8 +435,8 @@ INSERT INTO profiles (
     'linkedin.com/in/daniel-santos-silva',
     'https://github.com/danielsantos-dev',
     'github.com/danielsantos-dev',
-    'Disponível para novas oportunidades e transição de carreira',
-    'Available for new opportunities & career transition',
+    'Disponível para novas oportunidades em Suporte, Infraestrutura e Sistemas',
+    'Available for new opportunities in Support, Infrastructure and Systems',
     60,
     40,
     'Infraestrutura & Redes',
