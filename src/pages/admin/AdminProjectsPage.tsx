@@ -620,7 +620,7 @@ export const AdminProjectsPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-white">
-                    {editingProject ? `Editar Case: ${editingProject.title}` : 'Criar Novo Case de Projeto'}
+                    {editingProject ? `Editar Case: ${formData.title}` : 'Criar Novo Case de Projeto'}
                   </h3>
                   <p className="text-xs text-slate-400">
                     Formulário completo bilíngue com suporte a galeria de imagens do Storage
