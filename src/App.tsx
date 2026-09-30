@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { SpeedInsights } from '@vercel/speed-insights/react';
+import { Analytics } from '@vercel/analytics/react';
 import { CloudContentProvider } from './content/CloudContentProvider.tsx';
 import { AdminAuthProvider } from './admin/AdminAuthContext.tsx';
 import { AdminAuthGuard } from './admin/AdminAuthGuard.tsx';
@@ -43,6 +44,7 @@ export default function App() {
         <BrowserRouter>
           <ScrollToTop />
           <SpeedInsights />
+          <Analytics />
           <Routes>
             {/* Public Website Routes */}
             <Route path="/" element={<AppLayout />}>
