@@ -2,10 +2,12 @@ import {
   Profile,
   ExperienceItem,
   SkillCategory,
-  ContactInfo
+  ContactInfo,
+  Language,
 } from '../content/types.ts';
 
 export interface ResumeData {
+  language: Language;
   profile: Profile;
   experiences: ExperienceItem[];
   skillCategories: SkillCategory[];
@@ -15,6 +17,7 @@ export interface ResumeData {
 }
 
 export interface PortfolioData {
+  language: Language;
   profile: Profile;
   experiences: ExperienceItem[];
   projects: any[];

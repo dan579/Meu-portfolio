@@ -4,6 +4,7 @@ import React from 'react';
 import { ResumeDocument } from './ResumeDocument.tsx';
 import { PortfolioDocument } from './PortfolioDocument.tsx';
 import { ResumeData, PortfolioData } from './types.ts';
+import { pdfLabels } from './pdfLabels.ts';
 import { ContentContextType } from '../content/ContentProvider.tsx';
 
 /**
@@ -35,16 +36,19 @@ function downloadBlob(blob: Blob, fileName: string) {
  */
 export async function downloadResumePdf(content: ContentContextType): Promise<void> {
   const dateSlug = getCurrentDateSlug();
-  const fileName = `curriculo-daniel-santos-${dateSlug}.pdf`;
+  const language = content.language;
+  const L = pdfLabels[language];
+  const fileName = `${L.resumeFilePrefix}-${dateSlug}.pdf`;
   const siteUrl = window.location.origin;
 
   const data: ResumeData = {
+    language,
     profile: content.profile,
     experiences: content.experiences,
     skillCategories: content.skillCategories,
     contact: content.contact,
     siteUrl,
-    generatedDate: new Date().toLocaleDateString('pt-BR'),
+    generatedDate: new Date().toLocaleDateString(L.dateLocale),
   };
 
   const doc = React.createElement(ResumeDocument, { data });
@@ -57,7 +61,9 @@ export async function downloadResumePdf(content: ContentContextType): Promise<vo
  */
 export async function downloadPortfolioPdf(content: ContentContextType): Promise<void> {
   const dateSlug = getCurrentDateSlug();
-  const fileName = `portfolio-daniel-santos-${dateSlug}.pdf`;
+  const language = content.language;
+  const L = pdfLabels[language];
+  const fileName = `${L.portfolioFilePrefix}-${dateSlug}.pdf`;
   const siteUrl = window.location.origin;
 
   // Generate dynamic QR Code pointing to the live site
@@ -76,6 +82,7 @@ export async function downloadPortfolioPdf(content: ContentContextType): Promise
   }
 
   const data: PortfolioData = {
+    language,
     profile: content.profile,
     experiences: content.experiences,
     projects: content.projects,
@@ -84,7 +91,7 @@ export async function downloadPortfolioPdf(content: ContentContextType): Promise
     contact: content.contact,
     siteUrl,
     qrCodeDataUrl,
-    generatedDate: new Date().toLocaleDateString('pt-BR'),
+    generatedDate: new Date().toLocaleDateString(L.dateLocale),
   };
 
   const doc = React.createElement(PortfolioDocument, { data });

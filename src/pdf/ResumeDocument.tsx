@@ -2,9 +2,11 @@ import React from 'react';
 import { Document, Page, Text, View, Link } from '@react-pdf/renderer';
 import { ResumeData } from './types.ts';
 import { pdfStyles as styles } from './sharedStyles.ts';
+import { pdfLabels } from './pdfLabels.ts';
 
 export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
   const { profile, experiences, skillCategories, contact, siteUrl } = data;
+  const L = pdfLabels[data.language];
   const directEmail = profile.email || contact.email || '';
 
   const contactItems: React.ReactNode[] = [];
@@ -47,10 +49,10 @@ export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
 
   return (
     <Document
-      title={`Currículo - ${profile.name}`}
+      title={`${L.resumeDocTitle} - ${profile.name}`}
       author={profile.name}
-      subject="Currículo Profissional ATS"
-      keywords="Analista de Sistemas, Infraestrutura, Suporte de TI, TypeScript, React, SQL, Redes"
+      subject={L.resumeDocSubject}
+      keywords={L.resumeKeywords}
     >
       <Page size="A4" style={styles.page}>
         {/* 1. Header (ATS Clean) */}
@@ -72,7 +74,7 @@ export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
 
         {/* 2. Resumo Profissional */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Resumo Profissional</Text>
+          <Text style={styles.sectionTitle}>{L.professionalSummary}</Text>
           <Text style={styles.summaryText}>
             {profile.shortSummary || (profile.fullBio && profile.fullBio[0]) || ''}
           </Text>
@@ -80,7 +82,7 @@ export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
 
         {/* 3. Experiência Profissional (max 4 bullets per role, clear margin between roles) */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Experiência Profissional</Text>
+          <Text style={styles.sectionTitle}>{L.experience}</Text>
           {experiences.map((exp) => {
             const displayResponsibilities = (exp.responsibilities || []).slice(0, 4);
 
@@ -105,7 +107,7 @@ export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
 
                 {exp.technologies && exp.technologies.length > 0 && (
                   <View style={styles.techStackRow}>
-                    <Text style={styles.techLabel}>Tecnologias: </Text>
+                    <Text style={styles.techLabel}>{L.technologies}: </Text>
                     <Text style={styles.techList}>
                       {exp.technologies.join(' • ')}
                     </Text>
@@ -119,7 +121,7 @@ export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
         {/* 4. Formação Acadêmica */}
         {profile.education && profile.education.length > 0 && (
           <View style={styles.section} wrap={false}>
-            <Text style={styles.sectionTitle}>Formação Acadêmica</Text>
+            <Text style={styles.sectionTitle}>{L.education}</Text>
             {profile.education.map((edu) => (
               <View key={edu.id || edu.field} style={styles.eduBlock}>
                 <View style={styles.expHeaderRow}>
@@ -141,7 +143,7 @@ export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
         {/* 5. Certificações & Cursos Técnicos */}
         {profile.certifications && profile.certifications.length > 0 && (
           <View style={styles.section} wrap={false}>
-            <Text style={styles.sectionTitle}>Certificações & Cursos Técnicos</Text>
+            <Text style={styles.sectionTitle}>{L.certificationsAndCourses}</Text>
             {profile.certifications.map((cert) => (
               <View key={cert.id || cert.name} style={styles.certRow}>
                 <Text style={styles.certName}>
@@ -157,7 +159,7 @@ export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
         {/* 6. Competências Técnicas */}
         {skillCategories && skillCategories.length > 0 && (
           <View style={styles.section} wrap={false}>
-            <Text style={styles.sectionTitle}>Competências Técnicas</Text>
+            <Text style={styles.sectionTitle}>{L.technicalSkills}</Text>
             {skillCategories.map((cat) => {
               const skillNames = (cat.skills || []).map((s) => s.name).join(', ');
               return (
@@ -173,7 +175,7 @@ export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
         {/* Rodapé Dinâmico */}
         <View style={styles.footer} fixed>
           <Text>
-            Portfólio Interativo & Cases Completos:{' '}
+            {L.resumeFooter}:{' '}
             <Link style={styles.footerLink} src={siteUrl}>
               {siteUrl}
             </Link>
@@ -181,7 +183,7 @@ export const ResumeDocument: React.FC<{ data: ResumeData }> = ({ data }) => {
           <Text
             style={styles.pageNumber}
             render={({ pageNumber, totalPages }) =>
-              `Página ${pageNumber} de ${totalPages}`
+              L.page(pageNumber, totalPages)
             }
           />
         </View>
