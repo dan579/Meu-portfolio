@@ -4,7 +4,8 @@ import {
   useProfile,
   useProjects,
   useUILabels,
-  useContent
+  useContent,
+  useLanguage
 } from '../content/ContentProvider.tsx';
 import { downloadResumePdf, downloadPortfolioPdf } from '../pdf/pdfGenerator.ts';
 import { TechBadge } from '../components/common/TechBadge.tsx';
@@ -16,7 +17,6 @@ import {
   MapPin,
   Briefcase,
   Layers,
-  Sparkles,
   Server,
   Code,
   FileText,
@@ -24,7 +24,10 @@ import {
   Check,
   Download,
   BookOpen,
-  ChevronDown
+  ChevronDown,
+  ShieldCheck,
+  Cpu,
+  Network
 } from 'lucide-react';
 
 export const HomePage: React.FC = () => {
@@ -32,6 +35,8 @@ export const HomePage: React.FC = () => {
   const profile = useProfile();
   const projects = useProjects();
   const labels = useUILabels();
+  const { language } = useLanguage();
+
   const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
   const [downloadingFormat, setDownloadingFormat] = useState<'resume' | 'portfolio' | null>(null);
   const [downloadedFormat, setDownloadedFormat] = useState<'resume' | 'portfolio' | null>(null);
@@ -84,328 +89,454 @@ export const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-10" id="home-page-container">
-      {/* Hero / Identity Quick Header */}
-      <section className="relative">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-2">
-          <div className="space-y-3 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/25 text-blue-400 text-xs font-mono font-medium tracking-wide">
-              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-              <span>{profile.headline}</span>
-            </div>
+    <div className="w-full" id="home-page-container">
+      {/* 1. Hero / Apresentação Profissional */}
+      <section className="bg-white border-b border-slate-200/90 py-16 sm:py-20 lg:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
+            {/* Left Content */}
+            <div className="max-w-3xl space-y-6">
+              {/* Badge Identidade */}
+              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#0877E8]/10 border border-[#0877E8]/20 text-[#0877E8] text-xs font-semibold tracking-wide">
+                <span className="w-2 h-2 rounded-full bg-[#00D4E8]" />
+                <span>{profile.headline}</span>
+              </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
-              {profile.name} <span className="text-blue-500">.</span>
-            </h1>
+              {/* Main Heading H1 */}
+              <div className="space-y-2">
+                <h1 className="font-heading font-extrabold text-4xl sm:text-5xl lg:text-6xl text-[#061B3A] tracking-tight leading-[1.1]">
+                  {profile.name}
+                </h1>
+                <p className="font-heading font-bold text-lg sm:text-xl text-[#1769AA]">
+                  {language === 'pt'
+                    ? 'Sustentação de Ambientes Tecnológicos & Desenvolvimento de Sistemas'
+                    : 'Technology Infrastructure & Software Systems'}
+                </p>
+              </div>
 
-            <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-xl">
-              {profile.shortSummary}
-            </p>
+              {/* Presentation Bio */}
+              <p className="text-base sm:text-lg text-[#253247] leading-relaxed font-normal">
+                {profile.shortSummary}
+              </p>
 
-            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-1 font-mono">
-              <span className="flex items-center gap-1.5 text-slate-300">
-                <MapPin className="w-3.5 h-3.5 text-blue-400" />
-                {profile.location}
-              </span>
-              <span className="text-slate-700">•</span>
-              <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50" />
-                {profile.availability}
-              </span>
-            </div>
-          </div>
+              {/* Status and Location row */}
+              <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-[#64748B] pt-1">
+                <span className="inline-flex items-center gap-1.5 text-[#253247]">
+                  <MapPin className="w-4 h-4 text-[#0877E8]" />
+                  <span>{profile.location}</span>
+                </span>
+                <span className="text-slate-300">•</span>
+                <span className="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>{profile.availability}</span>
+                </span>
+              </div>
 
-          {/* Quick Action Buttons */}
-          <div className="flex flex-wrap sm:flex-col gap-2.5 w-full sm:w-auto shrink-0">
-            <Link
-              to="/contato"
-              id="hero-contact-btn"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white text-xs font-bold tracking-wide transition-all duration-200 shadow-lg shadow-blue-600/25 hover:shadow-blue-500/35 hover:-translate-y-0.5"
-            >
-              <Mail className="w-4 h-4" />
-              <span>{labels.common.getInTouch}</span>
-            </Link>
-
-            {/* Download CV Dropdown */}
-            <div className="relative" ref={downloadMenuRef}>
-              <button
-                onClick={() => setIsDownloadMenuOpen((prev) => !prev)}
-                disabled={downloadingFormat !== null}
-                id="hero-download-cv-btn"
-                aria-expanded={isDownloadMenuOpen}
-                aria-haspopup="true"
-                className="w-full inline-flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl bg-[#16161c] hover:bg-[#1f1f27] border border-slate-800/90 hover:border-blue-500/40 text-slate-200 hover:text-white text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50 hover:-translate-y-0.5 shadow-sm"
-              >
-                <div className="flex items-center gap-2">
-                  {downloadingFormat !== null ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400" />
-                  ) : downloadedFormat ? (
-                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                  ) : (
-                    <Download className="w-3.5 h-3.5 text-blue-400" />
-                  )}
-                  <span>
-                    {downloadingFormat !== null
-                      ? 'Gerando PDF...'
-                      : downloadedFormat === 'resume'
-                      ? 'Currículo Baixado'
-                      : downloadedFormat === 'portfolio'
-                      ? 'Portfólio Baixado'
-                      : 'Baixar CV (PDF)'}
-                  </span>
-                </div>
-                <ChevronDown
-                  className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
-                    isDownloadMenuOpen ? 'rotate-180 text-blue-400' : ''
-                  }`}
-                />
-              </button>
-
-              {/* Dropdown Menu */}
-              {isDownloadMenuOpen && (
-                <div
-                  id="hero-download-menu"
-                  className="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 w-72 sm:w-80 bg-[#16161c] border border-slate-800 rounded-xl shadow-2xl shadow-black/80 p-2 z-50 space-y-1.5 backdrop-blur-md animate-in fade-in slide-in-from-top-1 duration-150"
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-3 pt-4">
+                {/* Conhecer Projetos */}
+                <Link
+                  to="/projetos"
+                  id="hero-projects-btn"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-[10px] bg-[#0877E8] hover:bg-[#0766c6] text-white text-sm font-bold transition-all shadow-xs hover:shadow-md hover:-translate-y-0.5 cursor-pointer"
                 >
-                  {/* Option 1: Currículo Tradicional */}
+                  <Layers className="w-4 h-4" />
+                  <span>{language === 'pt' ? 'Conhecer Projetos' : 'Explore Projects'}</span>
+                </Link>
+
+                {/* Download CV Dropdown */}
+                <div className="relative" ref={downloadMenuRef}>
                   <button
-                    type="button"
-                    onClick={handleDownloadResume}
-                    id="hero-dropdown-resume-btn"
-                    className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-[#1f1f28] border border-transparent hover:border-blue-500/30 transition-all duration-150 text-left group cursor-pointer"
+                    onClick={() => setIsDownloadMenuOpen((prev) => !prev)}
+                    disabled={downloadingFormat !== null}
+                    id="hero-download-cv-btn"
+                    aria-expanded={isDownloadMenuOpen}
+                    aria-haspopup="true"
+                    className="inline-flex items-center justify-between gap-2 px-5 py-3 rounded-[10px] bg-white hover:bg-slate-50 border border-slate-300 text-[#061B3A] text-sm font-semibold transition-all cursor-pointer disabled:opacity-50 hover:border-[#0877E8] shadow-xs"
                   >
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-105 transition-transform shrink-0">
-                        <FileText className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-white group-hover:text-blue-400 transition-colors">
-                          Currículo Tradicional (PDF)
-                        </div>
-                        <div className="text-[10px] text-slate-400">
-                          Formato ATS · Enxuto
-                        </div>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      {downloadingFormat !== null ? (
+                        <Loader2 className="w-4 h-4 animate-spin text-[#0877E8]" />
+                      ) : downloadedFormat ? (
+                        <Check className="w-4 h-4 text-emerald-600" />
+                      ) : (
+                        <Download className="w-4 h-4 text-[#0877E8]" />
+                      )}
+                      <span>
+                        {downloadingFormat !== null
+                          ? (language === 'pt' ? 'Gerando PDF...' : 'Generating PDF...')
+                          : downloadedFormat === 'resume'
+                          ? (language === 'pt' ? 'Currículo Baixado' : 'Resume Downloaded')
+                          : downloadedFormat === 'portfolio'
+                          ? (language === 'pt' ? 'Portfólio Baixado' : 'Portfolio Downloaded')
+                          : (language === 'pt' ? 'Baixar Currículo (PDF)' : 'Download Resume (PDF)')}
+                      </span>
                     </div>
-                    <Download className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 group-hover:translate-y-0.5 transition-all shrink-0 ml-2" />
+                    <ChevronDown
+                      className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${
+                        isDownloadMenuOpen ? 'rotate-180 text-[#0877E8]' : ''
+                      }`}
+                    />
                   </button>
 
-                  {/* Option 2: Portfólio Completo */}
-                  <button
-                    type="button"
-                    onClick={handleDownloadPortfolio}
-                    id="hero-dropdown-portfolio-btn"
-                    className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-[#1f1f28] border border-transparent hover:border-emerald-500/30 transition-all duration-150 text-left group cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform shrink-0">
-                        <BookOpen className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors">
-                          Portfólio Completo (PDF)
+                  {/* Dropdown Options */}
+                  {isDownloadMenuOpen && (
+                    <div
+                      id="hero-download-menu"
+                      className="absolute left-0 top-full mt-2 w-80 bg-white border border-slate-200 rounded-xl shadow-xl p-2 z-50 space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-150"
+                    >
+                      {/* Option 1: Currículo ATS */}
+                      <button
+                        type="button"
+                        onClick={handleDownloadResume}
+                        id="hero-dropdown-resume-btn"
+                        className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-[#F3F6FA] border border-transparent hover:border-slate-200 transition-all text-left group cursor-pointer"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-[#0877E8]/10 border border-[#0877E8]/20 flex items-center justify-center text-[#0877E8] shrink-0">
+                            <FileText className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-[#061B3A] group-hover:text-[#0877E8] transition-colors">
+                              {language === 'pt' ? 'Currículo Tradicional (PDF)' : 'Traditional Resume (PDF)'}
+                            </div>
+                            <div className="text-[11px] text-[#64748B]">
+                              {language === 'pt' ? 'Formato ATS • Enxuto (até 2 págs)' : 'ATS Formatted • Compact'}
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-[10px] text-slate-400">
-                          Com projetos, arquitetura e QR Code
+                        <Download className="w-4 h-4 text-slate-400 group-hover:text-[#0877E8] shrink-0" />
+                      </button>
+
+                      {/* Option 2: Portfólio Completo */}
+                      <button
+                        type="button"
+                        onClick={handleDownloadPortfolio}
+                        id="hero-dropdown-portfolio-btn"
+                        className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-[#F3F6FA] border border-transparent hover:border-slate-200 transition-all text-left group cursor-pointer"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-[#00D4E8]/20 border border-[#00D4E8]/30 flex items-center justify-center text-[#0877E8] shrink-0">
+                            <BookOpen className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-[#061B3A] group-hover:text-[#0877E8] transition-colors">
+                              {language === 'pt' ? 'Portfólio Completo (PDF)' : 'Full Portfolio (PDF)'}
+                            </div>
+                            <div className="text-[11px] text-[#64748B]">
+                              {language === 'pt' ? 'Com cases, infraestrutura e QR Code' : 'Full case studies & QR Code'}
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                        <Download className="w-4 h-4 text-slate-400 group-hover:text-[#0877E8] shrink-0" />
+                      </button>
                     </div>
-                    <Download className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 group-hover:translate-y-0.5 transition-all shrink-0 ml-2" />
-                  </button>
+                  )}
                 </div>
-              )}
+
+                {/* Social Channels */}
+                <div className="flex items-center gap-2">
+                  {profile.linkedin && (
+                    <a
+                      href={profile.linkedin}
+                      target="_blank"
+                      rel="noreferrer"
+                      id="hero-linkedin-btn"
+                      className="p-3 rounded-[10px] bg-slate-100 hover:bg-slate-200 text-[#061B3A] hover:text-[#0877E8] transition-colors border border-slate-200"
+                      title="LinkedIn"
+                    >
+                      <Linkedin className="w-4 h-4" />
+                    </a>
+                  )}
+                  {profile.github && (
+                    <a
+                      href={profile.github}
+                      target="_blank"
+                      rel="noreferrer"
+                      id="hero-github-btn"
+                      className="p-3 rounded-[10px] bg-slate-100 hover:bg-slate-200 text-[#061B3A] hover:text-[#0877E8] transition-colors border border-slate-200"
+                      title="GitHub"
+                    >
+                      <Github className="w-4 h-4" />
+                    </a>
+                  )}
+                  <Link
+                    to="/contato"
+                    className="p-3 rounded-[10px] bg-slate-100 hover:bg-slate-200 text-[#061B3A] hover:text-[#0877E8] transition-colors border border-slate-200"
+                    title="Contato"
+                  >
+                    <Mail className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <a
-                href={profile.linkedin}
-                target="_blank"
-                rel="noreferrer"
-                id="hero-linkedin-btn"
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#14141a] hover:bg-[#1c1c24] border border-slate-800/90 text-slate-300 hover:text-white hover:border-slate-700 text-xs font-medium transition-all duration-200 hover:-translate-y-0.5"
-              >
-                <Linkedin className="w-3.5 h-3.5 text-blue-400" />
-                <span>LinkedIn</span>
-              </a>
-              <a
-                href={profile.github}
-                target="_blank"
-                rel="noreferrer"
-                id="hero-github-btn"
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#14141a] hover:bg-[#1c1c24] border border-slate-800/90 text-slate-300 hover:text-white hover:border-slate-700 text-xs font-medium transition-all duration-200 hover:-translate-y-0.5"
-              >
-                <Github className="w-3.5 h-3.5" />
-                <span>GitHub</span>
-              </a>
+            {/* Right Card / Monogram Showcase */}
+            <div className="w-full lg:w-96 shrink-0">
+              <div className="bg-[#061B3A] text-white p-8 rounded-2xl shadow-xl relative overflow-hidden border border-[#1769AA]/40">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-[#00D4E8]/10 rounded-full blur-2xl pointer-events-none" />
+                <div className="relative z-10 space-y-6">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                    <img
+                      src="/assets/aistudio/Logo_DS_entrela_ado_em_azul_marinho_e_ciano_135d994c.png"
+                      alt="DS Monogram"
+                      className="w-12 h-12 object-contain brightness-110"
+                    />
+                    <span className="text-[11px] font-mono font-bold text-[#00D4E8] bg-white/10 px-2.5 py-1 rounded">
+                      DS SISTEMAS
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="font-heading font-extrabold text-xl text-white">
+                      {language === 'pt' ? 'Atuação Completa' : 'Full Scope'}
+                    </h3>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      {language === 'pt'
+                        ? 'Da sustentação e redes ao desenvolvimento de soluções completas — conectando a operação aos sistemas.'
+                        : 'From infrastructure support to full-stack system development — bridging operations with software.'}
+                    </p>
+                  </div>
+
+                  <div className="space-y-3 pt-2">
+                    <div className="flex items-center gap-3 text-xs text-slate-200">
+                      <div className="w-7 h-7 rounded-lg bg-[#0877E8]/20 flex items-center justify-center text-[#00D4E8]">
+                        <Server className="w-3.5 h-3.5" />
+                      </div>
+                      <span>{language === 'pt' ? 'Infraestrutura, Redes & AD' : 'Infrastructure, Networks & AD'}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-slate-200">
+                      <div className="w-7 h-7 rounded-lg bg-[#0877E8]/20 flex items-center justify-center text-[#00D4E8]">
+                        <Code className="w-3.5 h-3.5" />
+                      </div>
+                      <span>{language === 'pt' ? 'Sistemas Web, Mobile & APIs' : 'Web & Mobile Systems, APIs'}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-slate-200">
+                      <div className="w-7 h-7 rounded-lg bg-[#0877E8]/20 flex items-center justify-center text-[#00D4E8]">
+                        <Cpu className="w-3.5 h-3.5" />
+                      </div>
+                      <span>{language === 'pt' ? 'Automações & Inteligência Aplicada' : 'Automations & Applied AI'}</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <Link
+                      to="/sobre"
+                      className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-[10px] bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-colors"
+                    >
+                      <span>{language === 'pt' ? 'Ver Trajetória Completa' : 'View Full Background'}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Primary Stack Overview Card */}
-      <section>
-        <div className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 flex flex-col justify-between hover:border-blue-500/30 transition-all duration-300 shadow-lg shadow-black/20">
-          <div>
-            <div className="flex items-center justify-between gap-2 mb-4">
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+      {/* 2. Stack Principal: Infraestrutura & Desenvolvimento */}
+      <section className="bg-[#F3F6FA] py-16 border-b border-slate-200/90">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <span className="text-xs font-bold font-heading uppercase tracking-wider text-[#0877E8]">
                 {labels.common.primaryStack}
-              </h3>
-              <span className="text-[10px] text-slate-500 font-mono">Infra + Software</span>
+              </span>
+              <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-[#061B3A] mt-1">
+                {language === 'pt'
+                  ? 'Competências e Tecnologias Aplicadas'
+                  : 'Core Competencies & Technologies'}
+              </h2>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <span className="text-[11px] text-slate-400 font-mono font-semibold uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <Server className="w-3.5 h-3.5 text-blue-400" />
-                  Infraestrutura & Redes
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {['Active Directory', 'Windows Server', 'Proxmox VE', 'pfSense', 'MikroTik', 'Zabbix', 'GLPI'].map((tech) => (
-                    <TechBadge key={tech} variant="default" size="xs">
-                      {tech}
-                    </TechBadge>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <span className="text-[11px] text-slate-400 font-mono font-semibold uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <Code className="w-3.5 h-3.5 text-blue-400" />
-                  Desenvolvimento & Bancos
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {['React', 'TypeScript', 'PostgreSQL / SQL', 'Tailwind CSS', 'Git & GitHub', 'Flutter'].map((tech) => (
-                    <TechBadge key={tech} variant="accent" size="xs">
-                      {tech}
-                    </TechBadge>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-4 mt-4 border-t border-slate-800/60 flex items-center justify-between text-xs">
             <Link
               to="/infraestrutura"
-              className="text-blue-400 hover:text-blue-300 transition-colors inline-flex items-center gap-1 font-mono text-[11px] hover:underline underline-offset-4"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0877E8] hover:text-[#061B3A] transition-colors"
             >
-              <span>Ver catálogo detalhado de infraestrutura</span>
+              <span>{language === 'pt' ? 'Ver catálogo de infraestrutura' : 'Explore infrastructure catalog'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Bloco 1: Infraestrutura & Redes */}
+            <div className="bg-white rounded-2xl p-7 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-[#0877E8]/10 flex items-center justify-center text-[#0877E8]">
+                  <Server className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-base text-[#061B3A]">
+                    {language === 'pt' ? 'Infraestrutura & Redes' : 'Infrastructure & Networking'}
+                  </h3>
+                  <p className="text-xs text-[#64748B]">
+                    {language === 'pt'
+                      ? 'Administração de ambientes, conectividade e suporte'
+                      : 'Environment administration, connectivity & support'}
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-xs text-[#253247] leading-relaxed mb-5">
+                {language === 'pt'
+                  ? 'Vivência diária na resolução de incidentes N1/N2, servidores de rede, virtualização Proxmox, domínio Active Directory, firewall pfSense, roteamento MikroTik e monitoramento contínuo com Zabbix.'
+                  : 'Hands-on daily experience with L1/L2 incident resolution, network servers, Proxmox virtualization, Active Directory, pfSense firewalls, MikroTik routing, and Zabbix monitoring.'}
+              </p>
+
+              <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+                {['Active Directory', 'Windows Server', 'Proxmox VE', 'pfSense', 'MikroTik', 'Zabbix', 'GLPI', 'VLANs / DHCP'].map((tech) => (
+                  <TechBadge key={tech} variant="navy" size="xs">
+                    {tech}
+                  </TechBadge>
+                ))}
+              </div>
+            </div>
+
+            {/* Bloco 2: Desenvolvimento & Bancos */}
+            <div className="bg-white rounded-2xl p-7 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-[#00D4E8]/20 flex items-center justify-center text-[#0877E8]">
+                  <Code className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-base text-[#061B3A]">
+                    {language === 'pt' ? 'Desenvolvimento de Sistemas & Bancos' : 'Systems Development & Databases'}
+                  </h3>
+                  <p className="text-xs text-[#64748B]">
+                    {language === 'pt'
+                      ? 'Aplicações web, mobile, automações e bancos de dados'
+                      : 'Web & mobile applications, automations & databases'}
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-xs text-[#253247] leading-relaxed mb-5">
+                {language === 'pt'
+                  ? 'Construção de sistemas completos orientados a regras de negócio reais, integração de APIs, modelagem relacional em PostgreSQL, interfaces responsivas em React + Tailwind CSS e automações operacionais.'
+                  : 'Building end-to-end systems focused on real business rules, API integrations, relational modeling with PostgreSQL, responsive React + Tailwind CSS frontends, and operational automation.'}
+              </p>
+
+              <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+                {['React', 'TypeScript', 'PostgreSQL / SQL', 'Tailwind CSS', 'Git & GitHub', 'Flutter', 'Automações', 'Supabase'].map((tech) => (
+                  <TechBadge key={tech} variant="accent" size="xs">
+                    {tech}
+                  </TechBadge>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Featured Projects Highlight */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Layers className="w-4 h-4 text-blue-400" />
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-              {labels.common.featuredProjects}
-            </h3>
+      {/* 3. Projetos em Destaque */}
+      <section className="bg-white py-16 sm:py-20 border-b border-slate-200/90">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <span className="text-xs font-bold font-heading uppercase tracking-wider text-[#0877E8]">
+                {labels.common.featuredProjects}
+              </span>
+              <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-[#061B3A] mt-1">
+                {language === 'pt' ? 'Cases de Projetos Desenvolvidos' : 'Featured Case Studies'}
+              </h2>
+            </div>
+            <Link
+              to="/projetos"
+              id="view-all-projects-link"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0877E8] hover:text-[#061B3A] transition-colors"
+            >
+              <span>{labels.common.viewAllProjects}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
 
-          <Link
-            to="/projetos"
-            id="view-all-projects-link"
-            className="text-xs text-blue-400 hover:text-blue-300 font-mono font-semibold inline-flex items-center gap-1 transition-colors hover:underline underline-offset-4"
-          >
-            <span>{labels.common.viewAllProjects}</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {projects.map((proj) => (
-            <Link
-              key={proj.slug}
-              to={`/projetos/${proj.slug}`}
-              id={`featured-project-card-${proj.slug}`}
-              className="group bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 hover:border-blue-500/40 rounded-2xl p-5 transition-all duration-300 flex flex-col justify-between hover:shadow-xl hover:shadow-blue-500/[0.04] hover:-translate-y-0.5"
-            >
-              <div>
-                {/* Project Cover Block */}
-                <div className="w-full bg-[#16161c] border border-slate-800/80 rounded-xl mb-4 flex flex-col justify-between group-hover:border-slate-700 transition-colors relative overflow-hidden">
-                  <div className="absolute inset-0 bg-blue-600/[0.02] group-hover:bg-blue-600/[0.06] transition-colors pointer-events-none" />
-                  
-                  {/* Top Header bar with window dots and badge */}
-                  <div className="flex items-center justify-between px-3 py-2 border-b border-slate-800/70 bg-[#121217] relative z-10">
-                    <div className="flex items-center gap-1 shrink-0">
-                      <div className="w-1.5 h-1.5 rounded-full bg-red-500/70" />
-                      <div className="w-1.5 h-1.5 rounded-full bg-amber-500/70" />
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/70" />
-                    </div>
+          {/* Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {projects.map((proj) => (
+              <Link
+                key={proj.slug}
+                to={`/projetos/${proj.slug}`}
+                id={`featured-project-card-${proj.slug}`}
+                className="group bg-white rounded-2xl border border-slate-200/90 p-5 flex flex-col justify-between hover:border-[#0877E8] hover:shadow-lg transition-all duration-200"
+              >
+                <div>
+                  {/* Card Header Top */}
+                  <div className="bg-[#F3F6FA] border border-slate-200/80 rounded-xl p-4 mb-4 flex flex-col justify-center items-center text-center min-h-[90px] relative overflow-hidden group-hover:bg-[#0877E8]/5 transition-colors">
+                    <span className="font-heading font-extrabold text-sm text-[#061B3A] tracking-tight line-clamp-1">
+                      {proj.title}
+                    </span>
+                    <span className="text-[11px] text-[#64748B] mt-0.5 line-clamp-1">
+                      {proj.category}
+                    </span>
                     {proj.badge && (
-                      <span className="text-[9px] font-mono font-medium text-blue-400 bg-blue-950/60 border border-blue-800/40 px-2 py-0.5 rounded truncate max-w-[180px]">
+                      <span className="mt-2 text-[10px] font-mono font-bold text-[#0877E8] bg-white border border-[#0877E8]/20 px-2 py-0.5 rounded shadow-xs">
                         {proj.badge}
                       </span>
                     )}
                   </div>
 
-                  {/* Mockup Title Center Body */}
-                  <div className="px-3 py-3.5 flex flex-col items-center justify-center text-center relative z-10 min-h-[58px]">
-                    <span className="text-slate-200 group-hover:text-blue-300 font-mono font-bold text-xs tracking-wider uppercase transition-colors line-clamp-2">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <h3 className="font-heading font-bold text-base text-[#061B3A] group-hover:text-[#0877E8] transition-colors line-clamp-1">
                       {proj.title}
-                    </span>
-                    <span className="text-[10px] text-slate-500 font-mono mt-0.5 truncate max-w-full">
-                      {proj.category}
+                    </h3>
+                    <span
+                      className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md uppercase tracking-wider shrink-0 ${
+                        proj.status === 'completed'
+                          ? 'text-emerald-700 bg-emerald-50 border border-emerald-200'
+                          : 'text-[#0877E8] bg-[#0877E8]/10 border border-[#0877E8]/20'
+                      }`}
+                    >
+                      {proj.statusLabel}
                     </span>
                   </div>
+
+                  <p className="text-xs text-[#64748B] leading-relaxed line-clamp-3 mb-4">
+                    {proj.shortSummary}
+                  </p>
                 </div>
 
-                <div className="flex items-center justify-between gap-2 mb-1.5">
-                  <h4 className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors tracking-tight">
-                    {proj.title}
-                  </h4>
-                  <span
-                    className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${
-                      proj.status === 'completed'
-                        ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/25'
-                        : 'text-blue-400 bg-blue-500/10 border border-blue-500/25'
-                    }`}
-                  >
-                    {proj.statusLabel}
-                  </span>
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#0877E8]">
+                  <span>{language === 'pt' ? 'Ver Detalhes do Case' : 'View Case Details'}</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
-
-                <p className="text-xs text-slate-400 leading-relaxed line-clamp-2 mb-3">
-                  {proj.shortSummary}
-                </p>
-              </div>
-
-              <div className="pt-3 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-500 font-mono">
-                <span>Case Study</span>
-                <span className="text-blue-400 group-hover:translate-x-1 transition-transform">→</span>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Call to Experience & Full Trajectory */}
-      <section className="bg-gradient-to-r from-[#111115] via-[#14141c] to-[#111115] border border-slate-800/80 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-lg shadow-black/20">
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2 text-xs font-mono font-semibold text-blue-400">
-            <Briefcase className="w-4 h-4" />
-            <span>Trajetória Prática na UNIFENAS</span>
-          </div>
-          <h3 className="text-lg font-bold text-white tracking-tight">
-            Experiência em suporte corporativo, gestão de ativos e automação
-          </h3>
-          <p className="text-xs text-slate-400 max-w-xl leading-relaxed">
-            Veja as responsabilidades diárias, resolução de incidentes N1/N2, administração de domínio Active Directory e atendimento a centenas de usuários.
-          </p>
-        </div>
+      {/* 4. Trajetória Prática na UNIFENAS (Strategic Navy Banner) */}
+      <section className="bg-[#061B3A] text-white py-14 relative overflow-hidden">
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#0877E8]/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+            <div className="space-y-2 max-w-2xl">
+              <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#00D4E8]">
+                <Briefcase className="w-4 h-4" />
+                <span>{language === 'pt' ? 'Experiência Profissional Consolidada' : 'Proven Work Experience'}</span>
+              </div>
+              <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-white tracking-tight">
+                {language === 'pt'
+                  ? 'Vivência Real em Suporte, Infraestrutura e Sistemas'
+                  : 'Hands-on Experience in Support, Infrastructure & Systems'}
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                {language === 'pt'
+                  ? 'Atuação direta na Universidade José do Rosário Vellano (UNIFENAS) em sustentação de computadores, atendimento a centenas de usuários corporativos, gestão de ativos e automação.'
+                  : 'Direct experience at UNIFENAS providing technical support, network administration, Active Directory management, and process automation.'}
+              </p>
+            </div>
 
-        <Link
-          to="/experiencia"
-          id="home-cta-experience-btn"
-          className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1a1a24] hover:bg-[#222230] text-white text-xs font-bold transition-all duration-200 border border-slate-700/80 hover:border-blue-500/40 hover:-translate-y-0.5 shadow-sm"
-        >
-          <span>Ver Linha do Tempo</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
+            <Link
+              to="/experiencia"
+              id="home-cta-experience-btn"
+              className="shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-[10px] bg-[#0877E8] hover:bg-[#0766c6] text-white text-xs font-bold transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
+            >
+              <span>{language === 'pt' ? 'Ver Linha do Tempo' : 'View Work Timeline'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
       </section>
     </div>
   );

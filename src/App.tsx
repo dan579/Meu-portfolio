@@ -52,6 +52,7 @@ export default function App() {
               <Route path="sobre" element={<AboutPage />} />
               <Route path="experiencia" element={<ExperiencePage />} />
               <Route path="infraestrutura" element={<InfrastructurePage />} />
+              <Route path="competencias" element={<InfrastructurePage />} />
               <Route path="projetos" element={<ProjectsPage />} />
               <Route path="projetos/:slug" element={<ProjectDetailPage />} />
               <Route path="metricas" element={<Navigate to="/" replace />} />

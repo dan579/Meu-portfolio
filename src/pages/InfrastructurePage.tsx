@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useInfrastructure, useUILabels } from '../content/ContentProvider.tsx';
+import { useInfrastructure, useUILabels, useLanguage } from '../content/ContentProvider.tsx';
 import { TechBadge } from '../components/common/TechBadge.tsx';
 import {
   Server,
@@ -16,6 +16,7 @@ import {
 export const InfrastructurePage: React.FC = () => {
   const areas = useInfrastructure();
   const labels = useUILabels();
+  const { language } = useLanguage();
   const [activeAreaFilter, setActiveAreaFilter] = useState<string>('all');
 
   const getAreaIcon = (iconName: string) => {
@@ -38,127 +39,122 @@ export const InfrastructurePage: React.FC = () => {
     : areas.filter(a => a.id === activeAreaFilter);
 
   return (
-    <div className="space-y-8" id="infrastructure-page-container">
-      {/* Header */}
-      <div>
-        <div className="flex items-center gap-2 text-blue-400 text-xs font-mono font-semibold uppercase tracking-wider mb-2">
-          <Server className="w-4 h-4" />
-          <span>Infraestrutura & Operações</span>
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          Ecossistema de Infraestrutura <span className="text-blue-500">.</span>
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mt-1 leading-relaxed">
-          Catálogo estruturado por áreas operacionais. Cada tecnologia é acompanhada de sua finalidade técnica e do contexto real em que foi aplicada no campus.
-        </p>
-      </div>
+    <div className="w-full bg-[#061B3A] text-white py-14 sm:py-20 relative overflow-hidden" id="infrastructure-page-container">
+      {/* Background ambient glow */}
+      <div className="absolute top-0 right-1/3 w-[600px] h-[400px] bg-[#00D4E8]/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Filter Tabs */}
-      <div className="flex flex-wrap gap-2 pb-2 border-b border-slate-800/60">
-        <button
-          onClick={() => setActiveAreaFilter('all')}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
-            activeAreaFilter === 'all'
-              ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 shadow-sm'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-[#16161c] border border-transparent'
-          }`}
-        >
-          Todas as Áreas ({areas.reduce((acc, a) => acc + a.items.length, 0)} tecnologias)
-        </button>
-        {areas.map((area) => (
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 relative z-10">
+        {/* Header */}
+        <div className="space-y-3">
+          <div className="inline-flex items-center gap-2 text-[#00D4E8] text-xs font-mono font-bold uppercase tracking-wider">
+            <Server className="w-4 h-4" />
+            <span>{language === 'pt' ? 'Infraestrutura & Competências' : 'Infrastructure & Skills'}</span>
+          </div>
+          <h1 className="font-heading font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight">
+            {language === 'pt' ? 'Ecossistema Técnico & Operações' : 'Technical Ecosystem & Operations'}
+          </h1>
+          <p className="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed font-normal">
+            {language === 'pt'
+              ? 'Catálogo estruturado por áreas operacionais. Cada tecnologia é acompanhada de sua finalidade técnica e do contexto real em que foi aplicada no campus.'
+              : 'Structured by operational domain. Each technology includes its engineering purpose and real-world deployment context.'}
+          </p>
+        </div>
+
+        {/* Filter Tabs */}
+        <div className="flex flex-wrap gap-2 pb-3 border-b border-white/10">
           <button
-            key={area.id}
-            onClick={() => setActiveAreaFilter(area.id)}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
-              activeAreaFilter === area.id
-                ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 shadow-sm'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-[#16161c] border border-transparent'
+            type="button"
+            onClick={() => setActiveAreaFilter('all')}
+            className={`px-4 py-2 rounded-[10px] text-xs font-mono font-bold tracking-wide transition-all cursor-pointer ${
+              activeAreaFilter === 'all'
+                ? 'bg-[#0877E8] text-white shadow-xs'
+                : 'text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
             }`}
           >
-            {area.areaName} ({area.items.length})
+            {language === 'pt' ? 'Todas as Áreas' : 'All Domains'} ({areas.reduce((acc, a) => acc + a.items.length, 0)})
           </button>
-        ))}
-      </div>
-
-      {/* Areas & Items Display */}
-      <div className="space-y-8">
-        {filteredAreas.map((area) => {
-          const AreaIcon = getAreaIcon(area.iconName);
-          return (
-            <section
+          {areas.map((area) => (
+            <button
               key={area.id}
-              id={`infra-section-${area.id}`}
-              className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 sm:p-8 space-y-6 shadow-lg shadow-black/20"
+              type="button"
+              onClick={() => setActiveAreaFilter(area.id)}
+              className={`px-4 py-2 rounded-[10px] text-xs font-mono font-bold tracking-wide transition-all cursor-pointer ${
+                activeAreaFilter === area.id
+                  ? 'bg-[#0877E8] text-white shadow-xs'
+                  : 'text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10'
+              }`}
             >
-              {/* Area Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/60">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+              {area.areaName} ({area.items.length})
+            </button>
+          ))}
+        </div>
+
+        {/* Areas Display */}
+        <div className="space-y-8">
+          {filteredAreas.map((area) => {
+            const AreaIcon = getAreaIcon(area.iconName);
+            return (
+              <section
+                key={area.id}
+                id={`infra-section-${area.id}`}
+                className="bg-white/5 backdrop-blur-md rounded-2xl p-7 sm:p-9 border border-white/10 space-y-6 shadow-xl"
+              >
+                {/* Area Header */}
+                <div className="flex items-center gap-3.5 pb-4 border-b border-white/10">
+                  <div className="w-10 h-10 rounded-xl bg-[#00D4E8]/20 flex items-center justify-center text-[#00D4E8] shrink-0">
                     <AreaIcon className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-base font-bold text-white tracking-tight">
+                    <h2 className="font-heading font-extrabold text-xl text-white tracking-tight">
                       {area.areaName}
                     </h2>
-                    <p className="text-xs text-slate-400">{area.description}</p>
+                    <span className="text-xs text-slate-300">
+                      {area.items.length} {language === 'pt' ? 'tecnologias catalogadas' : 'technologies cataloged'}
+                    </span>
                   </div>
                 </div>
 
-                <span className="text-[11px] font-mono text-slate-400 bg-[#16161c] px-3 py-1 rounded-lg border border-slate-800/80 self-start sm:self-auto">
-                  {area.items.length} tecnologias catalogadas
-                </span>
-              </div>
-
-              {/* Technologies in this Area */}
-              <div className="grid grid-cols-1 gap-4">
-                {area.items.map((item) => (
-                  <div
-                    key={item.id}
-                    className="bg-[#16161c] border border-slate-800/80 hover:border-blue-500/30 rounded-xl p-4 sm:p-5 space-y-3.5 transition-all duration-200"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                      <div className="flex items-center gap-2.5">
-                        <span className="w-2 h-2 rounded-full bg-blue-400 shadow-sm shadow-blue-400/50" />
-                        <h3 className="text-sm font-bold text-white tracking-tight">
+                {/* Items Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {area.items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="bg-white/5 p-4.5 rounded-xl border border-white/10 hover:border-[#00D4E8]/40 transition-colors space-y-2.5"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-heading font-bold text-sm text-[#00D4E8]">
                           {item.technology}
-                        </h3>
+                        </span>
+                        <TechBadge variant="dark" size="xs">
+                          {area.areaName}
+                        </TechBadge>
                       </div>
-                      <div className="flex flex-wrap gap-1.5">
-                        {item.tags.map((tag) => (
-                          <TechBadge key={tag} variant="subtle" size="xs">
-                            {tag}
-                          </TechBadge>
-                        ))}
-                      </div>
-                    </div>
 
-                    {/* Purpose: O que ela é usada para fazer */}
-                    <div className="bg-[#121217]/90 border border-slate-800/80 p-3.5 rounded-lg">
-                      <div className="text-[11px] font-mono font-bold text-blue-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                        <HelpCircle className="w-3.5 h-3.5 text-blue-400" />
-                        <span>Finalidade Técnica (O que faz)</span>
+                      <div className="space-y-1 text-xs">
+                        {item.purpose && (
+                          <p className="text-slate-200 leading-relaxed font-normal">
+                            <span className="font-semibold text-white">
+                              {language === 'pt' ? 'Finalidade: ' : 'Purpose: '}
+                            </span>
+                            {item.purpose}
+                          </p>
+                        )}
+                        {item.appliedContext && (
+                          <p className="text-slate-400 leading-relaxed font-normal">
+                            <span className="font-semibold text-slate-300">
+                              {language === 'pt' ? 'Contexto de Aplicação: ' : 'Applied Context: '}
+                            </span>
+                            {item.appliedContext}
+                          </p>
+                        )}
                       </div>
-                      <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                        {item.purpose}
-                      </p>
                     </div>
-
-                    {/* Applied Context: Contexto real de uso */}
-                    <div className="pl-3.5 border-l-2 border-slate-700/80 space-y-1">
-                      <div className="text-[11px] font-mono font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <Terminal className="w-3 h-3 text-slate-500" />
-                        <span>Contexto Real de Aplicação</span>
-                      </div>
-                      <p className="text-xs text-slate-400 leading-relaxed">
-                        {item.appliedContext}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          );
-        })}
+                  ))}
+                </div>
+              </section>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

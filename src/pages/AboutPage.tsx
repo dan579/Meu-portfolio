@@ -1,171 +1,163 @@
 import React from 'react';
 import {
   useProfile,
-  useSkillCategories,
-  useUILabels
+  useLanguage
 } from '../content/ContentProvider.tsx';
-import { TechBadge } from '../components/common/TechBadge.tsx';
 import {
   User,
   GraduationCap,
   Award,
   Compass,
   CheckCircle,
-  FileCheck2,
-  Terminal
+  MapPin,
+  Calendar,
+  ExternalLink
 } from 'lucide-react';
 
 export const AboutPage: React.FC = () => {
   const profile = useProfile();
-  const skillCategories = useSkillCategories();
-  const labels = useUILabels();
+  const { language } = useLanguage();
 
   return (
-    <div className="space-y-10" id="about-page-container">
-      {/* Header */}
-      <div>
-        <div className="flex items-center gap-2 text-blue-400 text-xs font-mono font-semibold uppercase tracking-wider mb-2">
-          <User className="w-4 h-4" />
-          <span>Perfil & Carreira</span>
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          Sobre {profile.name} <span className="text-blue-500">.</span>
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mt-1 leading-relaxed">
-          Histórico profissional, mentalidade de engenharia, formação acadêmica e escopo de atuação técnica.
-        </p>
-      </div>
-
-      {/* Trajetória Completa (Bio) */}
-      <section className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg shadow-black/20">
-        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-          <Compass className="w-4 h-4 text-blue-400" />
-          <span>Trajetória & Posicionamento Profissional</span>
-        </h3>
-
-        <div className="space-y-3.5 text-sm text-slate-300 leading-relaxed">
-          {profile.fullBio.map((paragraph, index) => (
-            <p key={index} className="text-slate-300">
-              {paragraph}
-            </p>
-          ))}
-        </div>
-      </section>
-
-      {/* Formação & Certificações */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Educação */}
-        <div className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 space-y-4 shadow-lg shadow-black/20">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
-            <GraduationCap className="w-4 h-4 text-blue-400" />
-            <span>Formação Acadêmica</span>
+    <div className="w-full py-12 sm:py-16" id="about-page-container">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        {/* Header da Página */}
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 text-[#0877E8] text-xs font-bold font-heading uppercase tracking-wider">
+            <User className="w-4 h-4" />
+            <span>{language === 'pt' ? 'Perfil Profissional' : 'Professional Profile'}</span>
           </div>
-
-          <div className="space-y-4">
-            {profile.education.map((edu) => (
-              <div key={edu.id} className="border-l-2 border-blue-500/50 pl-4 space-y-2">
-                <div>
-                  <h4 className="text-sm font-bold text-white tracking-tight">{edu.institution}</h4>
-                  <p className="text-xs text-blue-400 font-medium">
-                    {edu.degree} • {edu.field}
-                  </p>
-                  <span className="text-[11px] text-slate-500 font-mono block mt-0.5">
-                    {edu.period} ({edu.status})
-                  </span>
-                </div>
-
-                {edu.description && (
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    {edu.description}
-                  </p>
-                )}
-
-                {edu.highlights && (
-                  <ul className="space-y-1 pt-1">
-                    {edu.highlights.map((h, i) => (
-                      <li key={i} className="text-xs text-slate-400 flex items-start gap-1.5">
-                        <CheckCircle className="w-3.5 h-3.5 text-blue-400/80 shrink-0 mt-0.5" />
-                        <span>{h}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </div>
+          <h1 className="font-heading font-extrabold text-3xl sm:text-4xl text-[#061B3A] tracking-tight">
+            {language === 'pt' ? `Sobre ${profile.name}` : `About ${profile.name}`}
+          </h1>
+          <p className="text-sm text-[#64748B] max-w-2xl leading-relaxed">
+            {language === 'pt'
+              ? 'Histórico profissional, mentalidade técnica, formação acadêmica e escopo de atuação.'
+              : 'Professional background, engineering mindset, education, and technical expertise.'}
+          </p>
         </div>
 
-        {/* Certificações & Cursos Técnicos */}
-        <div className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 space-y-4 shadow-lg shadow-black/20">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
-            <Award className="w-4 h-4 text-blue-400" />
-            <span>Certificações & Especializações</span>
-          </div>
-
-          <div className="space-y-3">
-            {profile.certifications?.map((cert) => (
-              <div
-                key={cert.id}
-                className="bg-[#16161c] border border-slate-800/80 hover:border-slate-700/80 rounded-xl p-3.5 flex items-start justify-between gap-3 transition-colors"
-              >
-                <div>
-                  <h4 className="text-xs font-bold text-slate-200">{cert.name}</h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">{cert.issuer}</p>
-                </div>
-                <span className="text-[10px] font-mono font-medium text-blue-400 bg-blue-500/10 px-2.5 py-0.5 rounded-md border border-blue-500/25 shrink-0">
-                  {cert.year}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Competências com Contexto Real de Uso */}
-      <section className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-          <div className="flex items-center gap-2">
-            <Terminal className="w-4 h-4 text-blue-400" />
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-              Competências Aplicadas (Contexto Real)
-            </h3>
-          </div>
-          <span className="text-[11px] text-slate-500 font-mono">
-            Organizadas por aplicação prática, sem falsas métricas de porcentagem
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {skillCategories.map((category) => (
-            <div
-              key={category.id}
-              className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 hover:border-slate-700/80 rounded-2xl p-5 space-y-3 flex flex-col justify-between transition-all shadow-lg shadow-black/20"
-            >
-              <div>
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-1">
-                  {category.title}
-                </h4>
-                <p className="text-[11px] text-slate-400 leading-snug mb-3">
-                  {category.description}
-                </p>
-
-                <div className="space-y-2.5">
-                  {category.skills.map((skill, index) => (
-                    <div key={index} className="bg-[#16161c] border border-slate-800/80 hover:border-blue-500/30 p-3 rounded-xl transition-colors">
-                      <div className="text-xs font-mono font-semibold text-blue-300 mb-1">
-                        {skill.name}
-                      </div>
-                      <p className="text-[11px] text-slate-400 leading-relaxed">
-                        {skill.appliedContext}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+        {/* Trajetória Completa (Bio) - Card Branco Elegante */}
+        <section className="bg-white rounded-2xl p-7 sm:p-9 border border-slate-200/90 shadow-xs space-y-5">
+          <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
+            <div className="w-8 h-8 rounded-lg bg-[#0877E8]/10 flex items-center justify-center text-[#0877E8]">
+              <Compass className="w-4 h-4" />
             </div>
-          ))}
-        </div>
-      </section>
+            <h2 className="font-heading font-bold text-base sm:text-lg text-[#061B3A]">
+              {language === 'pt' ? 'Trajetória & Posicionamento Profissional' : 'Background & Career Positioning'}
+            </h2>
+          </div>
+
+          <div className="space-y-4 text-sm sm:text-base text-[#253247] leading-relaxed">
+            {profile.fullBio.map((paragraph, index) => (
+              <p key={index} className="leading-relaxed font-normal">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </section>
+
+        {/* Formação Acadêmica & Certificações em Grid */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Educação */}
+          <div className="bg-white rounded-2xl p-7 border border-slate-200/90 shadow-xs space-y-5">
+            <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
+              <div className="w-8 h-8 rounded-lg bg-[#0877E8]/10 flex items-center justify-center text-[#0877E8]">
+                <GraduationCap className="w-4 h-4" />
+              </div>
+              <h3 className="font-heading font-bold text-base text-[#061B3A]">
+                {language === 'pt' ? 'Formação Acadêmica' : 'Academic Education'}
+              </h3>
+            </div>
+
+            <div className="space-y-6">
+              {profile.education.map((edu) => (
+                <div key={edu.id} className="space-y-2 border-l-2 border-[#0877E8] pl-4">
+                  <div>
+                    <h4 className="font-heading font-bold text-sm text-[#061B3A]">
+                      {edu.institution}
+                    </h4>
+                    <p className="text-xs text-[#0877E8] font-semibold mt-0.5">
+                      {edu.degree} • {edu.field}
+                    </p>
+                    <span className="text-[11px] text-[#64748B] font-mono block mt-0.5">
+                      {edu.period} ({edu.status})
+                    </span>
+                  </div>
+
+                  {edu.description && (
+                    <p className="text-xs text-[#253247] leading-relaxed">
+                      {edu.description}
+                    </p>
+                  )}
+
+                  {edu.highlights && (
+                    <ul className="space-y-1 pt-1">
+                      {edu.highlights.map((h, i) => (
+                        <li key={i} className="text-xs text-[#64748B] flex items-start gap-1.5">
+                          <CheckCircle className="w-3.5 h-3.5 text-[#0877E8] shrink-0 mt-0.5" />
+                          <span>{h}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Certificações & Cursos Técnicos */}
+          <div className="bg-white rounded-2xl p-7 border border-slate-200/90 shadow-xs space-y-5">
+            <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
+              <div className="w-8 h-8 rounded-lg bg-[#00D4E8]/20 flex items-center justify-center text-[#0877E8]">
+                <Award className="w-4 h-4" />
+              </div>
+              <h3 className="font-heading font-bold text-base text-[#061B3A]">
+                {language === 'pt' ? 'Certificações & Cursos' : 'Certifications & Courses'}
+              </h3>
+            </div>
+
+            <div className="space-y-4">
+              {profile.certifications.map((cert) => (
+                <div
+                  key={cert.id}
+                  className="p-3.5 rounded-xl bg-[#F3F6FA] border border-slate-200/80 hover:border-[#0877E8]/40 transition-colors flex items-start justify-between gap-3"
+                >
+                  <div className="space-y-0.5">
+                    <h4 className="font-heading font-bold text-xs text-[#061B3A]">
+                      {cert.name}
+                    </h4>
+                    <p className="text-[11px] text-[#64748B]">
+                      {cert.issuer}
+                    </p>
+                    {cert.badge && (
+                      <span className="inline-block text-[10px] font-mono text-[#0877E8] font-semibold mt-1">
+                        {cert.badge}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-[11px] font-mono text-[#64748B] bg-white border border-slate-200 px-2 py-0.5 rounded">
+                      {cert.year}
+                    </span>
+                    {cert.credentialUrl && (
+                      <a
+                        href={cert.credentialUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[#0877E8] hover:text-[#061B3A] p-1"
+                        title="Ver credencial"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   );
 };

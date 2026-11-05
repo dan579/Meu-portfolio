@@ -83,20 +83,22 @@ export const AdminLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#09090B] text-slate-200 flex flex-col md:flex-row">
       {/* Mobile Topbar */}
-      <header className="md:hidden flex items-center justify-between p-4 bg-[#0F0F12] border-b border-slate-800/80 sticky top-0 z-40">
+      <header className="md:hidden flex items-center justify-between p-4 bg-[#061B3A] border-b border-white/10 sticky top-0 z-40">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-blue-600/10 border border-blue-500/30 flex items-center justify-center text-blue-400 font-black text-xs">
-            <Shield className="w-4 h-4" />
-          </div>
+          <img
+            src="/assets/aistudio/Logo_DS_entrela_ado_em_azul_marinho_e_ciano_135d994c.png"
+            alt="DS Logo"
+            className="w-7 h-7 object-contain brightness-110"
+          />
           <div>
-            <span className="text-sm font-bold text-white tracking-tight">Admin Núcleo</span>
-            <span className="text-[10px] block font-mono text-slate-400">Interactive CV</span>
+            <span className="text-sm font-bold text-white tracking-tight font-heading">Admin Núcleo</span>
+            <span className="text-[10px] block font-mono text-[#00D4E8]">DS Sistemas & CV</span>
           </div>
         </div>
 
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 rounded-lg bg-[#16161B] border border-slate-800 text-slate-300"
+          className="p-2 rounded-lg bg-white/10 border border-white/15 text-white"
           aria-label="Toggle admin menu"
         >
           {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -105,29 +107,31 @@ export const AdminLayout: React.FC = () => {
 
       {/* Sidebar (Desktop & Mobile Drawer) */}
       <aside
-        className={`fixed md:sticky top-0 left-0 z-50 h-screen w-64 bg-[#0D0D10] border-r border-slate-800/80 flex flex-col justify-between p-4 transition-transform duration-200 ${
+        className={`fixed md:sticky top-0 left-0 z-50 h-screen w-64 bg-[#061B3A] border-r border-white/10 flex flex-col justify-between p-4 transition-transform duration-200 ${
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
         <div className="space-y-6">
           {/* Brand & Auth Status */}
-          <div className="hidden md:flex items-center justify-between pb-4 border-b border-slate-800/60">
+          <div className="hidden md:flex items-center justify-between pb-4 border-b border-white/10">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-400">
-                <Shield className="w-4 h-4" />
-              </div>
+              <img
+                src="/assets/aistudio/Logo_DS_entrela_ado_em_azul_marinho_e_ciano_135d994c.png"
+                alt="DS Logo"
+                className="w-8 h-8 object-contain brightness-110"
+              />
               <div>
-                <h2 className="text-sm font-extrabold text-white tracking-tight">Admin Núcleo</h2>
-                <p className="text-[10px] font-mono text-slate-400">Fase 1: Perfil & Exp</p>
+                <h2 className="text-sm font-extrabold text-white tracking-tight font-heading">Admin Núcleo</h2>
+                <p className="text-[10px] font-mono text-[#00D4E8]">DS Sistemas & Soluções</p>
               </div>
             </div>
           </div>
 
           {/* User Badge */}
-          <div className="bg-[#141418] border border-slate-800 rounded-xl p-3 space-y-1.5">
+          <div className="bg-white/5 border border-white/10 rounded-xl p-3 space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Administrador</span>
-              <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Administrador</span>
+              <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-300 bg-emerald-500/20 px-1.5 py-0.2 rounded border border-emerald-400/30">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 Ativo
               </span>
@@ -157,8 +161,8 @@ export const AdminLayout: React.FC = () => {
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
                       isActive
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20 font-bold'
-                        : 'text-slate-400 hover:text-white hover:bg-[#16161B]'
+                        ? 'bg-[#0877E8] text-white shadow-md shadow-[#0877E8]/30 font-bold'
+                        : 'text-slate-300 hover:text-white hover:bg-white/10'
                     }`
                   }
                 >

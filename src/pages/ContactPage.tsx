@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useContact, useProfile, useUILabels } from '../content/ContentProvider.tsx';
+import { useContact, useProfile, useUILabels, useLanguage } from '../content/ContentProvider.tsx';
 import { PdfDownloadButtons } from '../components/common/PdfDownloadButtons.tsx';
 import {
   Mail,
@@ -8,9 +8,9 @@ import {
   MapPin,
   Check,
   Copy,
-  Clock,
   Send,
   MessageSquare,
+  ArrowUpRight,
   Sparkles
 } from 'lucide-react';
 
@@ -18,6 +18,7 @@ export const ContactPage: React.FC = () => {
   const contact = useContact();
   const profile = useProfile();
   const labels = useUILabels();
+  const { language } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const effectiveEmail = profile.email || contact.email || '';
@@ -30,151 +31,158 @@ export const ContactPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8" id="contact-page-container">
-      {/* Header */}
-      <div>
-        <div className="flex items-center gap-2 text-blue-400 text-xs font-mono font-semibold uppercase tracking-wider mb-2">
-          <Mail className="w-4 h-4" />
-          <span>Comunicação & Conexão</span>
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          Entrar em Contato <span className="text-blue-500">.</span>
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mt-1 leading-relaxed">
-          Canais diretos para oportunidades profissionais, alinhamentos técnicos, consultoria ou networking.
-        </p>
-      </div>
+    <div className="w-full bg-[#061B3A] text-white py-14 sm:py-20 relative overflow-hidden" id="contact-page-container">
+      {/* Background ambient lighting */}
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#00D4E8]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-10 w-80 h-80 bg-[#0877E8]/15 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Main Contact Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Email Card with One-click Copy */}
-        <div className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 hover:border-slate-700/80 rounded-2xl p-6 sm:p-7 space-y-4 shadow-lg shadow-black/20 transition-all">
-          <div className="flex items-center justify-between">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
-              <Mail className="w-5 h-5" />
-            </div>
-            <span className="text-[10px] font-mono font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-2.5 py-0.5 rounded-md">
-              Canal Principal
-            </span>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 relative z-10">
+        {/* Header */}
+        <div className="space-y-3">
+          <div className="inline-flex items-center gap-2 text-[#00D4E8] text-xs font-mono font-bold uppercase tracking-wider">
+            <Mail className="w-4 h-4" />
+            <span>{language === 'pt' ? 'Canais de Conexão' : 'Direct Channels'}</span>
           </div>
-
-          <div className="space-y-1">
-            <h3 className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">
-              E-mail Direto
-            </h3>
-            <p className="text-base font-mono font-bold text-white tracking-tight">
-              {effectiveEmail || '—'}
-            </p>
-          </div>
-
-          <div className="flex gap-2 pt-2">
-            <a
-              href={effectiveEmail ? `mailto:${effectiveEmail}` : '#'}
-              id="send-email-mailto-btn"
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/20 cursor-pointer"
-            >
-              <Send className="w-4 h-4" />
-              <span>{labels.common.getInTouch}</span>
-            </a>
-
-            <button
-              onClick={handleCopyEmail}
-              id="copy-email-btn"
-              title={labels.common.copyEmail}
-              disabled={!effectiveEmail}
-              className="inline-flex items-center justify-center px-3.5 py-2.5 rounded-xl bg-[#16161c] hover:bg-slate-800 border border-slate-800/90 text-slate-300 hover:text-white text-xs font-semibold transition-all cursor-pointer disabled:opacity-40"
-            >
-              {copied ? (
-                <Check className="w-4 h-4 text-emerald-400" />
-              ) : (
-                <Copy className="w-4 h-4" />
-              )}
-            </button>
-          </div>
+          <h1 className="font-heading font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight">
+            {labels.common.getInTouch}
+          </h1>
+          <p className="text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed font-normal">
+            {language === 'pt'
+              ? 'Canais diretos para oportunidades profissionais em suporte, infraestrutura, desenvolvimento de sistemas ou consultoria técnica.'
+              : 'Direct communication channels for opportunities in IT support, infrastructure, software engineering, or technical consulting.'}
+          </p>
         </div>
 
-        {/* Professional Network Links */}
-        <div className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 hover:border-slate-700/80 rounded-2xl p-6 sm:p-7 space-y-4 flex flex-col justify-between shadow-lg shadow-black/20 transition-all">
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
-                <Linkedin className="w-5 h-5" />
+        {/* Contact Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Email Direct Card */}
+          <div className="bg-white/5 backdrop-blur-md rounded-2xl p-7 border border-white/10 hover:border-[#00D4E8]/40 transition-colors space-y-5 shadow-xl">
+            <div className="flex items-center justify-between">
+              <div className="w-11 h-11 rounded-xl bg-[#00D4E8]/20 flex items-center justify-center text-[#00D4E8]">
+                <Mail className="w-5 h-5" />
               </div>
-              <span className="text-[10px] font-mono text-slate-400 bg-[#16161c] border border-slate-800/80 px-2.5 py-0.5 rounded-md">
-                Redes Profissionais
+              <span className="text-[10px] font-mono font-bold text-emerald-300 bg-emerald-950/60 border border-emerald-700/40 px-2.5 py-1 rounded">
+                {language === 'pt' ? 'Canal Principal' : 'Primary Channel'}
+              </span>
+            </div>
+
+            <div className="space-y-1">
+              <span className="text-xs font-heading font-bold uppercase tracking-wider text-slate-400">
+                {language === 'pt' ? 'E-mail Direto' : 'Direct Email'}
+              </span>
+              <p className="font-heading font-extrabold text-base sm:text-lg text-white tracking-tight break-all">
+                {effectiveEmail || '—'}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2.5 pt-2">
+              <a
+                href={effectiveEmail ? `mailto:${effectiveEmail}` : '#'}
+                id="send-email-mailto-btn"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-[10px] bg-[#0877E8] hover:bg-[#0766c6] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+              >
+                <Send className="w-4 h-4" />
+                <span>{language === 'pt' ? 'Enviar E-mail' : 'Send Email'}</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={handleCopyEmail}
+                id="copy-email-btn"
+                title={labels.common.copyEmail}
+                disabled={!effectiveEmail}
+                className="inline-flex items-center justify-center px-4 py-2.5 rounded-[10px] bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold transition-all cursor-pointer disabled:opacity-40"
+              >
+                {copied ? (
+                  <Check className="w-4 h-4 text-emerald-400" />
+                ) : (
+                  <Copy className="w-4 h-4 text-slate-300" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Professional Social Links Card */}
+          <div className="bg-white/5 backdrop-blur-md rounded-2xl p-7 border border-white/10 hover:border-[#0877E8]/40 transition-colors space-y-5 shadow-xl">
+            <div className="flex items-center justify-between">
+              <div className="w-11 h-11 rounded-xl bg-[#0877E8]/20 flex items-center justify-center text-[#0877E8]">
+                <MessageSquare className="w-5 h-5 text-[#00D4E8]" />
+              </div>
+              <span className="text-[10px] font-mono font-bold text-slate-300 bg-white/10 px-2.5 py-1 rounded">
+                {language === 'pt' ? 'Redes Profissionais' : 'Social Networks'}
               </span>
             </div>
 
             <div className="space-y-3">
-              <a
-                href={contact.linkedinUrl}
-                target="_blank"
-                rel="noreferrer"
-                id="contact-linkedin-link"
-                className="flex items-center justify-between p-3 rounded-xl bg-[#16161c] border border-slate-800/80 hover:border-blue-500/40 text-xs font-medium text-slate-200 transition-all group shadow-sm"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Linkedin className="w-4 h-4 text-blue-400" />
-                  <span>LinkedIn ({contact.linkedin})</span>
-                </div>
-                <span className="text-blue-400 group-hover:translate-x-0.5 transition-transform">↗</span>
-              </a>
+              {profile.linkedin && (
+                <a
+                  href={profile.linkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                  id="contact-linkedin-link"
+                  className="flex items-center justify-between p-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-[#0877E8]/20 flex items-center justify-center text-[#00D4E8]">
+                      <Linkedin className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-white group-hover:text-[#00D4E8] transition-colors">
+                        LinkedIn
+                      </div>
+                      <div className="text-[11px] text-slate-400">
+                        {profile.linkedinDisplay || profile.shortName}
+                      </div>
+                    </div>
+                  </div>
+                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-white" />
+                </a>
+              )}
 
-              <a
-                href={contact.githubUrl}
-                target="_blank"
-                rel="noreferrer"
-                id="contact-github-link"
-                className="flex items-center justify-between p-3 rounded-xl bg-[#16161c] border border-slate-800/80 hover:border-slate-700 text-xs font-medium text-slate-200 transition-all group shadow-sm"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Github className="w-4 h-4 text-slate-400" />
-                  <span>GitHub (@{contact.github})</span>
-                </div>
-                <span className="text-slate-400 group-hover:translate-x-0.5 transition-transform">↗</span>
-              </a>
+              {profile.github && (
+                <a
+                  href={profile.github}
+                  target="_blank"
+                  rel="noreferrer"
+                  id="contact-github-link"
+                  className="flex items-center justify-between p-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-slate-200">
+                      <Github className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-white group-hover:text-[#00D4E8] transition-colors">
+                        GitHub
+                      </div>
+                      <div className="text-[11px] text-slate-400">
+                        {profile.githubDisplay || 'Repositórios e Códigos'}
+                      </div>
+                    </div>
+                  </div>
+                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-white" />
+                </a>
+              )}
             </div>
           </div>
-
-          <div className="pt-3 border-t border-slate-800/60 flex items-center gap-2 text-xs text-slate-400">
-            <MapPin className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-            <span>{contact.cityStateCountry}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Availability Status & Perspective Note */}
-      <section className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg shadow-black/20">
-        <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest">
-          <Clock className="w-4 h-4" />
-          <span>Status de Disponibilidade</span>
         </div>
 
-        <h3 className="text-base font-bold text-white tracking-tight">
-          {contact.availabilityStatus}
-        </h3>
-
-        <div className="bg-[#16161c] border border-slate-800/80 p-4 rounded-xl text-xs sm:text-sm text-slate-300 leading-relaxed italic">
-          &ldquo;{contact.messageNote}&rdquo;
-        </div>
-      </section>
-
-      {/* Dynamic PDF Downloads */}
-      <section className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg shadow-black/20">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-blue-400" />
-              <span>Downloads de Currículo & Portfólio</span>
+        {/* Download de Documentos PDF */}
+        <div className="bg-white/5 backdrop-blur-md rounded-2xl p-7 border border-white/10 space-y-4 shadow-xl">
+          <div className="space-y-1">
+            <h3 className="font-heading font-extrabold text-base text-white">
+              {language === 'pt' ? 'Documentos Oficiais para Download' : 'Official PDF Documents'}
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Documentos gerados em tempo real com as informações e projetos mais recentes.
+            <p className="text-xs text-slate-300 leading-relaxed font-normal">
+              {language === 'pt'
+                ? 'Currículo formatado para sistemas ATS e Portfólio completo com arquitetura e QR Code de validação.'
+                : 'ATS-ready resume and comprehensive technical portfolio with architecture diagrams and QR verification.'}
             </p>
           </div>
-        </div>
 
-        <PdfDownloadButtons variant="public" />
-      </section>
+          <PdfDownloadButtons variant="hero" />
+        </div>
+      </div>
     </div>
   );
 };

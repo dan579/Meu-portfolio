@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
-import { useProjectBySlug, useUILabels } from '../content/ContentProvider.tsx';
+import { useProjectBySlug, useUILabels, useLanguage } from '../content/ContentProvider.tsx';
 import { TechBadge } from '../components/common/TechBadge.tsx';
 import { MockupVisualizer } from '../components/common/MockupVisualizer.tsx';
 import {
@@ -15,260 +15,259 @@ import {
   Image,
   ExternalLink,
   Github,
-  Clock,
-  ShieldCheck,
-  Terminal
+  Terminal,
+  ShieldCheck
 } from 'lucide-react';
 
 export const ProjectDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const project = useProjectBySlug(slug);
   const labels = useUILabels();
+  const { language } = useLanguage();
 
   if (!project) {
     return (
-      <div className="py-16 text-center space-y-4">
-        <h2 className="text-xl font-bold text-white">Projeto não encontrado</h2>
-        <p className="text-xs text-slate-400">O case study solicitado não existe no momento.</p>
+      <div className="py-24 text-center space-y-4">
+        <h2 className="font-heading font-bold text-2xl text-[#061B3A]">
+          {language === 'pt' ? 'Projeto não encontrado' : 'Project not found'}
+        </h2>
+        <p className="text-sm text-[#64748B]">
+          {language === 'pt' ? 'O case study solicitado não existe no momento.' : 'The requested case study does not exist.'}
+        </p>
         <Link
           to="/projetos"
-          className="inline-flex items-center gap-2 text-xs text-blue-400 hover:underline"
+          className="inline-flex items-center gap-2 text-sm font-bold text-[#0877E8] hover:underline"
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Voltar para lista de projetos</span>
+          <ArrowLeft className="w-4 h-4" />
+          <span>{labels.common.backToProjects}</span>
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="space-y-10" id={`case-study-${project.slug}`}>
-      {/* Back Navigation Bar */}
-      <div>
-        <Link
-          to="/projetos"
-          id="back-to-projects-btn"
-          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-blue-400 transition-colors mb-4"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>{labels.common.backToProjects}</span>
-        </Link>
+    <div className="w-full bg-[#F3F6FA] py-12 sm:py-16" id={`case-study-${project.slug}`}>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        {/* Back Link & Header */}
+        <div className="space-y-4">
+          <Link
+            to="/projetos"
+            id="back-to-projects-btn"
+            className="inline-flex items-center gap-2 text-xs font-bold text-[#0877E8] hover:text-[#061B3A] transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>{labels.common.backToProjects}</span>
+          </Link>
 
-        {/* Case Header */}
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-mono text-blue-400 uppercase tracking-wider">
-              {project.category}
-            </span>
-            <span className="text-slate-600">•</span>
-            <span
-              className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-                project.status === 'completed'
-                  ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
-                  : 'text-blue-400 bg-blue-500/10 border border-blue-500/20'
-              }`}
-            >
-              {project.statusLabel}
-            </span>
-            {project.badge && (
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-600/20 text-blue-300 border border-blue-500/30">
-                {project.badge}
+          {/* Project Title Block */}
+          <div className="bg-white rounded-2xl p-7 sm:p-9 border border-slate-200/90 shadow-xs space-y-4">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="text-xs font-mono font-bold text-[#0877E8] bg-[#0877E8]/10 px-2.5 py-1 rounded">
+                {project.category}
               </span>
-            )}
-          </div>
-
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-            {project.title} <span className="text-blue-500">.</span>
-          </h1>
-
-          <p className="text-sm sm:text-base text-slate-300 font-medium max-w-3xl leading-relaxed">
-            {project.subtitle}
-          </p>
-        </div>
-      </div>
-
-      {/* Camada 1: O Problema */}
-      <section
-        id="case-section-problem"
-        className="bg-[#141014]/80 backdrop-blur-sm border border-rose-500/20 rounded-2xl p-6 sm:p-8 space-y-3 shadow-lg shadow-black/20"
-      >
-        <div className="flex items-center gap-2 text-rose-400 text-xs font-bold uppercase tracking-widest font-mono">
-          <AlertCircle className="w-4 h-4 text-rose-400" />
-          <span>{labels.common.problem}</span>
-        </div>
-        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-          {project.problem}
-        </p>
-      </section>
-
-      {/* Camada 2: A Solução */}
-      <section
-        id="case-section-solution"
-        className="bg-[#101514]/80 backdrop-blur-sm border border-emerald-500/20 rounded-2xl p-6 sm:p-8 space-y-3 shadow-lg shadow-black/20"
-      >
-        <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-widest font-mono">
-          <Lightbulb className="w-4 h-4 text-emerald-400" />
-          <span>{labels.common.solution}</span>
-        </div>
-        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-          {project.solution}
-        </p>
-      </section>
-
-      {/* Camada 3: Arquitetura & Engenharia */}
-      <section
-        id="case-section-architecture"
-        className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg shadow-black/20"
-      >
-        <div className="flex items-center gap-2 text-blue-400 text-xs font-bold uppercase tracking-widest font-mono">
-          <Network className="w-4 h-4 text-blue-400" />
-          <span>{labels.common.architecture}</span>
-        </div>
-
-        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-          {project.architecture.overview}
-        </p>
-
-        {project.architecture.diagramDescription && (
-          <div className="bg-[#16161c] border border-slate-800/80 p-3.5 rounded-xl font-mono text-[11px] text-blue-300 flex items-center gap-2">
-            <span className="text-slate-500 font-bold">Fluxo:</span>
-            <span>{project.architecture.diagramDescription}</span>
-          </div>
-        )}
-
-        <div className="space-y-2.5 pt-2">
-          <span className="text-[11px] text-slate-400 font-mono font-semibold uppercase tracking-wider block">
-            Destaques de Engenharia & Segurança
-          </span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {project.architecture.highlights.map((item, idx) => (
-              <div
-                key={idx}
-                className="bg-[#16161c] border border-slate-800/80 p-3.5 rounded-xl flex items-start gap-2.5 text-xs text-slate-300 transition-colors hover:border-slate-700/80"
+              <span className="text-slate-300">•</span>
+              <span
+                className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md uppercase tracking-wider ${
+                  project.status === 'completed'
+                    ? 'text-emerald-700 bg-emerald-50 border border-emerald-200'
+                    : 'text-[#0877E8] bg-[#0877E8]/10 border border-[#0877E8]/20'
+                }`}
               >
-                <ShieldCheck className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-                <span>{item}</span>
+                {project.statusLabel}
+              </span>
+              {project.badge && (
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-100 text-[#061B3A] border border-slate-200">
+                  {project.badge}
+                </span>
+              )}
+            </div>
+
+            <h1 className="font-heading font-extrabold text-3xl sm:text-4xl text-[#061B3A] tracking-tight">
+              {project.title}
+            </h1>
+
+            <p className="text-base sm:text-lg text-[#253247] leading-relaxed font-normal">
+              {project.subtitle}
+            </p>
+
+            {/* Quick Links & Technologies */}
+            <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap gap-1.5">
+                {(project.technologies || []).map((tech: any) => {
+                  const name = typeof tech === 'string' ? tech : tech.name;
+                  return (
+                    <TechBadge key={name} variant="default" size="xs">
+                      {name}
+                    </TechBadge>
+                  );
+                })}
               </div>
-            ))}
+
+              {/* Action Link Buttons */}
+              {project.links && project.links.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2">
+                  {project.links.map((link, idx) => (
+                    <a
+                      key={idx}
+                      href={link.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-xs font-bold transition-colors shadow-xs ${
+                        link.type === 'github'
+                          ? 'bg-slate-100 hover:bg-slate-200 text-[#061B3A] border border-slate-200'
+                          : 'bg-[#0877E8] text-white hover:bg-[#0766c6]'
+                      }`}
+                    >
+                      {link.type === 'github' ? <Github className="w-3.5 h-3.5" /> : <ExternalLink className="w-3.5 h-3.5" />}
+                      <span>{link.label}</span>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </section>
 
-      {/* Camada 4: Funcionalidades Principais */}
-      <section
-        id="case-section-features"
-        className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg shadow-black/20"
-      >
-        <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest font-mono">
-          <CheckCircle2 className="w-4 h-4 text-blue-400" />
-          <span>{labels.common.keyFeatures}</span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {project.features.map((feature, idx) => (
-            <div
-              key={idx}
-              className="bg-[#16161c] border border-slate-800/80 p-3.5 rounded-xl flex items-start gap-3 text-xs text-slate-200 transition-colors hover:border-slate-700/80"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0 shadow-sm shadow-blue-400/50" />
-              <span>{feature}</span>
+        {/* Problema & Solução (2 Cards) */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* O Problema */}
+          <div className="bg-white rounded-2xl p-7 border border-slate-200/90 shadow-xs space-y-3">
+            <div className="flex items-center gap-2 text-rose-700 font-heading font-bold text-xs uppercase tracking-wider">
+              <AlertCircle className="w-4 h-4 text-rose-600" />
+              <span>{labels.common.problem}</span>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Camada 5: Tecnologias & Papel da Ferramenta */}
-      <section
-        id="case-section-technologies"
-        className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg shadow-black/20"
-      >
-        <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest font-mono">
-          <Cpu className="w-4 h-4 text-blue-400" />
-          <span>{labels.common.technologiesUsed}</span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {project.technologies.map((t) => (
-            <div
-              key={t.name}
-              className="bg-[#16161c] border border-slate-800/80 hover:border-blue-500/30 p-3.5 rounded-xl space-y-1 transition-colors"
-            >
-              <span className="text-xs font-mono font-bold text-white block">{t.name}</span>
-              <span className="text-[11px] text-slate-400 leading-tight block">{t.role}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Camada 6: Participação & Papel de Daniel */}
-      <section
-        id="case-section-daniel-role"
-        className="bg-[#111118]/90 backdrop-blur-sm border border-blue-500/25 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg shadow-blue-500/5"
-      >
-        <div className="flex items-center gap-2 text-blue-400 text-xs font-bold uppercase tracking-widest font-mono">
-          <UserCheck className="w-4 h-4 text-blue-400" />
-          <span>{labels.common.danielParticipation}</span>
-        </div>
-
-        <div className="space-y-1">
-          <h3 className="text-sm font-bold text-white tracking-tight">{project.danielRole.title}</h3>
-        </div>
-
-        <div className="space-y-2">
-          {project.danielRole.contributions.map((c, i) => (
-            <div key={i} className="flex items-start gap-2.5 text-xs text-slate-300 leading-relaxed">
-              <span className="text-blue-400 font-bold mt-0.5">▸</span>
-              <span>{c}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Camada 7: Galeria de Imagens / Mockups */}
-      <section
-        id="case-section-gallery"
-        className="space-y-4"
-      >
-        <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest font-mono">
-          <Image className="w-4 h-4 text-blue-400" />
-          <span>{labels.common.galleryMockups}</span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {project.gallery.map((item, idx) => (
-            <MockupVisualizer key={idx} item={item} projectSlug={project.slug} />
-          ))}
-        </div>
-      </section>
-
-      {/* Camada 8: Links & Recursos */}
-      {project.links && project.links.length > 0 && (
-        <section
-          id="case-section-links"
-          className="bg-[#111115]/90 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-6 space-y-3 shadow-lg shadow-black/20"
-        >
-          <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest font-mono">
-            <ExternalLink className="w-4 h-4 text-blue-400" />
-            <span>{labels.common.linksResources}</span>
+            <p className="text-sm text-[#253247] leading-relaxed font-normal">
+              {project.problem}
+            </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            {project.links.map((link, idx) => (
-              <a
-                key={idx}
-                href={link.url}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#16161c] hover:bg-blue-600 hover:text-white border border-slate-800/90 text-xs font-semibold text-blue-400 hover:text-white transition-all duration-200 shadow-sm"
-              >
-                <Github className="w-4 h-4" />
-                <span>{link.label}</span>
-                <ExternalLink className="w-3 h-3 opacity-60" />
-              </a>
-            ))}
+          {/* A Solução */}
+          <div className="bg-white rounded-2xl p-7 border border-slate-200/90 shadow-xs space-y-3">
+            <div className="flex items-center gap-2 text-[#0877E8] font-heading font-bold text-xs uppercase tracking-wider">
+              <Lightbulb className="w-4 h-4 text-[#0877E8]" />
+              <span>{labels.common.solution}</span>
+            </div>
+            <p className="text-sm text-[#253247] leading-relaxed font-normal">
+              {project.solution}
+            </p>
           </div>
         </section>
-      )}
+
+        {/* Arquitetura & Engenharia */}
+        {project.architecture && (
+          <section className="bg-white rounded-2xl p-7 sm:p-9 border border-slate-200/90 shadow-xs space-y-5">
+            <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
+              <div className="w-8 h-8 rounded-lg bg-[#0877E8]/10 flex items-center justify-center text-[#0877E8]">
+                <Network className="w-4 h-4" />
+              </div>
+              <h2 className="font-heading font-bold text-lg text-[#061B3A]">
+                {labels.common.architecture}
+              </h2>
+            </div>
+
+            {project.architecture.overview && (
+              <p className="text-sm text-[#253247] leading-relaxed font-normal">
+                {project.architecture.overview}
+              </p>
+            )}
+
+            {/* Highlights */}
+            {project.architecture.highlights && project.architecture.highlights.length > 0 && (
+              <div className="space-y-2.5 pt-2">
+                <span className="text-xs font-heading font-bold uppercase tracking-wider text-[#64748B]">
+                  {language === 'pt' ? 'Destaques Arquiteturais:' : 'Architecture Highlights:'}
+                </span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {project.architecture.highlights.map((h: string, i: number) => (
+                    <div
+                      key={i}
+                      className="bg-[#F3F6FA] p-3.5 rounded-xl border border-slate-200/80 flex items-start gap-2.5 text-xs text-[#253247] leading-relaxed"
+                    >
+                      <CheckCircle2 className="w-4 h-4 text-[#0877E8] shrink-0 mt-0.5" />
+                      <span>{h}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Funcionalidades Principais */}
+        {project.features && project.features.length > 0 && (
+          <section className="bg-white rounded-2xl p-7 sm:p-9 border border-slate-200/90 shadow-xs space-y-4">
+            <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
+              <div className="w-8 h-8 rounded-lg bg-[#0877E8]/10 flex items-center justify-center text-[#0877E8]">
+                <Cpu className="w-4 h-4" />
+              </div>
+              <h2 className="font-heading font-bold text-lg text-[#061B3A]">
+                {labels.common.keyFeatures}
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {project.features.map((feat: string, i: number) => (
+                <div
+                  key={i}
+                  className="bg-[#F3F6FA] p-3.5 rounded-xl border border-slate-200/80 flex items-start gap-2 text-xs text-[#253247]"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-[#0877E8] shrink-0 mt-0.5" />
+                  <span>{feat}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Papel e Participação de Daniel */}
+        {project.danielRole && (
+          <section className="bg-white rounded-2xl p-7 sm:p-9 border border-slate-200/90 shadow-xs space-y-4">
+            <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
+              <div className="w-8 h-8 rounded-lg bg-[#0877E8]/10 flex items-center justify-center text-[#0877E8]">
+                <UserCheck className="w-4 h-4" />
+              </div>
+              <h2 className="font-heading font-bold text-lg text-[#061B3A]">
+                {labels.common.danielParticipation}
+              </h2>
+            </div>
+            <div className="space-y-3">
+              <span className="font-heading font-bold text-sm text-[#0877E8] block">
+                {project.danielRole.title}
+              </span>
+              {project.danielRole.contributions && (
+                <ul className="space-y-2">
+                  {project.danielRole.contributions.map((c: string, idx: number) => (
+                    <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-[#253247]">
+                      <CheckCircle2 className="w-4 h-4 text-[#0877E8] shrink-0 mt-0.5" />
+                      <span>{c}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* Galeria de Mockups / Screenshots */}
+        {project.gallery && project.gallery.length > 0 && (
+          <section className="space-y-6">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[#0877E8]/10 flex items-center justify-center text-[#0877E8]">
+                <Image className="w-4 h-4" />
+              </div>
+              <h2 className="font-heading font-bold text-xl text-[#061B3A]">
+                {labels.common.galleryMockups}
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {project.gallery.map((item: any, i: number) => (
+                <MockupVisualizer key={i} item={item} projectSlug={project.slug} />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
     </div>
   );
 };
