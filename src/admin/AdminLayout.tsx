@@ -15,6 +15,7 @@ import {
   Sparkles,
   Database
 } from 'lucide-react';
+import { BrandLogo } from '../components/common/BrandLogo.tsx';
 
 export const AdminLayout: React.FC = () => {
   const { user, adminEmail, isConfigured, logout } = useAdminAuth();
@@ -85,10 +86,9 @@ export const AdminLayout: React.FC = () => {
       {/* Mobile Topbar */}
       <header className="md:hidden flex items-center justify-between p-4 bg-[#061B3A] border-b border-white/10 sticky top-0 z-40">
         <div className="flex items-center gap-2.5">
-          <img
-            src="/assets/aistudio/Logo_DS_entrela_ado_em_azul_marinho_e_ciano_135d994c.png"
-            alt="DS Logo"
-            className="w-7 h-7 object-contain brightness-110"
+          <BrandLogo
+            surface="dark"
+            className="w-7 h-7 object-contain"
           />
           <div>
             <span className="text-sm font-bold text-white tracking-tight font-heading">Admin Núcleo</span>
@@ -115,10 +115,9 @@ export const AdminLayout: React.FC = () => {
           {/* Brand & Auth Status */}
           <div className="hidden md:flex items-center justify-between pb-4 border-b border-white/10">
             <div className="flex items-center gap-2.5">
-              <img
-                src="/assets/aistudio/Logo_DS_entrela_ado_em_azul_marinho_e_ciano_135d994c.png"
-                alt="DS Logo"
-                className="w-8 h-8 object-contain brightness-110"
+              <BrandLogo
+                surface="dark"
+                className="w-8 h-8 object-contain"
               />
               <div>
                 <h2 className="text-sm font-extrabold text-white tracking-tight font-heading">Admin Núcleo</h2>

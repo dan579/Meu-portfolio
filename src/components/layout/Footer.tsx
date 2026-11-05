@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useProfile, useLanguage, useUILabels } from '../../content/ContentProvider.tsx';
 import { Linkedin, Github, Mail, Shield, MapPin, ArrowUpRight } from 'lucide-react';
+import { BrandLogo } from '../common/BrandLogo.tsx';
 
 export const Footer: React.FC = () => {
   const profile = useProfile();
@@ -28,10 +29,9 @@ export const Footer: React.FC = () => {
           {/* Column 1: Brand & Professional Presentation */}
           <div className="md:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <img
-                src="/assets/aistudio/Logo_DS_entrela_ado_em_azul_marinho_e_ciano_135d994c.png"
-                alt="DS Logo"
-                className="w-10 h-10 object-contain brightness-110"
+              <BrandLogo
+                surface="dark"
+                className="w-10 h-10 object-contain"
               />
               <div>
                 <h3 className="font-heading font-extrabold text-lg text-white tracking-tight leading-tight">

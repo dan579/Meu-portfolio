@@ -9,6 +9,7 @@ import {
 } from '../content/ContentProvider.tsx';
 import { downloadResumePdf, downloadPortfolioPdf } from '../pdf/pdfGenerator.ts';
 import { TechBadge } from '../components/common/TechBadge.tsx';
+import { BrandLogo } from '../components/common/BrandLogo.tsx';
 import {
   ArrowRight,
   Mail,
@@ -277,10 +278,9 @@ export const HomePage: React.FC = () => {
                 <div className="absolute top-0 right-0 w-48 h-48 bg-[#00D4E8]/10 rounded-full blur-2xl pointer-events-none" />
                 <div className="relative z-10 space-y-6">
                   <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                    <img
-                      src="/assets/aistudio/Logo_DS_entrela_ado_em_azul_marinho_e_ciano_135d994c.png"
-                      alt="DS Monogram"
-                      className="w-12 h-12 object-contain brightness-110"
+                    <BrandLogo
+                      surface="dark"
+                      className="w-12 h-12 object-contain"
                     />
                     <span className="text-[11px] font-mono font-bold text-[#00D4E8] bg-white/10 px-2.5 py-1 rounded">
                       DS SISTEMAS

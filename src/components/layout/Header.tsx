@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { useProfile, useLanguage, useUILabels } from '../../content/ContentProvider.tsx';
 import { Menu, X, ArrowUpRight, Mail } from 'lucide-react';
+import { BrandLogo } from '../common/BrandLogo.tsx';
 
 export const Header: React.FC = () => {
   const profile = useProfile();
@@ -29,11 +30,10 @@ export const Header: React.FC = () => {
             className="flex items-center gap-3.5 group select-none py-1"
             aria-label="Daniel Santos da Silva - Página Inicial"
           >
-            {/* DS Monogram Mark */}
+            {/* DS Monogram Mark (Light Surface) */}
             <div className="relative shrink-0">
-              <img
-                src="/assets/aistudio/Logo_DS_entrela_ado_em_azul_marinho_e_ciano_135d994c.png"
-                alt="DS Logo"
+              <BrandLogo
+                surface="light"
                 className="w-10 h-10 object-contain transition-transform duration-200 group-hover:scale-105"
               />
             </div>

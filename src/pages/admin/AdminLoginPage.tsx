@@ -12,6 +12,7 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react';
+import { BrandLogo } from '../../components/common/BrandLogo.tsx';
 
 export const AdminLoginPage: React.FC = () => {
   const { user, isAuthorized, isConfigured, loginWithPassword } = useAdminAuth();
@@ -69,15 +70,15 @@ export const AdminLoginPage: React.FC = () => {
         <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* Header */}
-        <div className="space-y-2 text-center">
-          <div className="w-12 h-12 rounded-xl bg-blue-600/10 border border-blue-500/30 flex items-center justify-center text-blue-400 mx-auto">
-            <ShieldCheck className="w-6 h-6" />
+        <div className="space-y-3 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto shadow-inner">
+            <BrandLogo surface="dark" className="w-10 h-10 object-contain" />
           </div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl font-extrabold text-white tracking-tight font-heading">
             Painel de Administração
           </h1>
           <p className="text-xs text-slate-400">
-            Interactive CV • Gestão de Conteúdo Relacional
+            DS Sistemas & Soluções • Gestão de Conteúdo Relacional
           </p>
         </div>
 
